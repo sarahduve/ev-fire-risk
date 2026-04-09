@@ -54,6 +54,21 @@
   .score.moderate { color: #ffcc00; }
   .score.low { color: #44cc44; }
   .reasons { font-size: 14px; color: #aaa; line-height: 1.4; }
+  .tip { border-bottom: 1px dotted #666; cursor: help; }
+
+  /* Custom tooltips */
+  [data-tip] { position: relative; }
+  [data-tip]:hover::after {
+    content: attr(data-tip);
+    position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+    background: #1a1a1a; color: #ccc; border: 1px solid #444; border-radius: 6px;
+    padding: 8px 12px; font-size: 12px; font-weight: 400; text-transform: none;
+    letter-spacing: 0; line-height: 1.4; white-space: normal; width: 260px;
+    z-index: 1000; pointer-events: none; margin-bottom: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  th[data-tip]:hover::after { left: 0; transform: none; bottom: auto; top: 100%; margin-top: 4px; margin-bottom: 0; z-index: 9999; }
+  .legend-item[data-tip]:hover::after { bottom: auto; top: 100%; margin-top: 6px; margin-bottom: 0; }
   .col-name { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -62,15 +77,15 @@
 <body>
 <div class="header">
   <h1>NYC EV Fire Risk — All Parking Garages</h1>
-  <p>1,666 garages scored by structural age, fire suppression status, DOB violations, and EV charger presence</p>
+  <p>Garages scored by structural age, fire suppression status, DOB violations, and EV charger presence</p>
 </div>
 <div class="stats" id="stats"></div>
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:#ff4444"></div> High risk (70+)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#ff8800"></div> Elevated (50-69)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#ffcc00"></div> Moderate (30-49)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#44cc44"></div> Low (&lt;30)</div>
-  <div class="legend-item" style="margin-left:16px; border-left:1px solid #444; padding-left:16px;"><div class="legend-dot" style="background:transparent; border:2px solid #fff; width:10px; height:10px;"></div> Has EV chargers</div>
+  <div class="legend-item" data-tip="Pre-1968 building + no sprinkler permits + multi-story or safety violations"><div class="legend-dot" style="background:#ff4444"></div> High risk (70+)</div>
+  <div class="legend-item" data-tip="Older building with limited fire suppression history"><div class="legend-dot" style="background:#ff8800"></div> Elevated (50-69)</div>
+  <div class="legend-item" data-tip="Some risk factors but partially mitigated by sprinkler work or newer construction"><div class="legend-dot" style="background:#ffcc00"></div> Moderate (30-49)</div>
+  <div class="legend-item" data-tip="Modern construction (post-2004) with recent sprinkler work"><div class="legend-dot" style="background:#44cc44"></div> Low (&lt;30)</div>
+  <div class="legend-item" data-tip="EV chargers concentrate vehicles at high state of charge, increasing thermal runaway risk. Dot size scales with port count." style="margin-left:16px; border-left:1px solid #444; padding-left:16px;"><div class="legend-dot" style="background:transparent; border:2px solid #fff; width:10px; height:10px;"></div> <span class="tip">Has EV chargers</span></div>
 </div>
 <div id="map"></div>
 <div class="panel-container" id="panel" style="height: 30vh;">
@@ -79,16 +94,16 @@
     <table>
       <thead>
         <tr id="thead-row">
-          <th data-key="risk_score" data-type="num">Score <span class="sort-arrow"></span></th>
+          <th data-key="risk_score" data-type="num" data-tip="Combined risk score (0-100) based on structural age, fire suppression status, safety violations, and EV charger presence">Score <span class="sort-arrow"></span></th>
           <th data-key="address" data-type="str">Address <span class="sort-arrow"></span></th>
           <th data-key="borough" data-type="str">Boro <span class="sort-arrow"></span></th>
-          <th data-key="yearbuilt" data-type="num">Built <span class="sort-arrow"></span></th>
+          <th data-key="yearbuilt" data-type="num" data-tip="Year the building was constructed, per NYC PLUTO tax lot data">Built <span class="sort-arrow"></span></th>
           <th data-key="numfloors" data-type="num">Floors <span class="sort-arrow"></span></th>
-          <th data-key="total_ev_ports" data-type="num">EV Ports <span class="sort-arrow"></span></th>
-          <th data-key="osm_parking_type" data-type="str">Type <span class="sort-arrow"></span></th>
-          <th data-key="sprinkler_last_date" data-type="str">Last Sprinkler Permit <span class="sort-arrow"></span></th>
-          <th data-key="fire_violations_count" data-type="num">Violations <span class="sort-arrow"></span></th>
-          <th data-key="_reasons" data-type="str">Risk Factors <span class="sort-arrow"></span></th>
+          <th data-key="total_ev_ports" data-type="num" data-tip="Number of EV charging ports. L2 = Level 2 (240V AC, adds ~25mi/hr). DC = DC Fast (direct current, adds ~200mi/30min — higher thermal stress on batteries)">EV Ports <span class="sort-arrow"></span></th>
+          <th data-key="osm_parking_type" data-type="str" data-tip="Underground or multi-storey, from OpenStreetMap + PLUTO basement codes. Underground = worse ventilation, toxic gas buildup, harder firefighter access.">Type <span class="sort-arrow"></span></th>
+          <th data-key="sprinkler_last_date" data-type="str" data-tip="Year of most recent DOB sprinkler permit. 'none' means no sprinkler work in DOB digital records (post-~1990). Sprinklers can't extinguish EV fires but prevent spread to adjacent vehicles.">Last Sprinkler Permit <span class="sort-arrow"></span></th>
+          <th data-key="fire_violations_count" data-type="num" data-tip="DOB safety violations: immediate emergencies, unsafe building designations, structurally compromised buildings, and sprinkler deficiencies. Tiered by severity.">Violations <span class="sort-arrow"></span></th>
+          <th data-key="_reasons" data-type="str" data-tip="Breakdown of what contributes to this garage's risk score">Risk Factors <span class="sort-arrow"></span></th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
@@ -152,7 +167,8 @@ document.getElementById('stats').innerHTML = `
   <div class="stat high" data-filter="high"><div class="n">${dist.high}</div><div class="label">High Risk</div></div>
   <div class="stat elevated" data-filter="elevated"><div class="n">${dist.elevated}</div><div class="label">Elevated</div></div>
   <div class="stat moderate" data-filter="moderate"><div class="n">${dist.moderate}</div><div class="label">Moderate</div></div>
-  <div class="stat" data-filter="chargers" style="margin-left:16px; border-left:1px solid #333; padding-left:16px;"><div class="n" style="color:#fff;">${withChargers}</div><div class="label">With EV Chargers</div></div>
+  <div style="border-left:1px solid #333; margin-left:-12px;"></div>
+  <div class="stat" data-filter="chargers"><div class="n" style="color:#fff;">${withChargers}</div><div class="label">With EV Chargers</div></div>
 `;
 document.querySelectorAll('.stat[data-filter]').forEach(el => {
   el.style.cursor = 'pointer';
@@ -195,7 +211,7 @@ DATA.results.forEach(r => {
   const yb = r.yearbuilt > 0 ? r.yearbuilt : 'Unknown';
   const typeBadge = isUnderground ? '<span style="color:#00bcd4; font-weight:600;">UNDERGROUND</span>' :
                     r.osm_parking_type === 'multi-storey' ? '<span style="color:#888;">multi-storey</span>' : '';
-  const evBadge = hasChargers ? `<span style="color:#44cc44; font-weight:600;">${r.total_ev_ports} EV ports</span>` : '<span style="color:#666;">no chargers</span>';
+  const evBadge = hasChargers ? `<span style="color:#44cc44; font-weight:600;" title="Level 2 (240V AC, slow) and/or DC Fast (direct current, rapid — higher thermal stress)">${r.total_ev_ports} EV ports</span>` : '<span style="color:#666;">no chargers</span>';
   circle.bindPopup(`
     <div style="font-family: sans-serif; min-width: 220px;">
       <div style="font-weight:700; font-size:14px; margin-bottom:4px;">${r.address}</div>
