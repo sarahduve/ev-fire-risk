@@ -109,33 +109,11 @@ jobs:
           print(f'Fetched {len(parsed)} OSM parking entries')
           "
 
-      - name: Run scoring pipeline
-        run: python3 build_all_garages.py
+      - name: Fetch DOB data and build cache
+        run: python3 fetch_data.py
 
-      - name: Add basement codes
-        run: |
-          python3 -c "
-          import json, urllib.request, urllib.parse
-          params = urllib.parse.urlencode({
-              '\$where': \"bldgclass in('G1','GU','GW') OR (bldgclass='G0' AND numfloors>1)\",
-              '\$select': 'bbl,bsmtcode', '\$limit': 5000,
-          })
-          url = f'https://data.cityofnewyork.us/resource/64uk-42ks.json?{params}'
-          with urllib.request.urlopen(url, timeout=30) as resp:
-              data = json.loads(resp.read())
-          bsmt_map = {str(r.get('bbl','')).split('.')[0].zfill(10): r.get('bsmtcode','0') for r in data}
-          with open('risk_scores_all.json') as f:
-              scores = json.load(f)
-          for r in scores['results']:
-              bsmt = bsmt_map.get(r['bbl'], '0')
-              if bsmt in ('1','2') and not r.get('osm_parking_type'):
-                  r['osm_parking_type'] = 'underground'
-              r['has_basement'] = bsmt in ('1','2')
-          with open('risk_scores_all.json', 'w') as f:
-              json.dump(scores, f, indent=2)
-          underground = sum(1 for r in scores['results'] if r.get('osm_parking_type') == 'underground')
-          print(f'Underground garages: {underground}')
-          "
+      - name: Score garages (reads from cache)
+        run: python3 score_garages.py
 
       - name: Build map
         run: python3 build_map.py

@@ -7,7 +7,21 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0a0a0a; color: #d0d0d0; line-height: 1.7; }
-  .container { max-width: 800px; margin: 0 auto; padding: 40px 24px 80px; }
+  .page { display: flex; max-width: 1100px; margin: 0 auto; }
+  .sidebar { width: 220px; flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 40px 0 40px 24px; border-right: 1px solid #1a1a1a; }
+  .sidebar nav { font-size: 13px; line-height: 1.4; }
+  .sidebar a { display: block; padding: 4px 12px; color: #666; text-decoration: none; border-left: 2px solid transparent; margin-bottom: 2px; transition: all 0.15s; }
+  .sidebar a:hover { color: #ccc; }
+  .sidebar a.active { color: #fff; border-left-color: #ff8800; }
+  .sidebar a.sub { padding-left: 24px; font-size: 12px; color: #555; }
+  .sidebar a.sub.active { color: #ddd; }
+  .sidebar .toc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #444; padding: 12px 12px 4px; }
+  .container { max-width: 800px; padding: 40px 24px 80px 48px; flex: 1; min-width: 0; }
+  @media (max-width: 900px) {
+    .page { display: block; }
+    .sidebar { display: none; }
+    .container { padding: 40px 24px 80px; }
+  }
   h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
   h2 { font-size: 20px; font-weight: 600; color: #fff; margin-top: 48px; margin-bottom: 16px; border-bottom: 1px solid #333; padding-bottom: 8px; }
   h3 { font-size: 16px; font-weight: 600; color: #ccc; margin-top: 32px; margin-bottom: 8px; }
@@ -29,6 +43,26 @@
 </style>
 </head>
 <body>
+<div class="page">
+<aside class="sidebar">
+  <nav>
+    <div class="toc-label">Contents</div>
+    <a href="#overview">Overview</a>
+    <a href="#scoring" class="sub">Scoring Formula</a>
+    <a href="#data-sources">Data Sources</a>
+    <a href="#spatial-matching">Spatial Matching</a>
+    <a href="#included">What's Included</a>
+    <a href="#excluded">What's Excluded</a>
+    <a href="#limitations">Known Limitations</a>
+    <a href="#background">Background Research</a>
+    <a href="#weight" class="sub">Why fire, not weight?</a>
+    <a href="#fire-behavior" class="sub">EV fire behavior</a>
+    <a href="#regulatory-gap" class="sub">The regulatory gap</a>
+    <a href="#detection-gap" class="sub">The detection gap</a>
+    <a href="#ebikes" class="sub">E-bikes &amp; detection vs bans</a>
+    <a href="#references">References</a>
+  </nav>
+</aside>
 <div class="container">
 
 <a href="index.html" class="back">&larr; Back to map</a>
@@ -36,13 +70,13 @@
 <h1>Methodology</h1>
 <p class="subtitle">How we score NYC parking garages for EV battery fire risk</p>
 
-<h2>Overview</h2>
+<h2 id="overview">Overview</h2>
 
 <p>This tool scores 1,907 parking garages and buildings with EV chargers across New York City on a 0-100 risk scale. The score reflects how vulnerable each location is to an EV battery fire event in an enclosed structure — specifically, the factors that would determine whether a single-vehicle thermal runaway cascades into a multi-vehicle fire like the <a href="https://fortune.com/asia/2024/08/07/exploding-mercedes-benz-ev-parking-garage-bans-south-korea/">August 2024 Incheon, South Korea incident</a> (140 vehicles destroyed, 23 hospitalized, 8 hours to extinguish).</p>
 
 <p>The score does <strong>not</strong> predict the probability of an EV fire occurring. EVs catch fire <a href="https://theicct.org/clearing-the-air-evs-could-bring-lower-fire-risk-oct24/">20-60x less frequently</a> than gasoline vehicles (~25 per 100,000 vs ~1,530 per 100,000). The score instead measures <strong>how bad it would be if one did occur</strong> at this specific location.</p>
 
-<h2>Scoring Formula</h2>
+<h2 id="scoring">Scoring Formula</h2>
 
 <p>Each garage is scored on five factors. Points are additive, capped at 100:</p>
 
@@ -118,7 +152,7 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 
 <p class="note"><strong>Why is charger presence a bonus, not a requirement?</strong> Roughly <a href="https://www.evfiresafe.com/ev-battery-fire-data">56% of documented EV battery fires</a> occur while the vehicle is parked and not charging. Any garage where EVs park is at risk — chargers just increase the concentration and add charging-related thermal stress.</p>
 
-<h2>Data Sources</h2>
+<h2 id="data-sources">Data Sources</h2>
 
 <h3>NYC PLUTO (Primary Land Use Tax Lot Output)</h3>
 <p>The foundation of the analysis. PLUTO contains building-level data for all ~870,000 NYC properties including building class, year built, number of floors, building area, and basement type.</p>
@@ -170,7 +204,7 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 <li><strong>Coverage is incomplete</strong> — only ~52% of NYC parking entries have a type tag. We supplement with PLUTO basement codes.</li>
 </ul>
 
-<h2>Spatial Matching</h2>
+<h2 id="spatial-matching">Spatial Matching</h2>
 
 <p>Connecting charger stations to buildings requires spatial matching because the datasets don't share a common identifier.</p>
 
@@ -187,7 +221,7 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 <h3>Why 800ft radius?</h3>
 <p>PLUTO lot coordinates represent the tax lot centroid, which can be hundreds of feet from the street address where a charger is listed — especially for large blocks. 800ft captures most same-block matches while avoiding cross-block false positives. In Manhattan, a typical block is ~250ft &times; 900ft.</p>
 
-<h2>What's Included</h2>
+<h2 id="included">What's Included</h2>
 
 <table>
 <tr><th>Category</th><th>Count</th><th>Source</th></tr>
@@ -198,7 +232,7 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 <tr><td><strong>Total scored</strong></td><td><strong>1,907</strong></td><td></td></tr>
 </table>
 
-<h2>What's Excluded</h2>
+<h2 id="excluded">What's Excluded</h2>
 
 <ul>
 <li><strong>Single-story residential garages (G0)</strong> — 2,416 structures, almost all under 1,000 sqft. These are private garages under houses, not public parking.</li>
@@ -207,7 +241,7 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 <li><strong>City fleet stations</strong> — EV chargers at government facilities (DEP, DOT, DOC, etc.) were excluded after Street View verification showed most are in outdoor yards, surface lots, or driveways rather than enclosed structures.</li>
 </ul>
 
-<h2>Known Limitations</h2>
+<h2 id="limitations">Known Limitations</h2>
 
 <h3>Sprinkler data measures maintenance, not capability</h3>
 <p>DOB digital records begin around 1990. A garage showing "no sprinkler permits" may have a functional system installed before records went digital. We cannot distinguish "no system" from "no digital record." However, any pre-1990 system without subsequent upgrades is almost certainly below the <a href="https://nfsa.org/2024/04/30/fire-protection-for-parking-garages/">2022 NFPA OH2 density standard</a> (33% higher than the previous requirement). The scoring reflects this: buildings with no evidence of recent fire suppression activity are at higher risk regardless of whether an older system exists, because that system was not designed for modern vehicle fire loads. Actual system specifications (GPM/SF) are available through DOB record requests but are not in any bulk dataset.</p>
@@ -224,25 +258,25 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 <h3>Scores reflect data availability</h3>
 <p>A garage with extensive DOB records will have more data points to score against. Absence of violations may mean a clean record or may mean the building hasn't been inspected recently.</p>
 
-<h2>Background Research</h2>
+<h2 id="background">Background Research</h2>
 
-<h3>Why fire, not weight?</h3>
+<h3 id="weight">Why fire, not weight?</h3>
 <p>This project began as an investigation into whether heavier EVs were stressing old parking structures. The engineering evidence says no: even a worst-case scenario with every spot filled with a 9,063 lb GMC Hummer EV produces only ~38.7 psf — still under the 40 psf IBC design minimum (<a href="https://www.pankowfoundation.org/news/final-report-safe-and-sustainable-parking-garage-live-loads-in-the-age-of-the-electric-vehicle-rga-05-24/">Pankow Foundation, 2024</a>). The weight concern was amplified by the <a href="https://www.cbsnews.com/newyork/news/lower-manhattan-parking-garage-collapse/">April 2023 Ann Street garage collapse</a>, where officials initially blamed vehicle weight. The <a href="https://gothamist.com/news/deadly-manhattan-parking-garage-collapse-tied-to-unsafe-demolition-structural-neglect-city-report-finds">actual cause</a> (revealed two years later) was unauthorized removal of a load-bearing masonry pier.</p>
 
-<h3>EV fire behavior in enclosed structures</h3>
+<h3 id="fire-behavior">EV fire behavior in enclosed structures</h3>
 <p>EV battery fires differ fundamentally from gasoline fires: they burn at ~5,000&deg;F vs ~1,500&deg;F, last 60-90+ minutes vs ~30 minutes, can reignite days later, and produce toxic hydrogen fluoride gas. Roughly <a href="https://www.evfiresafe.com/ev-battery-fire-data">56% of documented EV battery fires</a> occur while the vehicle is parked. The primary causes at rest are manufacturing defects in battery cells (torn anode tabs, folded separators, metal particle contamination) that can lie dormant for months before triggering thermal runaway.</p>
 
-<h3>The regulatory gap</h3>
+<h3 id="regulatory-gap">The regulatory gap</h3>
 <p>After the Incheon fire, South Korea mandated retroactive sprinkler upgrades in existing garages, battery chemistry disclosure, state-of-charge limits for underground parking, and mandatory fire liability insurance. The US has none of these. NFPA <a href="https://www.energymarketersofamerica.org/posts/nfpa-rejects-ev-charging-at-gas-stations-rules/">actively voted to remove</a> EV charging provisions from NFPA 30A in 2024. Meanwhile, NYC <a href="https://randpc.com/articles/energy-efficiency/nyc-law-ll55-2024/">Local Law 55 (2024)</a> requires 20% of commercial parking spaces to be EV-ready — with no fire safety conditions attached. More chargers in old garages, no sprinkler upgrades required.</p>
 
-<h3>The detection gap</h3>
+<h3 id="detection-gap">The detection gap</h3>
 <p>Sprinklers can contain an EV fire but cannot extinguish it. However, there is a window for earlier intervention: lithium-ion cells emit hydrogen gas during the early stages of thermal runaway, <a href="https://spj.science.org/doi/10.34133/energymatadv.0008"><strong>16-26 minutes before flames</strong></a> (Energy Material Advances). A single venting cell produces <a href="https://www.sciencedirect.com/science/article/abs/pii/S2352152X23009076">over 1,000 ppm of hydrogen outside the battery pack</a> — roughly 1,000x the indoor background level of ~1 ppm — easily detectable with existing sensor technology.</p>
 
 <p>This is not theoretical. China mandates thermal runaway warning systems in EV battery packs (using the vehicle's onboard BMS). <a href="https://www.telgian.com/nfpa-855-changes-in-2026/">NFPA 855 (2026 edition)</a> requires hydrogen detection for stationary energy storage systems — the shipping-container-scale battery banks at solar farms and data centers. Commercial products exist for this: <a href="https://liiontamer.com/products/generation-2-sensor-only/">Li-ion Tamer (now Honeywell)</a> detects thermal runaway off-gassing for battery rooms, and <a href="https://h2scan.com/press_release/hy-guard-hydrogen-safety-for-battery-rooms/">H2Scan's HY-GUARD</a> is designed specifically for battery room safety.</p>
 
 <p>But this technology has not been applied to parking garages or residential battery storage. No US fire code requires gas detection in parking structures. No building code addresses thermal runaway detection in e-bike storage rooms. The same chemistry that NFPA considers dangerous enough to require hydrogen monitoring in a grid battery installation receives zero detection requirements when it's in a vehicle parked in a basement or a bike stored in an apartment.</p>
 
-<h3>The broader picture: e-bikes and the case for detection over bans</h3>
+<h3 id="ebikes">The broader picture: e-bikes and the case for detection over bans</h3>
 
 <p>This project is not anti-EV. EVs catch fire <a href="https://theicct.org/clearing-the-air-evs-could-bring-lower-fire-risk-oct24/">20-60x less frequently</a> than gasoline vehicles. The problem is not the technology — it's that our fire safety infrastructure hasn't caught up to the reality that lithium-ion batteries are now everywhere, in vehicles of every size.</p>
 
@@ -254,7 +288,7 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 
 <p>The argument for detection is not that it makes bad batteries safe — it doesn't, and uncertified batteries need to be removed from circulation. The argument is that <strong>certified batteries + hydrogen detection</strong> creates a safety profile that makes blanket bans unnecessary. An e-bike battery is 150x smaller than an EV battery. With early detection providing minutes of warning, a 500 Wh battery event in a monitored space is survivable and manageable. A 500 Wh battery event with zero warning while someone is sleeping is how people die. The technology to bridge that gap exists, is proven, and is already required in other contexts. It just hasn't been applied here yet.</p>
 
-<h2>References</h2>
+<h2 id="references">References</h2>
 
 <p class="citation">Pankow Foundation. "Safe and Sustainable Parking Garage Live Loads in the Age of the Electric Vehicle." Report RGA-05-24, 2024. <a href="https://www.pankowfoundation.org/news/final-report-safe-and-sustainable-parking-garage-live-loads-in-the-age-of-the-electric-vehicle-rga-05-24/">Link</a></p>
 
@@ -301,5 +335,46 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 <p style="margin-top: 48px; font-size: 13px; color: #666;">Last updated: April 2026. Data snapshot reflects NYC Open Data as of query date. <a href="https://github.com/sarahduve/ev-fire-risk">Source code and data on GitHub.</a></p>
 
 </div>
+</div>
+<script>
+// Open all external links in new tab
+document.querySelectorAll('a[href^="http"]').forEach(a => {
+  if (!a.href.includes(location.hostname)) {
+    a.setAttribute('target', '_blank');
+    a.setAttribute('rel', 'noopener');
+  }
+});
+
+// Scroll spy for sidebar
+const sections = document.querySelectorAll('[id]');
+const navLinks = document.querySelectorAll('.sidebar a[href^="#"]');
+
+function updateActive() {
+  let current = '';
+  sections.forEach(section => {
+    if (section.getBoundingClientRect().top <= 100) {
+      current = section.id;
+    }
+  });
+  navLinks.forEach(link => {
+    link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+  });
+}
+
+window.addEventListener('scroll', updateActive);
+updateActive();
+
+// Smooth scroll for sidebar links
+navLinks.forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      history.replaceState(null, '', link.getAttribute('href'));
+    }
+  });
+});
+</script>
 </body>
 </html>

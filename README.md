@@ -43,18 +43,25 @@ All NYC Open Data is free and keyless (Socrata API). AFDC requires a free [NREL 
 git clone https://github.com/sarahduve/ev-fire-risk.git
 cd ev-fire-risk
 
-# Full pipeline: downloads PLUTO bulk data, queries DOB, matches chargers
-# Takes ~30 min (DOB API calls are the bottleneck)
+# Step 1: Fetch raw data (~30 min — DOB API calls are the bottleneck)
+# Downloads PLUTO bulk data, queries DOB permits/violations, matches chargers
+# Saves to cached_data.json so you don't have to re-fetch for scoring changes
 export NREL_API_KEY="your-key-here"
-python3 build_all_garages.py
+python3 fetch_data.py
 
-# Build the interactive map
+# Step 2: Score garages (instant — reads from cache)
+# Re-run freely when tweaking scoring weights, labels, or formula
+python3 score_garages.py
+
+# Step 3: Build the interactive map (instant)
 python3 build_map.py
 
 open ev_fire_risk_map.html
 ```
 
 Requires Python 3.10+ with no external dependencies (stdlib only).
+
+The fetch/score separation means you only re-run the slow API step when data is stale. Scoring and map changes are instant.
 
 ## Key limitations
 

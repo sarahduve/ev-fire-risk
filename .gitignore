@@ -2,6 +2,7 @@
 pluto_all.json
 afdc_data_full.json
 charger_bbl_map.json
+cached_data.json
 
 # Python
 __pycache__/
