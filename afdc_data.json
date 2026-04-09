@@ -1,8 +1,7 @@
 {
   "metadata": {
     "query_date": "2026-04-09",
-    "api_key_used": "registered",
-    "centers": 15
+    "api_key_used": "registered"
   },
   "total_unique_garage_stations": 271,
   "garage_stations_data": [
