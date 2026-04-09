@@ -233,7 +233,26 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 <p>EV battery fires differ fundamentally from gasoline fires: they burn at ~5,000&deg;F vs ~1,500&deg;F, last 60-90+ minutes vs ~30 minutes, can reignite days later, and produce toxic hydrogen fluoride gas. Roughly <a href="https://www.evfiresafe.com/ev-battery-fire-data">56% of documented EV battery fires</a> occur while the vehicle is parked. The primary causes at rest are manufacturing defects in battery cells (torn anode tabs, folded separators, metal particle contamination) that can lie dormant for months before triggering thermal runaway.</p>
 
 <h3>The regulatory gap</h3>
-<p>After the Incheon fire, South Korea mandated retroactive sprinkler upgrades in existing garages, battery chemistry disclosure, state-of-charge limits for underground parking, and mandatory fire liability insurance. The US has none of these. NFPA <a href="https://www.energymarketersofamerica.org/posts/nfpa-rejects-ev-charging-at-gas-stations-rules/">actively voted to remove</a> EV charging provisions from NFPA 30A in 2024. Meanwhile, NYC <a href="https://randpc.com/articles/energy-efficiency/nyc-law-ll55-2024/">Local Law 55 (2024)</a> requires 20% of commercial parking spaces to be EV-ready — with no fire safety conditions attached.</p>
+<p>After the Incheon fire, South Korea mandated retroactive sprinkler upgrades in existing garages, battery chemistry disclosure, state-of-charge limits for underground parking, and mandatory fire liability insurance. The US has none of these. NFPA <a href="https://www.energymarketersofamerica.org/posts/nfpa-rejects-ev-charging-at-gas-stations-rules/">actively voted to remove</a> EV charging provisions from NFPA 30A in 2024. Meanwhile, NYC <a href="https://randpc.com/articles/energy-efficiency/nyc-law-ll55-2024/">Local Law 55 (2024)</a> requires 20% of commercial parking spaces to be EV-ready — with no fire safety conditions attached. More chargers in old garages, no sprinkler upgrades required.</p>
+
+<h3>The detection gap</h3>
+<p>Sprinklers can contain an EV fire but cannot extinguish it. However, there is a window for earlier intervention: lithium-ion cells emit hydrogen gas during the early stages of thermal runaway, <a href="https://spj.science.org/doi/10.34133/energymatadv.0008"><strong>16-26 minutes before flames</strong></a> (Energy Material Advances). A single venting cell produces <a href="https://www.sciencedirect.com/science/article/abs/pii/S2352152X23009076">over 1,000 ppm of hydrogen outside the battery pack</a> — roughly 1,000x the indoor background level of ~1 ppm — easily detectable with existing sensor technology.</p>
+
+<p>This is not theoretical. China mandates thermal runaway warning systems in EV battery packs (using the vehicle's onboard BMS). <a href="https://www.telgian.com/nfpa-855-changes-in-2026/">NFPA 855 (2026 edition)</a> requires hydrogen detection for stationary energy storage systems — the shipping-container-scale battery banks at solar farms and data centers. Commercial products exist for this: <a href="https://liiontamer.com/products/generation-2-sensor-only/">Li-ion Tamer (now Honeywell)</a> detects thermal runaway off-gassing for battery rooms, and <a href="https://h2scan.com/press_release/hy-guard-hydrogen-safety-for-battery-rooms/">H2Scan's HY-GUARD</a> is designed specifically for battery room safety.</p>
+
+<p>But this technology has not been applied to parking garages or residential battery storage. No US fire code requires gas detection in parking structures. No building code addresses thermal runaway detection in e-bike storage rooms. The same chemistry that NFPA considers dangerous enough to require hydrogen monitoring in a grid battery installation receives zero detection requirements when it's in a vehicle parked in a basement or a bike stored in an apartment.</p>
+
+<h3>The broader picture: e-bikes and the case for detection over bans</h3>
+
+<p>This project is not anti-EV. EVs catch fire <a href="https://theicct.org/clearing-the-air-evs-could-bring-lower-fire-risk-oct24/">20-60x less frequently</a> than gasoline vehicles. The problem is not the technology — it's that our fire safety infrastructure hasn't caught up to the reality that lithium-ion batteries are now everywhere, in vehicles of every size.</p>
+
+<p>Nowhere is this clearer than with e-bikes. NYC recorded <a href="https://www.nyc.gov/site/fdny/news/03-25/fdny-commissioner-robert-s-tucker-significant-progress-the-battle-against-lithium-ion">279 e-bike battery fires in 2024</a>, with 18 deaths in 2023. FDNY officials consistently identify uncertified batteries in fire investigations — <a href="https://www.nfpa.org/news-blogs-and-articles/nfpa-journal/2025/08/08/lithium-ion-battery-fires-fdny">"Many times, I'd look at the battery and see there was no certification on it"</a> (John Orlando, former FDNY Lithium-Ion Battery Task Force). No fire from a genuinely <a href="https://www.cpsc.gov/Warnings/2026/CPSC-Warns-Consumers-to-Immediately-Stop-Using-Batteries-for-E-Bikes-from-Rad-Power-Bikes-Due-to-Fire-Hazard-Risk-of-Serious-Injury-or-Death">UL 2271/2849 certified battery</a> has been documented in public records.</p>
+
+<p>NYC is addressing the root cause through practical legislation: <a href="https://council.nyc.gov/press/2023/03/02/2361/">Local Law 39 (2023)</a> requires UL certification for all e-bike batteries sold in the city, and <a href="https://www.nyc.gov/html/dot/html/pr2025/nyc-dot-e-bike-trade-in-program.shtml">battery exchange programs</a> are replacing uncertified batteries with certified ones. This is evidence-based policy addressing the actual problem.</p>
+
+<p>But many NYC buildings have responded with blanket bans on all e-bikes and lithium batteries in common areas — regardless of certification status. This creates a paradox: a UL-certified 500 Wh e-bike battery is banned from a building's bike room, while 119 NYC garages are hosting EV chargers (50,000-100,000 Wh batteries) with no evidence of fire suppression maintenance.</p>
+
+<p>The argument for detection is not that it makes bad batteries safe — it doesn't, and uncertified batteries need to be removed from circulation. The argument is that <strong>certified batteries + hydrogen detection</strong> creates a safety profile that makes blanket bans unnecessary. An e-bike battery is 150x smaller than an EV battery. With early detection providing minutes of warning, a 500 Wh battery event in a monitored space is survivable and manageable. A 500 Wh battery event with zero warning while someone is sleeping is how people die. The technology to bridge that gap exists, is proven, and is already required in other contexts. It just hasn't been applied here yet.</p>
 
 <h2>References</h2>
 
@@ -260,6 +279,24 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 <p class="citation">SF Fire Department. "Sprinkler Protection Requirements for Parking Spaces Associated with Electric Vehicle Charging Stations." Information Sheet 429. <a href="https://sf-fire.org/429-sprinkler-protection-requirements-parking-spaces-associated-electric-vehicles-charging-stations">Link</a></p>
 
 <p class="citation">NYC Local Law 55 (2024). EV charging infrastructure requirements for commercial parking. <a href="https://randpc.com/articles/energy-efficiency/nyc-law-ll55-2024/">Analysis</a></p>
+
+<p class="citation">Energy Material Advances. "A Critical Review of Thermal Runaway Prediction and Early-Warning Methods for Lithium-Ion Batteries." Gas signals provide 16-26 minutes of advance warning. <a href="https://spj.science.org/doi/10.34133/energymatadv.0008">Link</a></p>
+
+<p class="citation">Journal of Energy Storage. "Hydrogen gas diffusion behavior and detector installation optimization of lithium ion battery energy-storage cabin." H2 detector warned 145 seconds before thermal runaway; 1,493 ppm H2 measured outside pack. <a href="https://www.sciencedirect.com/science/article/abs/pii/S2352152X23009076">Link</a></p>
+
+<p class="citation">NFPA 855, 2026 Edition. Standard for the Installation of Stationary Energy Storage Systems. Mandates combustible gas detection including hydrogen. <a href="https://www.telgian.com/nfpa-855-changes-in-2026/">Analysis</a></p>
+
+<p class="citation">NFPA Journal. "Lithium-Ion Battery Fire Learnings from FDNY." August 2025. <a href="https://www.nfpa.org/news-blogs-and-articles/nfpa-journal/2025/08/08/lithium-ion-battery-fires-fdny">Link</a></p>
+
+<p class="citation">FDNY Commissioner Robert S. Tucker. Statements on uncertified lithium-ion batteries. October 2024. <a href="https://www.nyc.gov/office-of-the-mayor/news/783-24/mayor-adams-finalized-e-bike-trade-in-program-keep-new-yorkers-safe-lithium-ion">Link</a></p>
+
+<p class="citation">CPSC. Warning on Rad Power Bikes batteries (non-UL-certified). 2026. <a href="https://www.cpsc.gov/Warnings/2026/CPSC-Warns-Consumers-to-Immediately-Stop-Using-Batteries-for-E-Bikes-from-Rad-Power-Bikes-Due-to-Fire-Hazard-Risk-of-Serious-Injury-or-Death">Link</a></p>
+
+<p class="citation">NYC Local Law 39 (2023). UL certification requirements for e-bike batteries. <a href="https://council.nyc.gov/press/2023/03/02/2361/">Link</a></p>
+
+<p class="citation">UK Office for Product Safety and Standards. "Fires in E-bikes and E-scooters 2024." 45% from aftermarket conversion kits, 20% from factory-built. <a href="https://www.gov.uk/government/publications/fires-in-e-bikes-and-e-scooters/fires-in-e-bikes-and-e-scooters-2024">Link</a></p>
+
+<p class="citation">NYC DOT. E-Bike Trade-In Program. 2025. <a href="https://www.nyc.gov/html/dot/html/pr2025/nyc-dot-e-bike-trade-in-program.shtml">Link</a></p>
 
 <p style="margin-top: 48px; font-size: 13px; color: #666;">Last updated: April 2026. Data snapshot reflects NYC Open Data as of query date. <a href="https://github.com/sarahduve/ev-fire-risk">Source code and data on GitHub.</a></p>
 
