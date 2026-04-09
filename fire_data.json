@@ -1,0 +1,435 @@
+{
+  "metadata": {
+    "description": "NYC Open Data fire-related datasets for parking garage fire risk assessment",
+    "fetched_date": "2026-04-08",
+    "sources": {
+      "fdny_fire_incident_dispatch": {
+        "dataset_name": "Fire Incident Dispatch Data",
+        "dataset_id": "8m42-w767",
+        "url": "https://data.cityofnewyork.us/Public-Safety/Fire-Incident-Dispatch-Data/8m42-w767",
+        "api_endpoint": "https://data.cityofnewyork.us/resource/8m42-w767.json"
+      },
+      "dob_permit_issuance": {
+        "dataset_name": "DOB Permit Issuance",
+        "api_endpoint": "https://data.cityofnewyork.us/resource/ipu4-2q9a.json"
+      },
+      "dob_now_build_approved_permits": {
+        "dataset_name": "DOB NOW Build Approved Permits",
+        "api_endpoint": "https://data.cityofnewyork.us/resource/rbx6-tga4.json"
+      },
+      "dob_violations": {
+        "dataset_name": "DOB Violations",
+        "api_endpoint": "https://data.cityofnewyork.us/resource/3h2n-5cm9.json"
+      }
+    }
+  },
+
+  "fdny_fire_incident_dispatch": {
+    "schema": {
+      "fields": [
+        "starfire_incident_id",
+        "incident_datetime",
+        "alarm_box_borough",
+        "alarm_box_number",
+        "alarm_box_location",
+        "incident_borough",
+        "zipcode",
+        "policeprecinct",
+        "citycouncildistrict",
+        "communitydistrict",
+        "communityschooldistrict",
+        "congressionaldistrict",
+        "alarm_source_description_tx",
+        "alarm_level_index_description",
+        "highest_alarm_level",
+        "incident_classification",
+        "incident_classification_group",
+        "dispatch_response_seconds_qy",
+        "first_assignment_datetime",
+        "first_activation_datetime",
+        "first_on_scene_datetime",
+        "incident_close_datetime",
+        "valid_dispatch_rspns_time_indc",
+        "valid_incident_rspns_time_indc",
+        "incident_response_seconds_qy",
+        "incident_travel_tm_seconds_qy",
+        "engines_assigned_quantity",
+        "ladders_assigned_quantity",
+        "other_units_assigned_quantity"
+      ],
+      "notes": "29 fields covering dispatch timing, location (borough/zip/precinct/council district), incident classification, response metrics, and resource allocation"
+    },
+    "classification_groups_total_counts": [
+      {"group": "Medical Emergencies", "count": 5271409},
+      {"group": "NonMedical Emergencies", "count": 4499468},
+      {"group": "Structural Fires", "count": 552577},
+      {"group": "NonMedical MFAs", "count": 463009},
+      {"group": "NonStructural Fires", "count": 325759},
+      {"group": "Medical MFAs", "count": 71919}
+    ],
+    "fire_classification_types": [
+      {"classification": "Multiple Dwelling 'A' - Food on the stove fire", "count": 212990},
+      {"classification": "Demolition Debris or Rubbish Fire", "count": 137824},
+      {"classification": "Private Dwelling Fire", "count": 110147},
+      {"classification": "Multiple Dwelling 'A' - Other fire", "count": 104511},
+      {"classification": "Other Commercial Building Fire", "count": 54537},
+      {"classification": "Automobile Fire", "count": 46709},
+      {"classification": "Manhole Fire - Seeping Smoke", "count": 44416},
+      {"classification": "Manhole Fire - Other", "count": 28829},
+      {"classification": "Multiple Dwelling 'B' Fire", "count": 26055},
+      {"classification": "Transit System - NonStructural", "count": 24862},
+      {"classification": "Brush Fire", "count": 22502},
+      {"classification": "School Fire", "count": 9342},
+      {"classification": "Multiple Dwelling 'A' - Compactor fire", "count": 9040},
+      {"classification": "Other Transportation Fire", "count": 8643},
+      {"classification": "Store Fire", "count": 8408},
+      {"classification": "Manhole Fire - Blown Cover", "count": 8102},
+      {"classification": "Hospital Fire", "count": 6917},
+      {"classification": "Other Public Building Fire", "count": 3217},
+      {"classification": "Abandoned Derelict Vehicle Fire", "count": 2317},
+      {"classification": "Church Fire", "count": 2269},
+      {"classification": "Untenanted Building Fire", "count": 1542},
+      {"classification": "Undefined Nonstructural Fire", "count": 1266},
+      {"classification": "Construction or Demolition Building Fire", "count": 989},
+      {"classification": "Transit System - Structural", "count": 972},
+      {"classification": "Factory Fire", "count": 866},
+      {"classification": "Theater or TV Studio Fire", "count": 527},
+      {"classification": "Under Contruction / Vacant Fire", "count": 248},
+      {"classification": "Manhole Fire - Extended to Building", "count": 209},
+      {"classification": "Maritime Fire", "count": 80}
+    ],
+    "vehicle_fire_related_classifications": [
+      {"classification": "Automobile Fire", "group": "NonStructural Fires", "count": 46709},
+      {"classification": "Abandoned Derelict Vehicle Fire", "group": "NonStructural Fires", "count": 2317},
+      {"classification": "Other Transportation Fire", "group": "NonStructural Fires", "count": 8643},
+      {"classification": "Vehicle Accident - Other", "group": "NonMedical Emergencies", "count": 267103},
+      {"classification": "Vehicle Accident - With Extrication", "group": "NonMedical Emergencies", "count": 8921}
+    ],
+    "automobile_fire_by_borough": [
+      {"borough": "QUEENS", "count": 14369},
+      {"borough": "BROOKLYN", "count": 13629},
+      {"borough": "BRONX", "count": 9711},
+      {"borough": "MANHATTAN", "count": 5820},
+      {"borough": "RICHMOND / STATEN ISLAND", "count": 3180}
+    ],
+    "automobile_fire_trend_by_year": [
+      {"year": 2005, "count": 4148},
+      {"year": 2006, "count": 3761},
+      {"year": 2007, "count": 3599},
+      {"year": 2008, "count": 3229},
+      {"year": 2009, "count": 2901},
+      {"year": 2010, "count": 2771},
+      {"year": 2011, "count": 2580},
+      {"year": 2012, "count": 2294},
+      {"year": 2013, "count": 2067},
+      {"year": 2014, "count": 1995},
+      {"year": 2015, "count": 1919},
+      {"year": 2016, "count": 1767},
+      {"year": 2017, "count": 1767},
+      {"year": 2018, "count": 1778},
+      {"year": 2019, "count": 1686},
+      {"year": 2020, "count": 1682},
+      {"year": 2021, "count": 1668},
+      {"year": 2022, "count": 1619},
+      {"year": 2023, "count": 1498},
+      {"year": 2024, "count": 1533},
+      {"year": 2025, "count": 447}
+    ],
+    "sample_automobile_fire_incidents": [
+      {
+        "starfire_incident_id": "250430-Q9374-002-0702",
+        "incident_datetime": "2025-04-30T21:45:31.000",
+        "incident_borough": "QUEENS",
+        "zipcode": "11368",
+        "alarm_box_location": "37 AVE & 103 ST",
+        "incident_classification": "Automobile Fire",
+        "dispatch_response_seconds_qy": 45,
+        "incident_response_seconds_qy": 305,
+        "engines_assigned_quantity": 3,
+        "ladders_assigned_quantity": 2
+      },
+      {
+        "starfire_incident_id": "250430-B1391-001-0906",
+        "incident_datetime": "2025-04-30T19:56:03.000",
+        "incident_borough": "BROOKLYN",
+        "zipcode": "11231",
+        "alarm_box_location": "FERRIS ST & WOLCOTT ST",
+        "incident_classification": "Automobile Fire",
+        "dispatch_response_seconds_qy": 55,
+        "incident_response_seconds_qy": 299,
+        "engines_assigned_quantity": 1,
+        "ladders_assigned_quantity": 2
+      },
+      {
+        "starfire_incident_id": "250430-M8780-001-1301",
+        "incident_datetime": "2025-04-30T19:24:45.000",
+        "incident_borough": "MANHATTAN",
+        "alarm_box_location": "QUEENBORO BRIDGE - LOWER LEVEL",
+        "incident_classification": "Automobile Fire",
+        "dispatch_response_seconds_qy": 55,
+        "incident_response_seconds_qy": 458,
+        "engines_assigned_quantity": 3,
+        "ladders_assigned_quantity": 3
+      },
+      {
+        "starfire_incident_id": "250429-Q8493-001-0641",
+        "incident_datetime": "2025-04-29T22:08:18.000",
+        "incident_borough": "QUEENS",
+        "alarm_box_location": "VAN WYCK EX- JEWEL AVE TO HILLSIDE AVE",
+        "incident_classification": "Automobile Fire",
+        "dispatch_response_seconds_qy": 37,
+        "incident_response_seconds_qy": 499,
+        "engines_assigned_quantity": 2,
+        "ladders_assigned_quantity": 2
+      },
+      {
+        "starfire_incident_id": "250429-M0389-001-0386",
+        "incident_datetime": "2025-04-29T08:19:13.000",
+        "incident_borough": "MANHATTAN",
+        "zipcode": "10014",
+        "alarm_box_location": "6 AVE & WASHINGTON PL",
+        "incident_classification": "Automobile Fire",
+        "dispatch_response_seconds_qy": 33,
+        "incident_response_seconds_qy": 249,
+        "engines_assigned_quantity": 1,
+        "ladders_assigned_quantity": 1
+      }
+    ],
+    "filtering_notes": {
+      "garage_parking_specific": "The FDNY dataset does NOT have a specific 'garage fire' or 'parking structure fire' classification. These would be categorized under 'Other Commercial Building Fire' (54,537 total) or 'Private Dwelling Fire'. The dataset does not include a location-type field (e.g., garage vs. street) -- only street-level address/intersection via alarm_box_location.",
+      "relevant_filter_queries": {
+        "automobile_fires": "$where=incident_classification='Automobile Fire'",
+        "all_vehicle_fires": "$where=incident_classification in('Automobile Fire','Abandoned Derelict Vehicle Fire','Other Transportation Fire')",
+        "all_fires": "$where=incident_classification_group in('Structural Fires','NonStructural Fires')",
+        "by_zipcode": "Add &zipcode=XXXXX to any query",
+        "by_borough": "Add &incident_borough='BROOKLYN' etc."
+      }
+    }
+  },
+
+  "dob_permit_issuance": {
+    "schema": {
+      "key_fields": [
+        "borough", "bin__", "house__", "street_name", "zip_code",
+        "job__", "job_doc___", "job_type", "job_start_date",
+        "permit_type", "permit_subtype", "permit_status", "permit_sequence__",
+        "work_type", "bldg_type", "residential",
+        "filing_status", "filing_date", "issuance_date", "expiration_date",
+        "permittee_s_first_name", "permittee_s_last_name", "permittee_s_business_name",
+        "permittee_s_license_type", "permittee_s_license__",
+        "owner_s_first_name", "owner_s_last_name", "owner_s_business_name",
+        "self_cert", "non_profit", "special_district_1", "site_fill",
+        "gis_latitude", "gis_longitude", "gis_council_district", "gis_census_tract", "gis_nta_name",
+        "community_board", "block", "lot"
+      ]
+    },
+    "sprinkler_permits_count": 140094,
+    "fire_related_permit_subtypes": [
+      {"subtype": "SP", "description": "Sprinkler", "count": 140094},
+      {"subtype": "FP", "description": "Fire Protection (likely)", "count": 65031},
+      {"subtype": "FS", "description": "Fire Suppression/Standpipe (likely)", "count": 24360},
+      {"subtype": "FA", "description": "Fire Alarm (likely)", "count": 266}
+    ],
+    "query_for_sprinkler_permits": "$where=permit_subtype='SP'",
+    "sample_sprinkler_permits": [
+      {
+        "borough": "MANHATTAN",
+        "house__": "612",
+        "street_name": "W 138 STREET",
+        "zip_code": "10031",
+        "work_type": "SP",
+        "permit_subtype": "SP",
+        "permit_status": "IN PROCESS",
+        "filing_status": "RENEWAL",
+        "bldg_type": "2",
+        "residential": "YES",
+        "filing_date": "04/03/2026"
+      },
+      {
+        "borough": "BROOKLYN",
+        "house__": "663",
+        "street_name": "MACDONOUGH STREET",
+        "zip_code": "11233",
+        "work_type": "SP",
+        "permit_subtype": "SP",
+        "permit_status": "IN PROCESS",
+        "filing_status": "RENEWAL",
+        "bldg_type": "2",
+        "residential": "YES",
+        "filing_date": "04/01/2026",
+        "permittee_s_business_name": "PARAMOUNT SERVICES, LLC",
+        "permittee_s_license_type": "FS"
+      },
+      {
+        "borough": "QUEENS",
+        "house__": "166-23",
+        "street_name": "JAMAICA AVENUE",
+        "zip_code": "11432",
+        "work_type": "SP",
+        "permit_subtype": "SP",
+        "permit_status": "IN PROCESS",
+        "filing_status": "RENEWAL",
+        "filing_date": "03/25/2026"
+      }
+    ]
+  },
+
+  "dob_now_build_approved_permits": {
+    "schema": {
+      "key_fields": [
+        "job_filing_number", "work_permit", "sequence_number",
+        "filing_reason", "house_no", "street_name", "borough",
+        "lot", "bin", "block", "c_b_no", "zip_code",
+        "work_on_floor", "work_type", "job_description",
+        "permittee_s_license_type", "applicant_license",
+        "applicant_first_name", "applicant_last_name", "applicant_business_name",
+        "approved_date", "issued_date", "expired_date",
+        "estimated_job_costs", "permit_status",
+        "owner_business_name", "owner_name",
+        "latitude", "longitude", "community_board", "council_district",
+        "bbl", "census_tract", "nta"
+      ]
+    },
+    "sprinkler_fire_suppression_fire_alarm_total_count": 37405,
+    "query_for_fire_related": "$where=job_description like '%SPRINKLER%' OR job_description like '%FIRE SUPPRESSION%' OR job_description like '%FIRE ALARM%'",
+    "sample_permits": [
+      {
+        "job_filing_number": "Q01370529-S4",
+        "borough": "QUEENS",
+        "house_no": "165-25",
+        "street_name": "JAMAICA AVENUE",
+        "work_type": "Sprinklers",
+        "approved_date": "2026-04-03",
+        "job_description": "MAINTAIN EXISTING TEMPORARY LOOP DURING CONSTRUCTION OF THE TENANT FITOUT. NEW FULL SPRINKLER SYSTEM THROUGHOUT SPACE TIED IN TO EXISTING SPRINKLER MAIN.",
+        "estimated_job_costs": 35010,
+        "permit_status": "Permit Issued"
+      },
+      {
+        "job_filing_number": "M01360742-S3",
+        "borough": "MANHATTAN",
+        "house_no": "32",
+        "street_name": "6 AVENUE",
+        "work_type": "Sprinklers",
+        "approved_date": "2026-04-01",
+        "job_description": "BLANK STREET-- MODIFICATIONS TO EXISTING SPRINKLER SYSTEM IN CONJUNCTION WITH CAFE BUILD OUT.",
+        "estimated_job_costs": 50000,
+        "permit_status": "Permit Issued"
+      },
+      {
+        "job_filing_number": "M01363700-S3",
+        "borough": "MANHATTAN",
+        "house_no": "55",
+        "street_name": "BROADWAY",
+        "work_type": "Sprinklers",
+        "approved_date": "2026-04-01",
+        "job_description": "SPRINKLER SYSTEM MODIFICTION INCLUDING NEW SPRINKLER HEADS INSTALLATION AS PER PLANS FILED HEREWITH.",
+        "estimated_job_costs": 34350,
+        "permit_status": "Permit Issued"
+      },
+      {
+        "job_filing_number": "M01379722-I1",
+        "borough": "MANHATTAN",
+        "house_no": "330",
+        "street_name": "7 AVENUE",
+        "work_type": "Plumbing",
+        "approved_date": "2026-03-31",
+        "job_description": "UPDATE THE GAS FIRED COOKING EQUIPMENT AND FIRE SUPPRESSION SHUT OFF ON 1ST FLOOR AS SHOWN IN DRAWINGS.",
+        "estimated_job_costs": 10500,
+        "permit_status": "Permit Issued"
+      }
+    ]
+  },
+
+  "dob_violations": {
+    "schema": {
+      "fields": [
+        "isn_dob_bis_viol", "boro", "bin", "block", "lot",
+        "issue_date", "violation_type_code", "violation_number",
+        "house_number", "street",
+        "description", "number",
+        "violation_category", "violation_type"
+      ],
+      "notes": "14 fields. issue_date is formatted as YYYYMMDD string. Location is by boro code (1=Manhattan, 2=Bronx, 3=Brooklyn, 4=Queens, 5=Staten Island), block/lot, and street address. Free-text description field is key for searching fire/sprinkler/garage keywords."
+    },
+    "fire_related_violations_for_garages": {
+      "count": 148,
+      "query": "$where=description like '%GARAGE%' AND (description like '%FIRE%' OR description like '%SPRINKLER%' OR description like '%FIREPROOF%')"
+    },
+    "fire_related_violations_for_parking_structures": {
+      "count": 41,
+      "query": "$where=description like '%PARKING%' AND (description like '%FIRE%' OR description like '%SPRINKLER%' OR description like '%FIREPROOF%')"
+    },
+    "sample_garage_fire_violations": [
+      {
+        "isn_dob_bis_viol": "2819992",
+        "boro": "4",
+        "issue_date": "20260407",
+        "house_number": "779",
+        "street": "WYCKOFF AVENUE",
+        "description": "WATER HEATED INSTALLED WITHOUT DOCUMENTATION OR PERMIT. VIOLATION ISSUED AS CONDITIONS POSED SEVERE SAFETY HAZARD TO OCCUPANTS AS OBSERVATIONS INCLUDING UNPROTECTED GAS PIPING INSTALLED ON WATER HEATER WITHOUT PROPER PROTECTION AGAINST VEHICLE IMPACT IN GARAGE. VIOLATING CODES: MC 304.6-304.7 AND FIRE CODE 312.3 AND FIRE CODE",
+        "violation_category": "V-DOB VIOLATION - ACTIVE"
+      },
+      {
+        "isn_dob_bis_viol": "2817633",
+        "boro": "4",
+        "issue_date": "20251226",
+        "house_number": "109-32",
+        "street": "213 STREET",
+        "description": "STRUCTURE RENDERED NON COMPLIANT DUE TO FIRE. AT REAR OF PREMISES THE GARAGE CAUGHT FIRE AND COLLAPSED TO THE GROUND ALONG WITH A MOTOR VEHICLE LEAVING EXCESSIVE FIRE DEBRIS AT REAR YARD.",
+        "violation_category": "V-DOB VIOLATION - ACTIVE"
+      },
+      {
+        "isn_dob_bis_viol": "2817632",
+        "boro": "4",
+        "issue_date": "20251226",
+        "house_number": "109-32 GAR",
+        "street": "213 STREET",
+        "description": "STRUCTURE RENDERED NON COMPLIANT DUE TO FIRE. AT TIME OF INSPECTION THE GARAGE AT REAR OF PREMISES CAUGHT FIRE ALONG WITH A VEHICLE. THE GARAGE IS COMPLETELY BURNED DOWN. THE SIDING ALSO SUFFERED FIRED DAMAGE.",
+        "violation_category": "V-DOB VIOLATION - ACTIVE"
+      },
+      {
+        "isn_dob_bis_viol": "2817016",
+        "boro": "4",
+        "issue_date": "20251204",
+        "house_number": "75-05",
+        "street": "DOUGLASTON PARKWAY",
+        "description": "LOWER GARAGE IN DISREPAIR, ACTIVE LEAK - STRUCTURAL STEEL RUSTING, MISSING FIREPROOFING AND CRACKS IN COLUMNS AND WALLS ALTHOUGH OUT.",
+        "violation_category": "V-DOB VIOLATION - ACTIVE"
+      },
+      {
+        "isn_dob_bis_viol": "2816598",
+        "boro": "2",
+        "issue_date": "20251125",
+        "house_number": "6425",
+        "street": "BROADWAY",
+        "description": "PARTIAL VACATE ORDER. VACATE ENTIRE PARKING STRUCTURE. OBSERVED UNSAFE CONDITION DUE TO SPALLING CONCRETE/EXPOSED REBARS & STEEL. ALSO MISSING OF FIRE PROOFING AT MULTIPLE LOCATIONS AT LOWER LEVEL AND UPPER LEVEL BROKEN CURB AND DISPLACEMENT IN SLAB AND CRACK IN MANY PLACES MAKING HAZARDOUS AND UNSAFE. REMEDY: VACATE ENTIRE PARKING GARAGE",
+        "violation_category": "V-DOB VIOLATION - ACTIVE"
+      }
+    ]
+  },
+
+  "analysis_notes": {
+    "key_findings": [
+      "FDNY dataset has 46,709 'Automobile Fire' incidents and 2,317 'Abandoned Derelict Vehicle Fire' incidents since 2005 -- but NO specific 'garage fire' or 'parking structure fire' classification exists",
+      "Automobile fires have been declining steadily: from 4,148/year in 2005 to ~1,500/year in 2023-2024 (a 64% reduction)",
+      "Queens leads in automobile fires (14,369), followed by Brooklyn (13,629) and Bronx (9,711)",
+      "DOB violations dataset has 148 garage-specific fire/sprinkler/fireproofing violations and 41 parking-structure-specific violations",
+      "DOB violations reveal real-world failure modes: missing fireproofing in parking structures, garage fires involving vehicles, unprotected gas piping in garages",
+      "There are 140,094 sprinkler permits (DOB Permit Issuance) and 37,405 sprinkler/fire suppression/alarm permits (DOB NOW Build) -- useful for assessing fire protection infrastructure coverage",
+      "The FDNY dataset lacks location-type metadata (cannot distinguish garage vs. street vs. highway fires from the data alone -- only street addresses are provided)"
+    ],
+    "limitations": [
+      "FDNY data does not classify by location type (garage, parking lot, highway, etc.) -- would need to cross-reference addresses with PLUTO/MapPLUTO land use data to identify parking garages",
+      "DOB violations free-text search is imprecise -- 'FIRE' in description captures both fire damage and fire escape/fire code references",
+      "Automobile Fire classification does not distinguish EV fires from ICE vehicle fires",
+      "No direct dataset linking fire incidents to specific building types (parking garage, etc.) without geocoding and land-use join"
+    ],
+    "recommended_next_steps": [
+      "Cross-reference FDNY automobile fire locations (zipcode + alarm_box_location) with MapPLUTO parking garage parcels to identify garage-specific incidents",
+      "Query DOB violations with BIN numbers matched to known parking garage BINs from PLUTO",
+      "Look at FDNY 'Other Commercial Building Fire' (54,537 incidents) as these likely include some parking structure fires",
+      "Consider FDNY Firehouse Inspections dataset or FDNY fire investigation data if available",
+      "Use permit data (SP subtype) to assess which parking garages have active sprinkler systems vs. those without"
+    ]
+  }
+}
