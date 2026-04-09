@@ -399,10 +399,10 @@ def score_garage(garage, sprinkler_permits, violations, charger_info):
 
     if not sprinkler_permits:
         score += 25
-        reasons.append("no sprinkler permits on record (+25)")
+        reasons.append("no fire suppression maintenance on record (+25)")
     elif latest_sprinkler < "2010-01-01":
         score += 15
-        reasons.append(f"last sprinkler work {latest_sprinkler} (+15)")
+        reasons.append(f"last sprinkler work {latest_sprinkler}, predates 2022 NFPA density increase (+15)")
     else:
         reasons.append(f"sprinkler work {latest_sprinkler}")
 

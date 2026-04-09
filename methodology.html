@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Methodology — NYC EV Fire Risk Map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0a0a0a; color: #d0d0d0; line-height: 1.7; }
+  .container { max-width: 800px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  h2 { font-size: 20px; font-weight: 600; color: #fff; margin-top: 48px; margin-bottom: 16px; border-bottom: 1px solid #333; padding-bottom: 8px; }
+  h3 { font-size: 16px; font-weight: 600; color: #ccc; margin-top: 32px; margin-bottom: 8px; }
+  p { margin-bottom: 16px; }
+  a { color: #6cacff; }
+  a:hover { color: #9fc5ff; }
+  .subtitle { font-size: 14px; color: #888; margin-bottom: 32px; }
+  .back { display: inline-block; margin-bottom: 24px; font-size: 13px; color: #888; text-decoration: none; }
+  .back:hover { color: #ccc; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 14px; }
+  th { text-align: left; padding: 8px 12px; background: #151515; color: #aaa; font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #333; }
+  td { padding: 8px 12px; border-bottom: 1px solid #1a1a1a; }
+  code { background: #1a1a1a; padding: 2px 6px; border-radius: 3px; font-size: 13px; color: #e0e0e0; }
+  .formula { background: #111; border: 1px solid #333; border-radius: 6px; padding: 16px 20px; margin: 16px 0; font-family: monospace; font-size: 14px; line-height: 1.8; }
+  .note { background: #111; border-left: 3px solid #ff8800; padding: 12px 16px; margin: 16px 0; border-radius: 0 6px 6px 0; font-size: 14px; }
+  .citation { font-size: 13px; color: #888; margin-bottom: 8px; padding-left: 24px; text-indent: -24px; }
+  ul, ol { margin: 8px 0 16px 24px; }
+  li { margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<a href="index.html" class="back">&larr; Back to map</a>
+
+<h1>Methodology</h1>
+<p class="subtitle">How we score NYC parking garages for EV battery fire risk</p>
+
+<h2>Overview</h2>
+
+<p>This tool scores 1,907 parking garages and buildings with EV chargers across New York City on a 0-100 risk scale. The score reflects how vulnerable each location is to an EV battery fire event in an enclosed structure — specifically, the factors that would determine whether a single-vehicle thermal runaway cascades into a multi-vehicle fire like the <a href="https://fortune.com/asia/2024/08/07/exploding-mercedes-benz-ev-parking-garage-bans-south-korea/">August 2024 Incheon, South Korea incident</a> (140 vehicles destroyed, 23 hospitalized, 8 hours to extinguish).</p>
+
+<p>The score does <strong>not</strong> predict the probability of an EV fire occurring. EVs catch fire <a href="https://theicct.org/clearing-the-air-evs-could-bring-lower-fire-risk-oct24/">20-60x less frequently</a> than gasoline vehicles (~25 per 100,000 vs ~1,530 per 100,000). The score instead measures <strong>how bad it would be if one did occur</strong> at this specific location.</p>
+
+<h2>Scoring Formula</h2>
+
+<p>Each garage is scored on five factors. Points are additive, capped at 100:</p>
+
+<div class="formula">
+Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(0-30) + (0-25) + (0-10) + (0-20) + (0-15)
+</div>
+
+<h3>1. Structural Age (0-30 points)</h3>
+
+<table>
+<tr><th>Year Built</th><th>Points</th><th>Rationale</th></tr>
+<tr><td>Before 1968</td><td>30</td><td>Built under pre-modern NYC building code. Maximum structural deterioration time. Original fire safety standards were designed for lighter vehicles and different fire profiles.</td></tr>
+<tr><td>1968-2003</td><td>15</td><td>Built under 1968 NYC Building Code but before IBC adoption. 50 psf design load standard.</td></tr>
+<tr><td>2004 or later</td><td>5</td><td>Built under International Building Code. Current 40 psf standard with modern fire safety requirements.</td></tr>
+<tr><td>Unknown</td><td>20</td><td>No year recorded in PLUTO — treated as likely pre-1968.</td></tr>
+</table>
+
+<p class="note"><strong>Why 1968?</strong> NYC adopted its first comprehensive modern building code in 1968. Garages built before this date were designed to varied and often undocumented standards. The <a href="https://www.nyc.gov/assets/buildings/building_code/1968_building_code_v2.pdf">1968 code</a> established uniform structural and fire safety requirements for the first time.</p>
+
+<h3>2. Fire Suppression Maintenance (0-25 points)</h3>
+
+<p>This factor measures <strong>evidence of fire suppression maintenance</strong>, not whether a sprinkler system exists. We cannot determine from permit data alone whether a building has sprinklers — only whether sprinkler work has been performed and recorded in DOB's digital systems (which begin around 1990).</p>
+
+<p>This matters because fire suppression standards have evolved significantly. In 2022, <a href="https://nfsa.org/2024/04/30/fire-protection-for-parking-garages/">NFPA 13 reclassified parking garages</a> from Ordinary Hazard Group 1 to Group 2, increasing the required sprinkler water discharge density by <strong>33%</strong> (from 0.15 to 0.20 GPM/SF). This change was driven by the increased plastics and energy content in modern vehicles. A garage with a sprinkler system installed in 1985 — even if perfectly maintained — is delivering 33% less water per square foot than the current standard requires. San Francisco goes further, requiring <a href="https://sf-fire.org/429-sprinkler-protection-requirements-parking-spaces-associated-electric-vehicles-charging-stations">double the OH2 density</a> (0.40 GPM/SF) at DC fast charging spots.</p>
+
+<p>A building with no sprinkler permit activity since 1990 has almost certainly not upgraded its fire suppression to reflect these evolving standards — if it has a system at all.</p>
+
+<table>
+<tr><th>Status</th><th>Points</th><th>What it means</th></tr>
+<tr><td>No sprinkler permits on record</td><td>25</td><td>No evidence of any sprinkler maintenance or installation in DOB digital records. Either no system exists, or the system predates digital records (~1990) and has had no recorded maintenance in 35+ years.</td></tr>
+<tr><td>Last sprinkler work before 2010</td><td>15</td><td>System exists with some maintenance history, but predates the 2022 NFPA density increase. Almost certainly not designed for modern vehicle fire loads.</td></tr>
+<tr><td>Recent sprinkler work (2010+)</td><td>0</td><td>Active maintenance — though even recent work may not meet the 2022 OH2 standard unless it was a full system upgrade.</td></tr>
+</table>
+
+<p class="note"><strong>Can sprinklers stop an EV fire?</strong> No. Sprinklers cannot extinguish a lithium-ion thermal runaway — the fire happens inside a sealed battery pack. But <a href="https://link.springer.com/article/10.1007/s10694-024-01694-7">full-scale testing</a> (Fire Technology, 2024) found that sprinklers at adequate density <strong>prevent fire spread to adjacent vehicles</strong>, which is the difference between a single-car event and a 140-car catastrophe.</p>
+
+<p class="note"><strong>Can we get actual system specifications?</strong> Sprinkler engineering drawings filed with DOB are public records, obtainable through <a href="https://a810-bisweb.nyc.gov">DOB BIS Options</a> record requests (~$8/page) or <a href="https://a860-openrecords.nyc.gov/">FOIL requests</a>. These would show the actual GPM/SF a system was designed for. This is not scalable to 1,907 garages but is a viable path for investigating individual high-scoring locations.</p>
+
+<h3>3. Multi-Story Structure (0-10 points)</h3>
+
+<table>
+<tr><th>Floors</th><th>Points</th><th>Rationale</th></tr>
+<tr><td>3+ floors</td><td>10</td><td>Multi-story enclosed structure — more vehicles, harder evacuation, heat rises to upper floors.</td></tr>
+<tr><td>2 floors</td><td>5</td><td>Partial enclosure risk.</td></tr>
+<tr><td>1 floor</td><td>0</td><td>Single-level structure.</td></tr>
+</table>
+
+<h3>4. Safety Violations (0-20 points)</h3>
+
+<p>DOB violations are tiered by severity:</p>
+
+<table>
+<tr><th>Type</th><th>Points Each</th><th>Examples</th></tr>
+<tr><td>Critical</td><td>8</td><td>Immediate emergency orders, unsafe building designations, structurally compromised buildings</td></tr>
+<tr><td>High</td><td>5</td><td>Sprinkler deficiency violations (LL2604S)</td></tr>
+<tr><td>Low</td><td>1 (max 3)</td><td>Photoluminescent exit sign violations, emergency power violations</td></tr>
+</table>
+
+<p>Total violation points are capped at 20. We search for violation types: <code>IMEGNCY</code> (immediate emergency), <code>UB</code> (unsafe buildings), <code>COMPBLD</code> (structurally compromised), <code>LL2604S</code> (sprinkler), <code>LL2604E</code> (emergency power), and <code>LL2604</code> (photoluminescent).</p>
+
+<h3>5. EV Charger Presence (0-15 points)</h3>
+
+<p>Garages with EV chargers concentrate vehicles that may be actively charging at high state of charge, which <a href="https://www.evfiresafe.com/risks-ev-fire-charging">increases thermal runaway severity</a>. DC fast chargers put more thermal stress on batteries than Level 2.</p>
+
+<table>
+<tr><th>Weighted Ports</th><th>Points</th><th>Calculation</th></tr>
+<tr><td>20+</td><td>15</td><td rowspan="4">Weighted ports = L2 count + (DC fast count &times; 3)</td></tr>
+<tr><td>4-19</td><td>10</td></tr>
+<tr><td>1-3</td><td>5</td></tr>
+<tr><td>None</td><td>0</td></tr>
+</table>
+
+<p class="note"><strong>Why is charger presence a bonus, not a requirement?</strong> Roughly <a href="https://www.evfiresafe.com/ev-battery-fire-data">56% of documented EV battery fires</a> occur while the vehicle is parked and not charging. Any garage where EVs park is at risk — chargers just increase the concentration and add charging-related thermal stress.</p>
+
+<h2>Data Sources</h2>
+
+<h3>NYC PLUTO (Primary Land Use Tax Lot Output)</h3>
+<p>The foundation of the analysis. PLUTO contains building-level data for all ~870,000 NYC properties including building class, year built, number of floors, building area, and basement type.</p>
+<ul>
+<li><strong>Garage identification:</strong> Building classes G1 (commercial garage), GU/GW (condo garage), and multi-story G0 (residential garage with 2+ floors)</li>
+<li><strong>Underground identification:</strong> PLUTO <code>bsmtcode</code> field (1=full basement, 2=partial basement) combined with OpenStreetMap <code>parking=underground</code> tags</li>
+<li><strong>Dataset:</strong> <a href="https://data.cityofnewyork.us/City-Government/Primary-Land-Use-Tax-Lot-Output-PLUTO-/64uk-42ks">NYC Open Data 64uk-42ks</a></li>
+<li><strong>Full dataset downloaded in bulk</strong> (857,161 records) for spatial matching — no per-record API calls</li>
+</ul>
+
+<h3>DOB Permit Issuance</h3>
+<p>Historical building permit records. We query for sprinkler permits (<code>permit_subtype='SP'</code>) to determine fire suppression history.</p>
+<ul>
+<li><strong>Queried by:</strong> Borough name + block (5-digit) + lot (both 4-digit and 5-digit to handle inconsistent padding)</li>
+<li><strong>Batched by block</strong> to minimize API calls (~1,300 block queries instead of ~1,900 individual queries)</li>
+<li><strong>Dataset:</strong> <a href="https://data.cityofnewyork.us/Housing-Development/DOB-Permit-Issuance/ipu4-2q9a">NYC Open Data ipu4-2q9a</a></li>
+</ul>
+
+<h3>DOB NOW Build Approved Permits</h3>
+<p>Newer permit system (2021+). Queried separately because it uses different field formats (BBL as a single field, ISO dates).</p>
+<ul>
+<li><strong>Queried by:</strong> BBL field (10-digit) + <code>work_type='Sprinklers'</code> or <code>job_description LIKE '%SPRINKLER%'</code></li>
+<li><strong>Dataset:</strong> <a href="https://data.cityofnewyork.us/Housing-Development/DOB-NOW-Build-Approved-Permits/rbx6-tga4">NYC Open Data rbx6-tga4</a></li>
+</ul>
+
+<h3>DOB Violations</h3>
+<p>Building code violations. We search for safety-related violation types only.</p>
+<ul>
+<li><strong>Queried by:</strong> Borough code + block + lot (both padding variants)</li>
+<li><strong>Violation types:</strong> IMEGNCY, UB, COMPBLD, LL2604S, LL2604E, LL2604</li>
+<li><strong>Dataset:</strong> <a href="https://data.cityofnewyork.us/Housing-Development/DOB-Violations/3h2n-5cm9">NYC Open Data 3h2n-5cm9</a></li>
+</ul>
+
+<h3>AFDC Alternative Fuel Stations</h3>
+<p>US Department of Energy database of EV charger locations.</p>
+<ul>
+<li><strong>Queried using:</strong> <code>/v1/nearest.json</code> endpoint with 15 center points across NYC at 8-mile radius each, to ensure full geographic coverage</li>
+<li><strong>Filtered to:</strong> <code>facility_type</code> of PAY_GARAGE or PARKING_GARAGE only</li>
+<li><strong>Result:</strong> 271 unique garage charger stations after deduplication by station ID</li>
+<li><strong>API:</strong> <a href="https://developer.nrel.gov/docs/transportation/alt-fuel-stations-v1/">NREL AFDC API v1</a> (free API key required)</li>
+</ul>
+
+<p class="note"><strong>Limitation:</strong> AFDC is voluntary — operators self-register. 271 stations is a lower bound. Some garages with chargers may not be in the federal database. We checked PlugShare and Recharged.com for additional sources but neither offers bulk data access.</p>
+
+<h3>OpenStreetMap</h3>
+<p>Community-edited map data. Queried via <a href="https://overpass-api.de/">Overpass API</a> for parking facilities tagged as <code>parking=underground</code> or <code>parking=multi-storey</code> within the NYC bounding box.</p>
+<ul>
+<li><strong>Result:</strong> 160 underground + 347 multi-storey entries</li>
+<li><strong>Coverage is incomplete</strong> — only ~52% of NYC parking entries have a type tag. We supplement with PLUTO basement codes.</li>
+</ul>
+
+<h2>Spatial Matching</h2>
+
+<p>Connecting charger stations to buildings requires spatial matching because the datasets don't share a common identifier.</p>
+
+<h3>Approach</h3>
+<ol>
+<li><strong>Download full PLUTO</strong> (857,161 records) and build a spatial grid index with ~300ft cell size</li>
+<li><strong>For each AFDC charger station</strong>, find the nearest PLUTO lot within 800ft using the grid index (9 neighboring cells searched)</li>
+<li><strong>Aggregate charger data by BBL</strong> — multiple stations at the same lot are combined</li>
+<li><strong>Non-garage buildings with chargers</strong> (residential, office, etc.) are added to the scoring set alongside G-class garages</li>
+</ol>
+
+<p>The grid index makes this O(n) instead of O(n&times;m), completing 271 station matches against 857K lots in ~0.1 seconds.</p>
+
+<h3>Why 800ft radius?</h3>
+<p>PLUTO lot coordinates represent the tax lot centroid, which can be hundreds of feet from the street address where a charger is listed — especially for large blocks. 800ft captures most same-block matches while avoiding cross-block false positives. In Manhattan, a typical block is ~250ft &times; 900ft.</p>
+
+<h2>What's Included</h2>
+
+<table>
+<tr><th>Category</th><th>Count</th><th>Source</th></tr>
+<tr><td>G1 commercial garages</td><td>1,357</td><td>PLUTO building class</td></tr>
+<tr><td>GU/GW condo garages</td><td>290</td><td>PLUTO building class</td></tr>
+<tr><td>Multi-story G0 residential garages</td><td>23</td><td>PLUTO building class + numfloors &gt; 1</td></tr>
+<tr><td>Non-garage buildings with EV chargers</td><td>241</td><td>AFDC + PLUTO spatial match</td></tr>
+<tr><td><strong>Total scored</strong></td><td><strong>1,907</strong></td><td></td></tr>
+</table>
+
+<h2>What's Excluded</h2>
+
+<ul>
+<li><strong>Single-story residential garages (G0)</strong> — 2,416 structures, almost all under 1,000 sqft. These are private garages under houses, not public parking.</li>
+<li><strong>Surface parking lots (G6, G7)</strong> — 5,393 lots. Open-air lots have unlimited ventilation and no enclosure fire risk.</li>
+<li><strong>Gas stations and auto repair (G2-G5, G8-G9)</strong> — not parking garages.</li>
+<li><strong>City fleet stations</strong> — EV chargers at government facilities (DEP, DOT, DOC, etc.) were excluded after Street View verification showed most are in outdoor yards, surface lots, or driveways rather than enclosed structures.</li>
+</ul>
+
+<h2>Known Limitations</h2>
+
+<h3>Sprinkler data measures maintenance, not capability</h3>
+<p>DOB digital records begin around 1990. A garage showing "no sprinkler permits" may have a functional system installed before records went digital. We cannot distinguish "no system" from "no digital record." However, any pre-1990 system without subsequent upgrades is almost certainly below the <a href="https://nfsa.org/2024/04/30/fire-protection-for-parking-garages/">2022 NFPA OH2 density standard</a> (33% higher than the previous requirement). The scoring reflects this: buildings with no evidence of recent fire suppression activity are at higher risk regardless of whether an older system exists, because that system was not designed for modern vehicle fire loads. Actual system specifications (GPM/SF) are available through DOB record requests but are not in any bulk dataset.</p>
+
+<h3>Underground classification is incomplete</h3>
+<p>PLUTO basement codes + OSM identify 156 underground garages. The true number in Manhattan alone is likely much higher — virtually every large residential or office building built since the 1960s has below-grade parking. The <a href="https://inrix.com/products/parking-data-software/">INRIX parking API</a> has a "Subterranean" classification for 350K+ facilities globally but requires enterprise licensing.</p>
+
+<h3>Charger data is a lower bound</h3>
+<p>AFDC is voluntary and self-reported. Our 271 garage stations likely undercount the true number. Smaller operators and recently installed chargers may not be registered.</p>
+
+<h3>This is not a structural assessment</h3>
+<p>A high score means a garage has risk <em>factors</em> — it does not mean the garage is unsafe or will have a fire. Only a licensed engineer can assess structural integrity, and only an on-site fire safety inspection can determine actual suppression capability. The <a href="https://gothamist.com/news/deadly-manhattan-parking-garage-collapse-tied-to-unsafe-demolition-structural-neglect-city-report-finds">57 Ann Street collapse investigation</a> took two years to determine the actual cause.</p>
+
+<h3>Scores reflect data availability</h3>
+<p>A garage with extensive DOB records will have more data points to score against. Absence of violations may mean a clean record or may mean the building hasn't been inspected recently.</p>
+
+<h2>Background Research</h2>
+
+<h3>Why fire, not weight?</h3>
+<p>This project began as an investigation into whether heavier EVs were stressing old parking structures. The engineering evidence says no: even a worst-case scenario with every spot filled with a 9,063 lb GMC Hummer EV produces only ~38.7 psf — still under the 40 psf IBC design minimum (<a href="https://www.pankowfoundation.org/news/final-report-safe-and-sustainable-parking-garage-live-loads-in-the-age-of-the-electric-vehicle-rga-05-24/">Pankow Foundation, 2024</a>). The weight concern was amplified by the <a href="https://www.cbsnews.com/newyork/news/lower-manhattan-parking-garage-collapse/">April 2023 Ann Street garage collapse</a>, where officials initially blamed vehicle weight. The <a href="https://gothamist.com/news/deadly-manhattan-parking-garage-collapse-tied-to-unsafe-demolition-structural-neglect-city-report-finds">actual cause</a> (revealed two years later) was unauthorized removal of a load-bearing masonry pier.</p>
+
+<h3>EV fire behavior in enclosed structures</h3>
+<p>EV battery fires differ fundamentally from gasoline fires: they burn at ~5,000&deg;F vs ~1,500&deg;F, last 60-90+ minutes vs ~30 minutes, can reignite days later, and produce toxic hydrogen fluoride gas. Roughly <a href="https://www.evfiresafe.com/ev-battery-fire-data">56% of documented EV battery fires</a> occur while the vehicle is parked. The primary causes at rest are manufacturing defects in battery cells (torn anode tabs, folded separators, metal particle contamination) that can lie dormant for months before triggering thermal runaway.</p>
+
+<h3>The regulatory gap</h3>
+<p>After the Incheon fire, South Korea mandated retroactive sprinkler upgrades in existing garages, battery chemistry disclosure, state-of-charge limits for underground parking, and mandatory fire liability insurance. The US has none of these. NFPA <a href="https://www.energymarketersofamerica.org/posts/nfpa-rejects-ev-charging-at-gas-stations-rules/">actively voted to remove</a> EV charging provisions from NFPA 30A in 2024. Meanwhile, NYC <a href="https://randpc.com/articles/energy-efficiency/nyc-law-ll55-2024/">Local Law 55 (2024)</a> requires 20% of commercial parking spaces to be EV-ready — with no fire safety conditions attached.</p>
+
+<h2>References</h2>
+
+<p class="citation">Pankow Foundation. "Safe and Sustainable Parking Garage Live Loads in the Age of the Electric Vehicle." Report RGA-05-24, 2024. <a href="https://www.pankowfoundation.org/news/final-report-safe-and-sustainable-parking-garage-live-loads-in-the-age-of-the-electric-vehicle-rga-05-24/">Link</a></p>
+
+<p class="citation">Springer / Fire Technology. "Full-Scale Fire Testing to Assess the Risk of Battery Electric Vehicle Fires in Underground Car Parks." Vol. 61, pp. 4133-4163, 2025. <a href="https://link.springer.com/article/10.1007/s10694-024-01694-7">Link</a></p>
+
+<p class="citation">NFPA. "Parking Garages and EVs." July 2024. <a href="https://www.nfpa.org/news-blogs-and-articles/blogs/2024/07/12/parking-garages-and-evs">Link</a></p>
+
+<p class="citation">EV FireSafe. "EV Battery Fire Data." Global incident database, updated continuously. <a href="https://www.evfiresafe.com/ev-battery-fire-data">Link</a></p>
+
+<p class="citation">ICCT. "Clearing the Air: EVs Could Bring Lower Fire Risk." October 2024. <a href="https://theicct.org/clearing-the-air-evs-could-bring-lower-fire-risk-oct24/">Link</a></p>
+
+<p class="citation">MDPI / Fire. "Risk Assessment of Toxic Gas Dispersion from Electric Vehicle Fires in Underground Apartment Parking Garages Using Numerical Analysis." Vol. 8, Issue 3, 2025. <a href="https://www.mdpi.com/2571-6255/8/3/96">Link</a></p>
+
+<p class="citation">Wen, Y.K. and Yeo, G.L. "Design Live Loads for Passenger Cars Parking Garages." ASCE Journal of Structural Engineering, Vol. 127, No. 3, 2001.</p>
+
+<p class="citation">Gothamist. "Deadly Manhattan parking garage collapse tied to unsafe demolition, structural neglect, city report finds." April 28, 2025. <a href="https://gothamist.com/news/deadly-manhattan-parking-garage-collapse-tied-to-unsafe-demolition-structural-neglect-city-report-finds">Link</a></p>
+
+<p class="citation">Fortune. "Exploding Mercedes-Benz EV prompts parking garage bans in South Korea." August 7, 2024. <a href="https://fortune.com/asia/2024/08/07/exploding-mercedes-benz-ev-parking-garage-bans-south-korea/">Link</a></p>
+
+<p class="citation">NFSA. "Fire Protection for Parking Garages." April 2024. <a href="https://nfsa.org/2024/04/30/fire-protection-for-parking-garages/">Link</a></p>
+
+<p class="citation">SF Fire Department. "Sprinkler Protection Requirements for Parking Spaces Associated with Electric Vehicle Charging Stations." Information Sheet 429. <a href="https://sf-fire.org/429-sprinkler-protection-requirements-parking-spaces-associated-electric-vehicles-charging-stations">Link</a></p>
+
+<p class="citation">NYC Local Law 55 (2024). EV charging infrastructure requirements for commercial parking. <a href="https://randpc.com/articles/energy-efficiency/nyc-law-ll55-2024/">Analysis</a></p>
+
+<p style="margin-top: 48px; font-size: 13px; color: #666;">Last updated: April 2026. Data snapshot reflects NYC Open Data as of query date. <a href="https://github.com/sarahduve/ev-fire-risk">Source code and data on GitHub.</a></p>
+
+</div>
+</body>
+</html>
