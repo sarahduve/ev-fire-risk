@@ -1,2 +1,10 @@
-# Empty afdc_data_full.json (failed rate-limited query, not useful)
+# Large files (re-downloaded at build time)
+pluto_all.json
 afdc_data_full.json
+charger_bbl_map.json
+
+# Python
+__pycache__/
+
+# Draft content (not ready for public)
+twitter_thread_draft.md

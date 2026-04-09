@@ -4,7 +4,7 @@ from pathlib import Path
 
 DATA_DIR = Path(__file__).parent
 
-with open(DATA_DIR / "risk_scores.json") as f:
+with open(DATA_DIR / "risk_scores_all.json") as f:
     data = json.load(f)
 
 with open(DATA_DIR / "map.html") as f:

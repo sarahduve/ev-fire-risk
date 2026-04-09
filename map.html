@@ -15,6 +15,9 @@
   .stat { text-align: center; }
   .stat .n { font-size: 28px; font-weight: 700; }
   .stat .label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat[data-filter] { padding: 8px 12px; border-radius: 6px; }
+  .stat[data-filter]:hover { background: #1a1a1a; }
+  .stat[data-filter].active { background: #222; outline: 1px solid #555; }
   .stat.high .n { color: #ff4444; }
   .stat.elevated .n { color: #ff8800; }
   .stat.moderate .n { color: #ffcc00; }
@@ -38,7 +41,7 @@
     text-align: left; padding: 6px 8px; border-bottom: 1px solid #333;
     color: #888; font-weight: 500; font-size: 11px; text-transform: uppercase;
     letter-spacing: 0.5px; position: sticky; top: 0; background: #0a0a0a;
-    cursor: pointer; user-select: none; white-space: nowrap;
+    cursor: pointer; user-select: none;
   }
   th:hover { color: #ccc; }
   th .sort-arrow { margin-left: 4px; font-size: 10px; color: #555; }
@@ -58,8 +61,8 @@
 </head>
 <body>
 <div class="header">
-  <h1>NYC EV Fire Risk — Parking Garages with Charging Stations</h1>
-  <p>Garages scored by structural age, EV charger density, fire suppression status, and DOB violations</p>
+  <h1>NYC EV Fire Risk — All Parking Garages</h1>
+  <p>1,666 garages scored by structural age, fire suppression status, DOB violations, and EV charger presence</p>
 </div>
 <div class="stats" id="stats"></div>
 <div class="legend">
@@ -67,6 +70,7 @@
   <div class="legend-item"><div class="legend-dot" style="background:#ff8800"></div> Elevated (50-69)</div>
   <div class="legend-item"><div class="legend-dot" style="background:#ffcc00"></div> Moderate (30-49)</div>
   <div class="legend-item"><div class="legend-dot" style="background:#44cc44"></div> Low (&lt;30)</div>
+  <div class="legend-item" style="margin-left:16px; border-left:1px solid #444; padding-left:16px;"><div class="legend-dot" style="background:transparent; border:2px solid #fff; width:10px; height:10px;"></div> Has EV chargers</div>
 </div>
 <div id="map"></div>
 <div class="panel-container" id="panel" style="height: 30vh;">
@@ -76,13 +80,13 @@
       <thead>
         <tr id="thead-row">
           <th data-key="risk_score" data-type="num">Score <span class="sort-arrow"></span></th>
-          <th data-key="confidence" data-type="str">Conf <span class="sort-arrow"></span></th>
-          <th data-key="station_name" data-type="str">Name <span class="sort-arrow"></span></th>
-          <th data-key="station_address" data-type="str">Address <span class="sort-arrow"></span></th>
+          <th data-key="address" data-type="str">Address <span class="sort-arrow"></span></th>
+          <th data-key="borough" data-type="str">Boro <span class="sort-arrow"></span></th>
           <th data-key="yearbuilt" data-type="num">Built <span class="sort-arrow"></span></th>
           <th data-key="numfloors" data-type="num">Floors <span class="sort-arrow"></span></th>
           <th data-key="total_ev_ports" data-type="num">EV Ports <span class="sort-arrow"></span></th>
-          <th data-key="sprinkler_permits_count" data-type="num">Sprinkler Permits <span class="sort-arrow"></span></th>
+          <th data-key="osm_parking_type" data-type="str">Type <span class="sort-arrow"></span></th>
+          <th data-key="sprinkler_last_date" data-type="str">Last Sprinkler Permit <span class="sort-arrow"></span></th>
           <th data-key="fire_violations_count" data-type="num">Violations <span class="sort-arrow"></span></th>
           <th data-key="_reasons" data-type="str">Risk Factors <span class="sort-arrow"></span></th>
         </tr>
@@ -109,20 +113,54 @@ function scoreColor(s) {
   return '#44cc44';
 }
 
-// Stats
-const valid = DATA.results.filter(r => r.confidence !== 'exclude');
+// Stats + filter state
+const all = DATA.results;
+let activeFilter = null; // null = show all, or 'high', 'elevated', 'moderate', 'chargers', 'underground'
+
+function passesFilter(r) {
+  if (!activeFilter) return true;
+  if (activeFilter === 'high') return r.risk_score >= 70;
+  if (activeFilter === 'elevated') return r.risk_score >= 50 && r.risk_score < 70;
+  if (activeFilter === 'moderate') return r.risk_score >= 30 && r.risk_score < 50;
+  if (activeFilter === 'chargers') return r.has_chargers;
+  if (activeFilter === 'underground') return r.osm_parking_type === 'underground';
+  return true;
+}
+
+function toggleFilter(f) {
+  activeFilter = activeFilter === f ? null : f;
+  updateStats();
+  updateMarkers();
+  renderTable();
+}
+
+function updateStats() {
+  document.querySelectorAll('.stat[data-filter]').forEach(el => {
+    el.classList.toggle('active', el.dataset.filter === activeFilter);
+  });
+}
+
+const withChargers = all.filter(r => r.has_chargers).length;
+const underground = all.filter(r => r.osm_parking_type === 'underground').length;
 const dist = {
-  high: valid.filter(r => r.risk_score >= 70).length,
-  elevated: valid.filter(r => r.risk_score >= 50 && r.risk_score < 70).length,
-  moderate: valid.filter(r => r.risk_score >= 30 && r.risk_score < 50).length,
-  low: valid.filter(r => r.risk_score < 30).length,
+  high: all.filter(r => r.risk_score >= 70).length,
+  elevated: all.filter(r => r.risk_score >= 50 && r.risk_score < 70).length,
+  moderate: all.filter(r => r.risk_score >= 30 && r.risk_score < 50).length,
 };
 document.getElementById('stats').innerHTML = `
-  <div class="stat"><div class="n">${valid.length}</div><div class="label">Garages Scored</div></div>
-  <div class="stat high"><div class="n">${dist.high}</div><div class="label">High Risk</div></div>
-  <div class="stat elevated"><div class="n">${dist.elevated}</div><div class="label">Elevated</div></div>
-  <div class="stat moderate"><div class="n">${dist.moderate}</div><div class="label">Moderate</div></div>
+  <div class="stat" data-filter="all"><div class="n">${all.length}</div><div class="label">Garages Scored</div></div>
+  <div class="stat high" data-filter="high"><div class="n">${dist.high}</div><div class="label">High Risk</div></div>
+  <div class="stat elevated" data-filter="elevated"><div class="n">${dist.elevated}</div><div class="label">Elevated</div></div>
+  <div class="stat moderate" data-filter="moderate"><div class="n">${dist.moderate}</div><div class="label">Moderate</div></div>
+  <div class="stat" data-filter="chargers" style="margin-left:16px; border-left:1px solid #333; padding-left:16px;"><div class="n" style="color:#fff;">${withChargers}</div><div class="label">With EV Chargers</div></div>
 `;
+document.querySelectorAll('.stat[data-filter]').forEach(el => {
+  el.style.cursor = 'pointer';
+  el.addEventListener('click', () => {
+    const f = el.dataset.filter;
+    toggleFilter(f === 'all' ? null : f);
+  });
+});
 
 // Map
 const map = L.map('map').setView([40.735, -73.99], 13);
@@ -133,34 +171,42 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
 
 // Markers — index by station address + lat for table row lookup
 const markerMap = {};
+const allMarkers = []; // {marker, record} pairs
 DATA.results.forEach(r => {
   if (!r.lat || !r.lon) return;
-  if (r.confidence === 'exclude') return; // skip excluded stations
   const color = scoreColor(r.risk_score);
-  const radius = Math.max(6, Math.min(14, r.total_ev_ports));
+  const hasChargers = r.has_chargers;
+  const isUnderground = r.osm_parking_type === 'underground';
+  const radius = hasChargers ? Math.max(6, Math.min(14, r.total_ev_ports)) : 5;
+  const borderColor = hasChargers ? '#fff' : '#000';
+  const weight = hasChargers ? 2 : 1;
+  const opacity = hasChargers ? 0.7 : 0.4;
 
-  const opacity = r.confidence === 'low' ? 0.3 : r.confidence === 'medium' ? 0.55 : 0.7;
   const circle = L.circleMarker([r.lat, r.lon], {
     radius: radius,
     fillColor: color,
-    color: '#000',
-    weight: 1,
+    color: borderColor,
+    weight: weight,
     opacity: opacity + 0.1,
     fillOpacity: opacity,
   }).addTo(map);
+  allMarkers.push({marker: circle, record: r});
 
   const yb = r.yearbuilt > 0 ? r.yearbuilt : 'Unknown';
+  const typeBadge = isUnderground ? '<span style="color:#00bcd4; font-weight:600;">UNDERGROUND</span>' :
+                    r.osm_parking_type === 'multi-storey' ? '<span style="color:#888;">multi-storey</span>' : '';
+  const evBadge = hasChargers ? `<span style="color:#44cc44; font-weight:600;">${r.total_ev_ports} EV ports</span>` : '<span style="color:#666;">no chargers</span>';
   circle.bindPopup(`
     <div style="font-family: sans-serif; min-width: 220px;">
-      <div style="font-weight:700; font-size:14px; margin-bottom:4px;">${r.station_name}</div>
-      <div style="font-size:12px; color:#666; margin-bottom:8px;">${r.station_address}</div>
-      <div style="font-size:24px; font-weight:700; color:${color}; margin-bottom:4px;">Risk: ${r.risk_score} <span style="font-size:12px; font-weight:400; color:#888;">${r.confidence} confidence</span></div>
+      <div style="font-weight:700; font-size:14px; margin-bottom:4px;">${r.address}</div>
+      <div style="font-size:12px; color:#666; margin-bottom:4px;">${r.borough} ${r.charger_names ? '— ' + r.charger_names : ''}</div>
+      <div style="font-size:11px; margin-bottom:8px;">${typeBadge} ${evBadge}</div>
+      <div style="font-size:24px; font-weight:700; color:${color}; margin-bottom:4px;">Risk: ${r.risk_score}</div>
       <table style="font-size:12px; width:100%;">
         <tr><td>Built</td><td style="text-align:right; font-weight:600">${yb}</td></tr>
         <tr><td>Floors</td><td style="text-align:right; font-weight:600">${r.numfloors}</td></tr>
-        <tr><td>EV Ports</td><td style="text-align:right; font-weight:600">${r.total_ev_ports} (${r.l2_ports} L2, ${r.dcfast_ports} DC)</td></tr>
         <tr><td>Sprinkler Permits</td><td style="text-align:right; font-weight:600">${r.sprinkler_permits_count}</td></tr>
-        <tr><td>Fire Violations</td><td style="text-align:right; font-weight:600">${r.fire_violations_count}</td></tr>
+        <tr><td>Safety Violations</td><td style="text-align:right; font-weight:600">${r.fire_violations_count}</td></tr>
       </table>
       <div style="margin-top:8px; font-size:11px; color:#888;">
         ${r.reasons.join('<br>')}
@@ -169,6 +215,16 @@ DATA.results.forEach(r => {
   `);
   markerMap[r.lat + ',' + r.lon] = circle;
 });
+
+function updateMarkers() {
+  allMarkers.forEach(({marker, record}) => {
+    if (passesFilter(record)) {
+      if (!map.hasLayer(marker)) map.addLayer(marker);
+    } else {
+      if (map.hasLayer(marker)) map.removeLayer(marker);
+    }
+  });
+}
 
 // --- Resizable panel ---
 const panel = document.getElementById('panel');
@@ -204,32 +260,32 @@ document.addEventListener('mouseup', () => {
 
 // --- Sortable table ---
 let currentSort = { key: null, dir: null };
-let tableData = DATA.results
-  .filter(r => r.confidence !== 'exclude')
-  .map(r => ({
-    ...r,
-    _reasons: r.reasons.join('; '),
-  }));
+let tableData = DATA.results.map(r => ({
+  ...r,
+  _reasons: r.reasons.join('; '),
+}));
 
 function renderTable() {
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = '';
-  const confStyle = { high: 'color:#44cc44', medium: 'color:#ff8800', low: 'color:#666' };
-  tableData.forEach(r => {
+  const filtered = tableData.filter(passesFilter);
+  filtered.forEach(r => {
     const cls = scoreClass(r.risk_score);
     const yb = r.yearbuilt > 0 ? r.yearbuilt : '????';
-    const conf = r.confidence || 'low';
+    const evLabel = r.has_chargers ? `<span style="color:#fff; font-weight:600">${r.total_ev_ports}</span>` : '<span style="color:#444">-</span>';
+    const typeLabel = r.osm_parking_type === 'underground' ? '<span style="color:#00bcd4">underground</span>' :
+                      r.osm_parking_type === 'multi-storey' ? 'multi-storey' : '';
+    const spDate = !r.sprinkler_last_date || r.sprinkler_last_date === 'none' ? '<span style="color:#ff4444">none</span>' : r.sprinkler_last_date.slice(0, 4);
     const tr = document.createElement('tr');
-    if (conf === 'low') tr.style.opacity = '0.5';
     tr.innerHTML = `
       <td><span class="score ${cls}">${r.risk_score}</span></td>
-      <td style="${confStyle[conf]}; font-weight:600; font-size:11px;">${conf}</td>
-      <td class="col-name" title="${r.station_name}">${r.station_name}</td>
-      <td>${r.station_address}, ${r.borough}</td>
+      <td>${r.address}</td>
+      <td>${r.borough}</td>
       <td>${yb}</td>
       <td>${r.numfloors}</td>
-      <td>${r.total_ev_ports}</td>
-      <td>${r.sprinkler_permits_count}</td>
+      <td>${evLabel}</td>
+      <td>${typeLabel}</td>
+      <td>${spDate}</td>
       <td>${r.fire_violations_count}</td>
       <td class="reasons">${r.reasons.map(s => s.replace(/\s*\(\+\d+\)/g, '')).join('; ')}</td>
     `;
