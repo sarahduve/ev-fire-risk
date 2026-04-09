@@ -1,0 +1,155 @@
+name: Update garage data
+
+on:
+  schedule:
+    # First of each month at 6am UTC (2am ET)
+    - cron: '0 6 1 * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Download full PLUTO dataset
+        run: |
+          python3 -c "
+          import json, urllib.request, urllib.parse, time
+          all_records, offset, limit = [], 0, 50000
+          while True:
+              params = urllib.parse.urlencode({
+                  '\$select': 'bbl,address,bldgclass,yearbuilt,numfloors,bldgarea,garagearea,lotarea,latitude,longitude,borough,zipcode,zonedist1',
+                  '\$where': 'latitude IS NOT NULL AND longitude IS NOT NULL AND latitude != 0',
+                  '\$limit': limit, '\$offset': offset, '\$order': 'bbl',
+              })
+              url = f'https://data.cityofnewyork.us/resource/64uk-42ks.json?{params}'
+              for attempt in range(3):
+                  try:
+                      with urllib.request.urlopen(url, timeout=60) as resp:
+                          data = json.loads(resp.read())
+                      break
+                  except: time.sleep(5); data = []
+              if not data: break
+              all_records.extend(data)
+              print(f'  {len(all_records)} PLUTO records...')
+              if len(data) < limit: break
+              offset += limit; time.sleep(1)
+          with open('pluto_all.json', 'w') as f:
+              json.dump({'total': len(all_records), 'records': all_records}, f)
+          print(f'Downloaded {len(all_records)} PLUTO records')
+          "
+
+      - name: Fetch AFDC charger data
+        env:
+          NREL_API_KEY: ${{ secrets.NREL_API_KEY }}
+        run: |
+          python3 -c "
+          import json, urllib.request, urllib.parse, time, os
+          API_KEY = os.environ['NREL_API_KEY']
+          BASE = 'https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json'
+          centers = [
+              (40.712, -74.006), (40.755, -73.985), (40.800, -73.960),
+              (40.840, -73.940), (40.850, -73.900), (40.880, -73.870),
+              (40.690, -73.985), (40.660, -73.950), (40.630, -73.960),
+              (40.660, -73.900), (40.740, -73.920), (40.720, -73.850),
+              (40.740, -73.790), (40.670, -73.780), (40.580, -74.150),
+          ]
+          all_stations = {}
+          for lat, lon in centers:
+              params = urllib.parse.urlencode({
+                  'api_key': API_KEY, 'fuel_type': 'ELEC',
+                  'latitude': lat, 'longitude': lon,
+                  'radius': 8, 'limit': 200, 'status': 'E',
+              })
+              with urllib.request.urlopen(f'{BASE}?{params}', timeout=30) as resp:
+                  data = json.loads(resp.read())
+              for s in data.get('fuel_stations', []):
+                  if s.get('facility_type') in ('PAY_GARAGE', 'PARKING_GARAGE'):
+                      all_stations[s['id']] = s
+              time.sleep(0.5)
+          output = {
+              'metadata': {'query_date': time.strftime('%Y-%m-%d'), 'api_key_used': 'registered'},
+              'total_unique_garage_stations': len(all_stations),
+              'garage_stations_data': list(all_stations.values()),
+          }
+          with open('afdc_data.json', 'w') as f:
+              json.dump(output, f, indent=2)
+          print(f'Fetched {len(all_stations)} AFDC garage stations')
+          "
+
+      - name: Fetch OSM parking data
+        run: |
+          python3 -c "
+          import json, urllib.request, urllib.parse
+          query = '''[out:json][timeout:60];
+          (node[\"amenity\"=\"parking\"][\"parking\"~\"underground|multi-storey|surface\"](40.49,-74.26,40.92,-73.70);
+          way[\"amenity\"=\"parking\"][\"parking\"~\"underground|multi-storey|surface\"](40.49,-74.26,40.92,-73.70);
+          relation[\"amenity\"=\"parking\"][\"parking\"~\"underground|multi-storey|surface\"](40.49,-74.26,40.92,-73.70););
+          out center tags;'''
+          data = urllib.parse.urlencode({'data': query}).encode()
+          with urllib.request.urlopen('https://overpass-api.de/api/interpreter', data=data, timeout=120) as resp:
+              result = json.loads(resp.read())
+          parsed = []
+          for e in result.get('elements', []):
+              tags = e.get('tags', {})
+              if e['type'] == 'node': lat, lon = e.get('lat'), e.get('lon')
+              else: c = e.get('center', {}); lat, lon = c.get('lat'), c.get('lon')
+              if lat and lon:
+                  parsed.append({'osm_id': e['id'], 'parking_type': tags.get('parking',''),
+                      'name': tags.get('name',''), 'lat': lat, 'lon': lon})
+          with open('osm_parking.json', 'w') as f:
+              json.dump({'total': len(parsed), 'elements': parsed}, f, indent=2)
+          print(f'Fetched {len(parsed)} OSM parking entries')
+          "
+
+      - name: Run scoring pipeline
+        run: python3 build_all_garages.py
+
+      - name: Add basement codes
+        run: |
+          python3 -c "
+          import json, urllib.request, urllib.parse
+          params = urllib.parse.urlencode({
+              '\$where': \"bldgclass in('G1','GU','GW') OR (bldgclass='G0' AND numfloors>1)\",
+              '\$select': 'bbl,bsmtcode', '\$limit': 5000,
+          })
+          url = f'https://data.cityofnewyork.us/resource/64uk-42ks.json?{params}'
+          with urllib.request.urlopen(url, timeout=30) as resp:
+              data = json.loads(resp.read())
+          bsmt_map = {str(r.get('bbl','')).split('.')[0].zfill(10): r.get('bsmtcode','0') for r in data}
+          with open('risk_scores_all.json') as f:
+              scores = json.load(f)
+          for r in scores['results']:
+              bsmt = bsmt_map.get(r['bbl'], '0')
+              if bsmt in ('1','2') and not r.get('osm_parking_type'):
+                  r['osm_parking_type'] = 'underground'
+              r['has_basement'] = bsmt in ('1','2')
+          with open('risk_scores_all.json', 'w') as f:
+              json.dump(scores, f, indent=2)
+          underground = sum(1 for r in scores['results'] if r.get('osm_parking_type') == 'underground')
+          print(f'Underground garages: {underground}')
+          "
+
+      - name: Build map
+        run: python3 build_map.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update data $(date -u +%Y-%m-%d)
+
+          Automated monthly data refresh via GitHub Actions."
+            git push
+          fi
