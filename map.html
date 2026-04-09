@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>NYC EV Fire Risk — Parking Garages</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0a0a0a; color: #e0e0e0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+  #map { width: 100%; flex: 1; min-height: 100px; }
+  .header { padding: 16px 24px; background: #111; border-bottom: 1px solid #333; flex-shrink: 0; }
+  .header h1 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .header p { font-size: 13px; color: #888; }
+  .stats { display: flex; gap: 24px; padding: 12px 24px; background: #111; border-bottom: 1px solid #222; flex-shrink: 0; }
+  .stat { text-align: center; }
+  .stat .n { font-size: 28px; font-weight: 700; }
+  .stat .label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat.high .n { color: #ff4444; }
+  .stat.elevated .n { color: #ff8800; }
+  .stat.moderate .n { color: #ffcc00; }
+  .legend { display: flex; gap: 16px; padding: 8px 24px; background: #111; font-size: 12px; flex-shrink: 0; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+
+  /* Resizable panel */
+  .panel-container { flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; }
+  .resize-handle {
+    height: 6px; background: #222; cursor: ns-resize; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    border-top: 1px solid #444; border-bottom: 1px solid #333;
+  }
+  .resize-handle:hover, .resize-handle.active { background: #335; }
+  .resize-handle::after { content: ''; width: 40px; height: 2px; background: #666; border-radius: 1px; }
+  .table-wrap { flex: 1; overflow-y: auto; padding: 0 24px 16px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    text-align: left; padding: 6px 8px; border-bottom: 1px solid #333;
+    color: #888; font-weight: 500; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.5px; position: sticky; top: 0; background: #0a0a0a;
+    cursor: pointer; user-select: none; white-space: nowrap;
+  }
+  th:hover { color: #ccc; }
+  th .sort-arrow { margin-left: 4px; font-size: 10px; color: #555; }
+  th.sorted-asc .sort-arrow, th.sorted-desc .sort-arrow { color: #ddd; }
+  td { padding: 6px 8px; border-bottom: 1px solid #1a1a1a; }
+  #tbody tr:hover td { background: #1a1a1a; }
+  .score { font-weight: 700; font-size: 14px; }
+  .score.high { color: #ff4444; }
+  .score.elevated { color: #ff8800; }
+  .score.moderate { color: #ffcc00; }
+  .score.low { color: #44cc44; }
+  .reasons { font-size: 14px; color: #aaa; line-height: 1.4; }
+  .col-name { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+</style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+<div class="header">
+  <h1>NYC EV Fire Risk — Parking Garages with Charging Stations</h1>
+  <p>Garages scored by structural age, EV charger density, fire suppression status, and DOB violations</p>
+</div>
+<div class="stats" id="stats"></div>
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#ff4444"></div> High risk (70+)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ff8800"></div> Elevated (50-69)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ffcc00"></div> Moderate (30-49)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#44cc44"></div> Low (&lt;30)</div>
+</div>
+<div id="map"></div>
+<div class="panel-container" id="panel" style="height: 30vh;">
+  <div class="resize-handle" id="resizeHandle"></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr id="thead-row">
+          <th data-key="risk_score" data-type="num">Score <span class="sort-arrow"></span></th>
+          <th data-key="confidence" data-type="str">Conf <span class="sort-arrow"></span></th>
+          <th data-key="station_name" data-type="str">Name <span class="sort-arrow"></span></th>
+          <th data-key="station_address" data-type="str">Address <span class="sort-arrow"></span></th>
+          <th data-key="yearbuilt" data-type="num">Built <span class="sort-arrow"></span></th>
+          <th data-key="numfloors" data-type="num">Floors <span class="sort-arrow"></span></th>
+          <th data-key="total_ev_ports" data-type="num">EV Ports <span class="sort-arrow"></span></th>
+          <th data-key="sprinkler_permits_count" data-type="num">Sprinkler Permits <span class="sort-arrow"></span></th>
+          <th data-key="fire_violations_count" data-type="num">Violations <span class="sort-arrow"></span></th>
+          <th data-key="_reasons" data-type="str">Risk Factors <span class="sort-arrow"></span></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const DATA = RISK_DATA_PLACEHOLDER;
+
+function scoreClass(s) {
+  if (s >= 70) return 'high';
+  if (s >= 50) return 'elevated';
+  if (s >= 30) return 'moderate';
+  return 'low';
+}
+
+function scoreColor(s) {
+  if (s >= 70) return '#ff4444';
+  if (s >= 50) return '#ff8800';
+  if (s >= 30) return '#ffcc00';
+  return '#44cc44';
+}
+
+// Stats
+const valid = DATA.results.filter(r => r.confidence !== 'exclude');
+const dist = {
+  high: valid.filter(r => r.risk_score >= 70).length,
+  elevated: valid.filter(r => r.risk_score >= 50 && r.risk_score < 70).length,
+  moderate: valid.filter(r => r.risk_score >= 30 && r.risk_score < 50).length,
+  low: valid.filter(r => r.risk_score < 30).length,
+};
+document.getElementById('stats').innerHTML = `
+  <div class="stat"><div class="n">${valid.length}</div><div class="label">Garages Scored</div></div>
+  <div class="stat high"><div class="n">${dist.high}</div><div class="label">High Risk</div></div>
+  <div class="stat elevated"><div class="n">${dist.elevated}</div><div class="label">Elevated</div></div>
+  <div class="stat moderate"><div class="n">${dist.moderate}</div><div class="label">Moderate</div></div>
+`;
+
+// Map
+const map = L.map('map').setView([40.735, -73.99], 13);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap &copy; CARTO',
+  maxZoom: 19
+}).addTo(map);
+
+// Markers — index by station address + lat for table row lookup
+const markerMap = {};
+DATA.results.forEach(r => {
+  if (!r.lat || !r.lon) return;
+  if (r.confidence === 'exclude') return; // skip excluded stations
+  const color = scoreColor(r.risk_score);
+  const radius = Math.max(6, Math.min(14, r.total_ev_ports));
+
+  const opacity = r.confidence === 'low' ? 0.3 : r.confidence === 'medium' ? 0.55 : 0.7;
+  const circle = L.circleMarker([r.lat, r.lon], {
+    radius: radius,
+    fillColor: color,
+    color: '#000',
+    weight: 1,
+    opacity: opacity + 0.1,
+    fillOpacity: opacity,
+  }).addTo(map);
+
+  const yb = r.yearbuilt > 0 ? r.yearbuilt : 'Unknown';
+  circle.bindPopup(`
+    <div style="font-family: sans-serif; min-width: 220px;">
+      <div style="font-weight:700; font-size:14px; margin-bottom:4px;">${r.station_name}</div>
+      <div style="font-size:12px; color:#666; margin-bottom:8px;">${r.station_address}</div>
+      <div style="font-size:24px; font-weight:700; color:${color}; margin-bottom:4px;">Risk: ${r.risk_score} <span style="font-size:12px; font-weight:400; color:#888;">${r.confidence} confidence</span></div>
+      <table style="font-size:12px; width:100%;">
+        <tr><td>Built</td><td style="text-align:right; font-weight:600">${yb}</td></tr>
+        <tr><td>Floors</td><td style="text-align:right; font-weight:600">${r.numfloors}</td></tr>
+        <tr><td>EV Ports</td><td style="text-align:right; font-weight:600">${r.total_ev_ports} (${r.l2_ports} L2, ${r.dcfast_ports} DC)</td></tr>
+        <tr><td>Sprinkler Permits</td><td style="text-align:right; font-weight:600">${r.sprinkler_permits_count}</td></tr>
+        <tr><td>Fire Violations</td><td style="text-align:right; font-weight:600">${r.fire_violations_count}</td></tr>
+      </table>
+      <div style="margin-top:8px; font-size:11px; color:#888;">
+        ${r.reasons.join('<br>')}
+      </div>
+    </div>
+  `);
+  markerMap[r.lat + ',' + r.lon] = circle;
+});
+
+// --- Resizable panel ---
+const panel = document.getElementById('panel');
+const handle = document.getElementById('resizeHandle');
+let dragging = false;
+let startY, startHeight;
+
+handle.addEventListener('mousedown', (e) => {
+  dragging = true;
+  startY = e.clientY;
+  startHeight = panel.offsetHeight;
+  handle.classList.add('active');
+  document.body.style.cursor = 'ns-resize';
+  e.preventDefault();
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!dragging) return;
+  const delta = startY - e.clientY;
+  const newHeight = Math.max(60, Math.min(window.innerHeight - 150, startHeight + delta));
+  panel.style.height = newHeight + 'px';
+  map.invalidateSize();
+});
+
+document.addEventListener('mouseup', () => {
+  if (dragging) {
+    dragging = false;
+    handle.classList.remove('active');
+    document.body.style.cursor = '';
+    map.invalidateSize();
+  }
+});
+
+// --- Sortable table ---
+let currentSort = { key: null, dir: null };
+let tableData = DATA.results
+  .filter(r => r.confidence !== 'exclude')
+  .map(r => ({
+    ...r,
+    _reasons: r.reasons.join('; '),
+  }));
+
+function renderTable() {
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+  const confStyle = { high: 'color:#44cc44', medium: 'color:#ff8800', low: 'color:#666' };
+  tableData.forEach(r => {
+    const cls = scoreClass(r.risk_score);
+    const yb = r.yearbuilt > 0 ? r.yearbuilt : '????';
+    const conf = r.confidence || 'low';
+    const tr = document.createElement('tr');
+    if (conf === 'low') tr.style.opacity = '0.5';
+    tr.innerHTML = `
+      <td><span class="score ${cls}">${r.risk_score}</span></td>
+      <td style="${confStyle[conf]}; font-weight:600; font-size:11px;">${conf}</td>
+      <td class="col-name" title="${r.station_name}">${r.station_name}</td>
+      <td>${r.station_address}, ${r.borough}</td>
+      <td>${yb}</td>
+      <td>${r.numfloors}</td>
+      <td>${r.total_ev_ports}</td>
+      <td>${r.sprinkler_permits_count}</td>
+      <td>${r.fire_violations_count}</td>
+      <td class="reasons">${r.reasons.map(s => s.replace(/\s*\(\+\d+\)/g, '')).join('; ')}</td>
+    `;
+    tr.style.cursor = 'pointer';
+    tr.addEventListener('click', () => {
+      map.setView([r.lat, r.lon], 17);
+      const marker = markerMap[r.lat + ',' + r.lon];
+      if (marker) marker.openPopup();
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function sortTable(key, type) {
+  if (currentSort.key === key) {
+    currentSort.dir = currentSort.dir === 'desc' ? 'asc' : 'desc';
+  } else {
+    currentSort.key = key;
+    currentSort.dir = type === 'num' ? 'desc' : 'asc';
+  }
+
+  tableData.sort((a, b) => {
+    let va = a[key], vb = b[key];
+    if (type === 'num') {
+      va = Number(va) || 0;
+      vb = Number(vb) || 0;
+      return currentSort.dir === 'desc' ? vb - va : va - vb;
+    } else {
+      va = String(va || '').toLowerCase();
+      vb = String(vb || '').toLowerCase();
+      const cmp = va.localeCompare(vb);
+      return currentSort.dir === 'desc' ? -cmp : cmp;
+    }
+  });
+
+  // Update header indicators
+  document.querySelectorAll('#thead-row th').forEach(th => {
+    th.classList.remove('sorted-asc', 'sorted-desc');
+    const arrow = th.querySelector('.sort-arrow');
+    if (th.dataset.key === key) {
+      th.classList.add(currentSort.dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+      arrow.textContent = currentSort.dir === 'asc' ? '\u25B2' : '\u25BC';
+    } else {
+      arrow.textContent = '';
+    }
+  });
+
+  renderTable();
+}
+
+// Attach click handlers to headers
+document.querySelectorAll('#thead-row th').forEach(th => {
+  th.addEventListener('click', () => sortTable(th.dataset.key, th.dataset.type));
+});
+
+// Initial render (already sorted by score desc)
+sortTable('risk_score', 'num');
+</script>
+</body>
+</html>

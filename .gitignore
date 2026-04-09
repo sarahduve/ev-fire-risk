@@ -1,0 +1,8 @@
+# Large data files (fetched from APIs at build time)
+afdc_data.json
+afdc_data_full.json
+pluto_garages.json
+fire_data.json
+risk_scores.json
+risk_scores.csv
+ev_fire_risk_map.html
