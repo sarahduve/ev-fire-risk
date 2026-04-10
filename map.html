@@ -221,7 +221,7 @@ DATA.results.forEach(r => {
   const evBadge = hasChargers ? `<span style="color:#44cc44; font-weight:600;" title="Level 2 (240V AC, slow) and/or DC Fast (direct current, rapid — higher thermal stress)">${r.total_ev_ports} EV ports</span>` : '<span style="color:#666;">no chargers</span>';
   circle.bindPopup(`
     <div style="font-family: sans-serif; min-width: 220px;">
-      <div style="font-weight:700; font-size:14px; margin-bottom:4px;">${r.address}</div>
+      <div style="font-weight:700; font-size:14px; margin-bottom:4px;"><a href="https://www.google.com/maps/search/${encodeURIComponent(r.address + ', ' + r.borough + ', New York, NY')}" target="_blank" rel="noopener" style="color:#333; text-decoration:none; border-bottom:1px dotted #999;">${r.address}</a></div>
       <div style="font-size:12px; color:#666; margin-bottom:4px;">${r.borough} ${r.charger_names ? '— ' + r.charger_names : ''}</div>
       <div style="font-size:11px; margin-bottom:8px;">${typeBadge} ${evBadge}</div>
       <div style="font-size:24px; font-weight:700; color:${color}; margin-bottom:4px;">Risk: ${r.risk_score}</div>
@@ -314,9 +314,14 @@ function renderTable() {
     `;
     tr.style.cursor = 'pointer';
     tr.addEventListener('click', () => {
-      map.setView([r.lat, r.lon], 17);
       const marker = markerMap[r.lat + ',' + r.lon];
-      if (marker) marker.openPopup();
+      if (marker) {
+        // Open popup first, then pan so the popup is visible
+        marker.openPopup();
+        map.setView([r.lat + 0.001, r.lon], 17, {animate: true});
+      } else {
+        map.setView([r.lat, r.lon], 17);
+      }
     });
     tbody.appendChild(tr);
   });
