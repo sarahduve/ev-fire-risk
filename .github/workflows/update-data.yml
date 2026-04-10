@@ -118,6 +118,9 @@ jobs:
       - name: Score garages (reads from cache)
         run: python3 score_garages.py
 
+      - name: Run tests
+        run: python3 tests.py
+
       - name: Build map
         run: python3 build_map.py
 
