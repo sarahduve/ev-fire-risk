@@ -91,6 +91,13 @@
 <div id="map"></div>
 <div class="panel-container" id="panel" style="height: 30vh;">
   <div class="resize-handle" id="resizeHandle"></div>
+  <div style="padding: 8px 24px 0; flex-shrink:0;">
+    <input type="text" id="addressSearch" placeholder="Search addresses..." style="
+      width: 260px; padding: 5px 10px; background: #1a1a1a; border: 1px solid #333;
+      border-radius: 4px; color: #e0e0e0; font-size: 12px; outline: none;
+      font-family: inherit;
+    " />
+  </div>
   <div class="table-wrap">
     <table>
       <thead>
@@ -295,7 +302,7 @@ DATA.results.forEach(r => {
 function updateMarkers() {
   const zoom = map.getZoom();
   allMarkers.forEach(({marker, record}) => {
-    const visible = passesFilter(record) && passesZoom(record, zoom);
+    const visible = passesFilter(record) && passesSearch(record) && passesZoom(record, zoom);
     if (visible) {
       if (!map.hasLayer(marker)) map.addLayer(marker);
     } else {
@@ -343,10 +350,25 @@ let tableData = DATA.results.map(r => ({
   _reasons: r.reasons.join('; '),
 }));
 
+let searchQuery = '';
+
+document.getElementById('addressSearch').addEventListener('input', (e) => {
+  searchQuery = e.target.value.trim().toUpperCase();
+  updateMarkers();
+  renderTable();
+});
+
+function passesSearch(r) {
+  if (!searchQuery) return true;
+  return (r.address || '').toUpperCase().includes(searchQuery) ||
+         (r.charger_names || '').toUpperCase().includes(searchQuery) ||
+         (r.charger_addresses || '').toUpperCase().includes(searchQuery);
+}
+
 function renderTable() {
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = '';
-  const filtered = tableData.filter(passesFilter);
+  const filtered = tableData.filter(r => passesFilter(r) && passesSearch(r));
   filtered.forEach(r => {
     const cls = scoreClass(r.risk_score);
     const yb = r.yearbuilt > 0 ? r.yearbuilt : '—';
