@@ -93,7 +93,7 @@
   <div class="resize-handle" id="resizeHandle"></div>
   <div style="padding: 8px 24px 0; flex-shrink:0;">
     <input type="text" id="addressSearch" placeholder="Search addresses..." style="
-      width: 260px; padding: 5px 10px; background: #1a1a1a; border: 1px solid #333;
+      width: 280px; padding: 5px 10px; background: #1a1a1a; border: 1px solid #333;
       border-radius: 4px; color: #e0e0e0; font-size: 12px; outline: none;
       font-family: inherit;
     " />
@@ -221,6 +221,22 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
 // Re-evaluate visibility when zoom changes (reveals moderate/low as user zooms in)
 map.on('zoomend', () => updateMarkers());
 
+// Custom panes so high-risk dots always render above the orange/yellow mass.
+// Default markerPane z-index is 600. We layer: low < moderate < elevated < high.
+map.createPane('lowPane').style.zIndex = 601;
+map.createPane('moderatePane').style.zIndex = 602;
+map.createPane('elevatedPane').style.zIndex = 603;
+map.createPane('highPane').style.zIndex = 604;
+map.createPane('chargerPane').style.zIndex = 605;
+
+function riskPane(r) {
+  if (r.has_chargers) return 'chargerPane';
+  if (r.risk_score >= 70) return 'highPane';
+  if (r.risk_score >= 50) return 'elevatedPane';
+  if (r.risk_score >= 30) return 'moderatePane';
+  return 'lowPane';
+}
+
 // Markers — index by station address + lat for table row lookup
 const markerMap = {};
 const allMarkers = []; // {marker, record} pairs
@@ -235,6 +251,7 @@ DATA.results.forEach(r => {
   const opacity = hasChargers ? 0.7 : 0.4;
 
   const circle = L.circleMarker([r.lat, r.lon], {
+    pane: riskPane(r),
     radius: radius,
     fillColor: color,
     color: borderColor,
