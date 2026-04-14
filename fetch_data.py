@@ -59,44 +59,113 @@ def haversine_ft(lat1, lon1, lat2, lon2):
 
 
 # ---------------------------------------------------------------------------
-# 1. Load PLUTO garages from local file
+# 1. Load PLUTO buildings with parking from local bulk file (v1)
+#
+# v1 change: "parking buildings" means EITHER a dedicated G-class garage
+# (G0 multi-story, G1, GU, GW) OR any non-G building with garagearea >= 1000
+# sqft (roughly 3+ cars). This catches apartment / office / institutional
+# buildings with ground-floor or basement garages, which PLUTO classifies by
+# the dominant use upstairs rather than by the garage itself.
+#
+# Pre-v1 scored only G-class plus non-G buildings that happened to be matched
+# to an AFDC charger — which made the non-G subset definitionally "has EV
+# charger" and broke any EV-risk correlation analysis.
 # ---------------------------------------------------------------------------
 
+GARAGEAREA_MIN_SQFT = 1000  # ~3 cars; flag garagearea < 2500 as small
+
+# Building classes to exclude even if they have garagearea. These are not
+# parking garages in any meaningful sense:
+#   T = Transportation (piers, airport terminals, bus terminals, ferry buildings)
+#   Q = Recreation (parks, rec centers — "garagearea" is often vehicle maintenance)
+#   U = Utility (power substations, water treatment)
+EXCLUDE_CLASSES = ("T", "Q", "U")
+
+# Map building class -> broad category for UI filtering / popup labels
+def _derive_garage_type(bldgclass):
+    if not bldgclass:
+        return "other"
+    letter = bldgclass[0]
+    if letter == "G":
+        return "standalone"
+    if letter in ("A", "B", "C", "D", "R"):
+        return "under_residential"
+    if letter in ("K", "O", "S"):
+        return "under_commercial"
+    if letter in ("H", "I", "M"):
+        return "institutional"
+    return "other"
+
+
+def _is_gclass_garage(bldgclass, numfloors):
+    """Keep the v0 G-class criteria: G1/GU/GW always, G0 only if multi-story."""
+    if bldgclass in ("G1", "GU", "GW"):
+        return True
+    if bldgclass == "G0" and numfloors > 1:
+        return True
+    return False
+
+
+def _normalize_pluto_record(r):
+    """Convert a PLUTO record dict to the garage shape used downstream."""
+    lat = r.get("latitude")
+    lon = r.get("longitude")
+    if not lat or not lon:
+        return None
+    try:
+        lat, lon = float(lat), float(lon)
+    except (ValueError, TypeError):
+        return None
+    if lat == 0 or lon == 0:
+        return None
+    bldgclass = r.get("bldgclass", "") or ""
+    numfloors = float(r.get("numfloors") or 0)
+    garagearea = float(r.get("garagearea") or 0)
+    return {
+        "bbl": str(r.get("bbl", "")).split(".")[0].zfill(10),
+        "address": r.get("address", ""),
+        "borough": r.get("borough", ""),
+        "bldgclass": bldgclass,
+        "yearbuilt": int(r.get("yearbuilt") or 0),
+        "numfloors": numfloors,
+        "bldgarea": float(r.get("bldgarea") or 0),
+        "garagearea": garagearea,
+        "lotarea": float(r.get("lotarea") or 0),
+        "zipcode": r.get("zipcode", ""),
+        "lat": lat,
+        "lon": lon,
+        "zonedist1": r.get("zonedist1", ""),
+        "garage_type": _derive_garage_type(bldgclass),
+        "small_garage": 0 < garagearea < 2500,
+    }
+
+
 def load_target_garages():
-    with open(DATA_DIR / "pluto_garages.json") as f:
+    """Load all parking buildings from pluto_all.json: G-class + non-G with garagearea."""
+    with open(DATA_DIR / "pluto_all.json") as f:
         data = json.load(f)
     out = []
+    gclass_count = non_g_count = 0
     for r in data["records"]:
-        bldgclass = r.get("bldgclass", "")
+        bldgclass = r.get("bldgclass", "") or ""
         numfloors = float(r.get("numfloors") or 0)
-        if bldgclass not in ("G1", "GU", "GW"):
-            if not (bldgclass == "G0" and numfloors > 1):
-                continue
-        lat = r.get("latitude")
-        lon = r.get("longitude")
-        if not lat or not lon:
+        garagearea = float(r.get("garagearea") or 0)
+        # Exclude non-parking classes (piers, airports, parks, utilities)
+        if any(bldgclass.startswith(ex) for ex in EXCLUDE_CLASSES):
             continue
-        try:
-            lat, lon = float(lat), float(lon)
-        except (ValueError, TypeError):
+        is_g = _is_gclass_garage(bldgclass, numfloors)
+        has_garage_area = (not bldgclass.startswith("G")) and garagearea >= GARAGEAREA_MIN_SQFT
+        if not (is_g or has_garage_area):
             continue
-        if lat == 0 or lon == 0:
+        norm = _normalize_pluto_record(r)
+        if norm is None:
             continue
-        out.append({
-            "bbl": str(r.get("bbl", "")).split(".")[0].zfill(10),
-            "address": r.get("address", ""),
-            "borough": r.get("borough", ""),
-            "bldgclass": bldgclass,
-            "yearbuilt": int(r.get("yearbuilt") or 0),
-            "numfloors": numfloors,
-            "bldgarea": float(r.get("bldgarea") or 0),
-            "garagearea": float(r.get("garagearea") or 0),
-            "lotarea": float(r.get("lotarea") or 0),
-            "zipcode": r.get("zipcode", ""),
-            "lat": lat,
-            "lon": lon,
-            "zonedist1": r.get("zonedist1", ""),
-        })
+        out.append(norm)
+        if is_g:
+            gclass_count += 1
+        else:
+            non_g_count += 1
+    print(f"  Loaded {len(out)} parking buildings: {gclass_count} G-class + {non_g_count} non-G with garagearea>={GARAGEAREA_MIN_SQFT}")
     return out
 
 
@@ -113,9 +182,14 @@ def load_charger_stations():
         lon = s.get("longitude")
         if not lat or not lon:
             continue
+        # Skip NJ / other-state stations
+        if (s.get("state") or "").upper() != "NY":
+            continue
         out.append({
+            "id": s.get("id"),
             "name": s.get("station_name", ""),
             "address": s.get("street_address", ""),
+            "city": s.get("city", ""),
             "lat": float(lat),
             "lon": float(lon),
             "l2_ports": int(s.get("ev_level2_evse_num") or 0),
@@ -128,73 +202,233 @@ def load_charger_stations():
 
 
 # ---------------------------------------------------------------------------
-# 3. Match chargers to garages using local PLUTO bulk data
+# 3. Match chargers to buildings (v1 cascade)
+#
+# (A) PAD address lookup via NYC Planning Labs Geosearch API
+# (B) ArcGIS MapPLUTO point-in-polygon
+# (C) shapely nearest-polygon-edge within 20 ft
+# (D) unmatched (charger kept as floating map dot, no scoring effect)
+#
+# All results cached in charger_bbl_map.json to avoid re-querying on
+# subsequent runs. Safe to delete the cache if you want to force a refresh.
 # ---------------------------------------------------------------------------
 
-def match_chargers_to_garages(garages, stations):
-    print("  Loading full PLUTO dataset for spatial matching...")
-    with open(DATA_DIR / "pluto_all.json") as f:
-        pluto_all = json.load(f)
+GEOSEARCH_URL = "https://geosearch.planninglabs.nyc/v2/search"
+ARCGIS_MAPPLUTO = "https://a841-dotweb01.nyc.gov/arcgis/rest/services/GAZETTEER/MapPLUTO/MapServer/0/query"
 
-    grid = defaultdict(list)
-    for lot in pluto_all["records"]:
-        try:
-            lat, lon = float(lot["latitude"]), float(lot["longitude"])
-        except (ValueError, TypeError, KeyError):
+
+def _geosearch_bbl(address, city="", focus_lat=None, focus_lon=None, max_drift_ft=1000):
+    """Resolve a street address to a BBL via Planning Labs Geosearch (PAD-backed).
+
+    Iterates features in relevance-rank order and picks the first one whose
+    coordinates are within max_drift_ft of the charger's own lat/lon. This
+    handles two failure modes:
+
+    1. Fuzzy ranked matches: searching "251 Avenue C" can return "251 NEW
+       JERSEY AVENUE" as the top result because of token overlap. Geographic
+       sanity check skips these.
+
+    2. Cross-borough ambiguity: "Avenue C" exists in Manhattan AND Brooklyn.
+       The charger coord tells us which borough. We skip Brooklyn results when
+       the charger is in Manhattan.
+
+    Relevance ranking wins when it produces a feature near the charger;
+    distance-based fallback only kicks in when the top-ranked feature is far
+    from the charger.
+    """
+    if not address:
+        return None
+    text = f"{address} {city}".strip() if city else address
+    params = {"text": text, "size": 5}
+    if focus_lat is not None and focus_lon is not None:
+        params["focus.point.lat"] = focus_lat
+        params["focus.point.lon"] = focus_lon
+    try:
+        url = f"{GEOSEARCH_URL}?{urllib.parse.urlencode(params)}"
+        req = urllib.request.Request(url, headers={"User-Agent": "ev-fire-risk/1.0"})
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read())
+    except Exception:
+        return None
+    features = data.get("features") or []
+    if not features:
+        return None
+
+    def _bbl_of(feature):
+        pad = feature.get("properties", {}).get("addendum", {}).get("pad", {})
+        bbl = pad.get("bbl")
+        return str(bbl).zfill(10) if bbl else None
+
+    # Without a focus point we have nothing to validate against; trust ranking.
+    if focus_lat is None or focus_lon is None:
+        return _bbl_of(features[0])
+
+    # With focus point: first feature within max_drift_ft wins. This preserves
+    # relevance ranking (the intended address is usually #1) while skipping
+    # fuzzy matches that landed on a totally different block.
+    for f in features:
+        coords = f.get("geometry", {}).get("coordinates")
+        if not coords:
             continue
-        cell = (round(lat, 3), round(lon, 3))
-        grid[cell].append(lot)
-    print(f"  Indexed {len(pluto_all['records'])} lots in {len(grid)} grid cells")
+        flon, flat = coords[0], coords[1]
+        if haversine_ft(focus_lat, focus_lon, flat, flon) <= max_drift_ft:
+            return _bbl_of(f)
+    return None
 
-    def find_nearest(lat, lon, max_dist_ft=800):
-        cell = (round(lat, 3), round(lon, 3))
-        candidates = []
-        for dlat in [-0.001, 0, 0.001]:
-            for dlon in [-0.001, 0, 0.001]:
-                candidates.extend(grid.get((round(lat + dlat, 3), round(lon + dlon, 3)), []))
-        best, best_dist = None, float("inf")
-        for lot in candidates:
-            try:
-                d = haversine_ft(lat, lon, float(lot["latitude"]), float(lot["longitude"]))
-            except:
-                continue
-            if d < best_dist:
-                best_dist = d
-                best = lot
-        return best if best and best_dist <= max_dist_ft else None
+
+def _arcgis_bbox_query(lat, lon, buffer_deg=0.0003):
+    """Query MapPLUTO for polygons intersecting a small bbox around the point."""
+    xmin, xmax = lon - buffer_deg, lon + buffer_deg
+    ymin, ymax = lat - buffer_deg, lat + buffer_deg
+    params = {
+        "geometry": json.dumps({
+            "xmin": xmin, "ymin": ymin, "xmax": xmax, "ymax": ymax,
+            "spatialReference": {"wkid": 4326},
+        }),
+        "geometryType": "esriGeometryEnvelope",
+        "inSR": "4326",
+        "spatialRel": "esriSpatialRelIntersects",
+        "outFields": "BBL,Address,BldgClass",
+        "returnGeometry": "true",
+        "outSR": "4326",
+        "f": "json",
+    }
+    try:
+        url = f"{ARCGIS_MAPPLUTO}?{urllib.parse.urlencode(params)}"
+        req = urllib.request.Request(url, headers={"User-Agent": "ev-fire-risk/1.0"})
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            return json.loads(resp.read())
+    except Exception:
+        return {"features": []}
+
+
+def _pip_and_nearest(lat, lon, max_edge_ft=20):
+    """Return (bbl, method) via point-in-polygon then nearest-edge fallback."""
+    from shapely.geometry import Point, shape  # lazy import so non-match users don't pay
+
+    data = _arcgis_bbox_query(lat, lon)
+    features = data.get("features", [])
+    if not features:
+        return None, None
+
+    pt = Point(lon, lat)
+    best_dist_ft, best_bbl = float("inf"), None
+    for f in features:
+        rings = f.get("geometry", {}).get("rings")
+        if not rings:
+            continue
+        poly = shape({"type": "Polygon", "coordinates": rings})
+        bbl = str(int(f["attributes"]["BBL"])).zfill(10)
+        if poly.contains(pt):
+            return bbl, "point_in_polygon"
+        # Approximate deg->ft at NYC latitude; fine for ranking under ~50ft
+        dist_ft = poly.distance(pt) * 280000
+        if dist_ft < best_dist_ft:
+            best_dist_ft, best_bbl = dist_ft, bbl
+    if best_bbl and best_dist_ft <= max_edge_ft:
+        return best_bbl, "nearest_edge"
+    return None, None
+
+
+def _load_pluto_by_bbl_index():
+    """Build an in-memory BBL -> record index from pluto_all.json."""
+    with open(DATA_DIR / "pluto_all.json") as f:
+        data = json.load(f)
+    idx = {}
+    for r in data["records"]:
+        bbl = str(r.get("bbl", "")).split(".")[0].zfill(10)
+        idx[bbl] = r
+    return idx
+
+
+def match_chargers_to_garages(garages, stations):
+    """Cascade: PAD address -> ArcGIS PIP -> nearest-edge -> unmatched.
+
+    Returns (charger_map, extra_garages, unmatched, stats).
+      charger_map: {bbl: [station_dict, ...]}
+      extra_garages: non-garage-set BBLs that a charger matched to (for append to garage list)
+      unmatched: stations with no BBL match (floating map dots)
+      stats: counts per match method
+    """
+    cache_path = DATA_DIR / "charger_bbl_map.json"
+    cache = {}
+    if cache_path.exists():
+        try:
+            with open(cache_path) as f:
+                cache = json.load(f)
+        except Exception:
+            cache = {}
+
+    print("  Building PLUTO BBL index for extra-garage lookup...")
+    pluto_by_bbl = _load_pluto_by_bbl_index()
 
     garage_bbls = {g["bbl"] for g in garages}
     charger_map = {}
     extra_garages = []
     seen_extra_bbls = set()
+    unmatched = []
+    stats = {"pad_address": 0, "point_in_polygon": 0, "nearest_edge": 0,
+             "unmatched": 0, "cached": 0}
 
-    for s in stations:
+    for i, s in enumerate(stations):
         if s.get("facility_type") == "FLEET_STATION":
             continue
-        lot = find_nearest(s["lat"], s["lon"])
-        if not lot:
-            continue
-        bbl = str(lot.get("bbl", "")).split(".")[0].zfill(10)
-        charger_map.setdefault(bbl, []).append(s)
-        if bbl not in garage_bbls and bbl not in seen_extra_bbls:
-            extra_garages.append({
-                "bbl": bbl,
-                "address": lot.get("address", ""),
-                "borough": lot.get("borough", ""),
-                "bldgclass": lot.get("bldgclass", ""),
-                "yearbuilt": int(lot.get("yearbuilt") or 0),
-                "numfloors": float(lot.get("numfloors") or 0),
-                "bldgarea": float(lot.get("bldgarea") or 0),
-                "garagearea": float(lot.get("garagearea") or 0),
-                "lotarea": float(lot.get("lotarea") or 0),
-                "zipcode": lot.get("zipcode", ""),
-                "lat": float(lot["latitude"]),
-                "lon": float(lot["longitude"]),
-                "zonedist1": lot.get("zonedist1", ""),
-            })
-            seen_extra_bbls.add(bbl)
 
-    return charger_map, extra_garages
+        key = str(s.get("id") or f"{s['lat']},{s['lon']}")
+        cached = cache.get(key)
+        bbl = None
+        method = None
+
+        if cached:
+            bbl = cached.get("bbl")
+            method = cached.get("method")
+            stats["cached"] += 1
+        else:
+            # Step A: PAD address lookup biased by charger coords
+            bbl = _geosearch_bbl(
+                s.get("address", ""), s.get("city", ""),
+                focus_lat=s["lat"], focus_lon=s["lon"],
+            )
+            if bbl:
+                method = "pad_address"
+            else:
+                # Step B/C: spatial fallback
+                bbl, method = _pip_and_nearest(s["lat"], s["lon"], max_edge_ft=20)
+            cache[key] = {"bbl": bbl, "method": method,
+                          "address": s.get("address"), "name": s.get("name")}
+            # Throttle external APIs
+            time.sleep(0.05)
+
+        if method and method in stats:
+            stats[method] += 1
+        elif method is None and bbl is None:
+            stats["unmatched"] += 1
+
+        if not bbl:
+            unmatched.append(s)
+            continue
+
+        charger_map.setdefault(bbl, []).append(s)
+
+        # If BBL isn't in our pre-expanded garage set, add it as an extra
+        # (this typically shouldn't happen much in v1 since we expanded to
+        # garagearea>=1000, but catches edge cases like chargers in buildings
+        # with garagearea below threshold or genuinely unusual classifications)
+        if bbl not in garage_bbls and bbl not in seen_extra_bbls:
+            r = pluto_by_bbl.get(bbl)
+            if r:
+                norm = _normalize_pluto_record(r)
+                if norm:
+                    extra_garages.append(norm)
+                    seen_extra_bbls.add(bbl)
+
+        if (i + 1) % 25 == 0:
+            print(f"    matched {i+1}/{len(stations)}...")
+
+    with open(cache_path, "w") as f:
+        json.dump(cache, f, indent=2)
+
+    return charger_map, extra_garages, unmatched, stats
 
 
 # ---------------------------------------------------------------------------
@@ -322,7 +556,7 @@ def main():
     print("FETCH DATA — downloading raw data from NYC Open Data + DOB")
     print("=" * 60)
 
-    print("\nLoading target garages (G1/GU/GW + multi-story G0)...")
+    print("\nLoading target garages (G-class + non-G with garagearea>=1000)...")
     garages = load_target_garages()
     print(f"  {len(garages)} garages")
 
@@ -330,10 +564,12 @@ def main():
     stations = load_charger_stations()
     print(f"  {len(stations)} stations")
 
-    print("\nMatching chargers to garages via PLUTO lookup...")
-    charger_map, extra_garages = match_chargers_to_garages(garages, stations)
+    print("\nMatching chargers via PAD -> PIP -> nearest-edge cascade...")
+    charger_map, extra_garages, unmatched, match_stats = match_chargers_to_garages(garages, stations)
+    print(f"  match methods: {match_stats}")
     print(f"  {len(charger_map)} buildings have chargers")
-    print(f"  {len(extra_garages)} additional non-garage buildings with chargers")
+    print(f"  {len(extra_garages)} extra (matched to BBLs not in pre-expanded set)")
+    print(f"  {len(unmatched)} chargers unmatched (will appear as floating dots)")
 
     all_garages = garages + extra_garages
     print(f"  Total buildings: {len(all_garages)}")
@@ -352,6 +588,8 @@ def main():
         "fetched": time.strftime("%Y-%m-%d %H:%M:%S"),
         "garages": all_garages,
         "charger_map": charger_map,
+        "unmatched_chargers": unmatched,
+        "match_stats": match_stats,
         "sprinkler_map": sprinkler_map,
         "violation_map": violation_map,
     }

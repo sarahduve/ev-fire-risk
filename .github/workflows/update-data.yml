@@ -21,6 +21,9 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
       - name: Download full PLUTO dataset
         run: |
           python3 -c "

@@ -77,8 +77,8 @@
 </head>
 <body>
 <div class="header">
-  <h1>NYC EV Fire Risk — All Parking Garages</h1>
-  <p>Garages scored by structural age, fire suppression status, DOB violations, and EV charger presence. <a href="methodology.html" target="_blank" style="color:#6cacff;">Methodology &amp; sources</a> <span id="last-updated" style="float:right; color:#555; font-size:12px;"></span></p>
+  <h1>NYC EV Fire Risk — All Parking Garages <span style="color:#888; font-size:13px; font-weight:400;">v1</span></h1>
+  <p>Every NYC building with parking space scored by structural age, fire suppression status, DOB violations, and EV charger presence. <a href="methodology.html" target="_blank" style="color:#6cacff;">Methodology &amp; sources</a> <span id="last-updated" style="float:right; color:#555; font-size:12px;"></span></p>
 </div>
 <div class="stats" id="stats"></div>
 <div class="legend">
@@ -138,8 +138,10 @@ function scoreColor(s) {
 // Stats + filter state
 const all = DATA.results;
 let activeFilter = null; // null = show all, or 'high', 'elevated', 'moderate', 'chargers', 'underground'
+let activeBldgFilter = null; // null = all, or 'standalone', 'under_residential', 'under_commercial', 'institutional'
 
 function passesFilter(r) {
+  if (activeBldgFilter && r.garage_type !== activeBldgFilter) return false;
   if (!activeFilter) return true;
   if (activeFilter === 'high') return r.risk_score >= 70;
   if (activeFilter === 'elevated') return r.risk_score >= 50 && r.risk_score < 70;
@@ -147,6 +149,23 @@ function passesFilter(r) {
   if (activeFilter === 'chargers') return r.has_chargers;
   if (activeFilter === 'underground') return r.osm_parking_type === 'underground';
   return true;
+}
+
+// Zoom-level visibility: at broad zoom, only show high/elevated. Reveal more
+// as user zooms in. Prevents 7K+ dots from overwhelming the city view while
+// preserving full detail at neighborhood scale.
+//
+// zoom < 13  -> high + elevated only
+// zoom 13-14 -> + moderate
+// zoom >= 15 -> + low
+// "With EV chargers" filter overrides zoom (always show chargers when that
+// filter is active).
+function passesZoom(r, zoom) {
+  if (activeFilter === 'chargers') return r.has_chargers; // always show
+  if (r.risk_score >= 50) return true;  // high + elevated always
+  if (zoom >= 13 && r.risk_score >= 30) return true;  // + moderate at neighborhood zoom
+  if (zoom >= 15) return true;  // + low at block zoom
+  return false;
 }
 
 function toggleFilter(f) {
@@ -192,6 +211,9 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
   maxZoom: 19
 }).addTo(map);
 
+// Re-evaluate visibility when zoom changes (reveals moderate/low as user zooms in)
+map.on('zoomend', () => updateMarkers());
+
 // Markers — index by station address + lat for table row lookup
 const markerMap = {};
 const allMarkers = []; // {marker, record} pairs
@@ -219,11 +241,42 @@ DATA.results.forEach(r => {
   const typeBadge = isUnderground ? '<span style="color:#00bcd4; font-weight:600;">UNDERGROUND</span>' :
                     r.osm_parking_type === 'multi-storey' ? '<span style="color:#888;">multi-storey</span>' : '';
   const evBadge = hasChargers ? `<span style="color:#44cc44; font-weight:600;" title="Level 2 (240V AC, slow) and/or DC Fast (direct current, rapid — higher thermal stress)">${r.total_ev_ports} EV ports</span>` : '<span style="color:#666;">no chargers</span>';
+  // Building-type label for popup (decoded from garage_type set in score_garages.py)
+  const bldgTypeLabels = {
+    'standalone': 'Parking garage',
+    'under_residential': 'Residential building with parking',
+    'under_commercial': 'Office / retail with parking',
+    'institutional': 'Institutional building with parking',
+    'other': 'Building with parking',
+  };
+  const bldgTypeLabel = bldgTypeLabels[r.garage_type] || bldgTypeLabels.other;
+  const smallFlag = r.small_garage ? ' <span style="color:#888; font-size:10px;">(small)</span>' : '';
+  // If charger's own address differs from PLUTO address, show both as separately
+  // clickable — PLUTO address is the building we're scoring, charger address is
+  // where the actual pumps are. Don't lie about either.
+  const plutoAddr = (r.address || '').toUpperCase();
+  const chargerAddr = (r.charger_addresses || '').trim();
+  const showSeparateChargerAddr = hasChargers && chargerAddr &&
+      chargerAddr.toUpperCase().replace(/\./g, '') !== plutoAddr.replace(/\./g, '');
+  // Hybrid Google Maps URL: place format with both address (so the side panel
+  // populates with Street View / business info when Google recognizes it) AND
+  // a coordinate anchor (so when Google doesn't know the exact address, it
+  // still drops the pin at the right spot rather than re-geocoding to a
+  // nearby address it does know — e.g. "152 Ashland Place" resolving to
+  // "139 Ashland Pl" across the street).
+  const boroughFull = {MN:'Manhattan', BX:'Bronx', BK:'Brooklyn',
+                       QN:'Queens', SI:'Staten Island'}[r.borough] || r.borough;
+  const placeQuery = `${r.address}, ${boroughFull}, NY`;
+  const mapUrl = `https://www.google.com/maps/place/${encodeURIComponent(placeQuery)}/@${r.lat},${r.lon},18z`;
+  const chargerAddrLine = showSeparateChargerAddr
+    ? `<div style="font-size:11px; color:#555; margin-bottom:4px;">⚡ Chargers at <a href="${mapUrl}" target="_blank" rel="noopener" style="color:#333; text-decoration:none; border-bottom:1px dotted #999;">${chargerAddr}</a></div>`
+    : '';
   circle.bindPopup(`
     <div style="font-family: sans-serif; min-width: 220px;">
-      <div style="font-weight:700; font-size:14px; margin-bottom:4px;"><a href="https://www.google.com/maps/search/${encodeURIComponent(r.address + ', ' + r.borough + ', New York, NY')}" target="_blank" rel="noopener" style="color:#333; text-decoration:none; border-bottom:1px dotted #999;">${r.address}</a></div>
-      <div style="font-size:12px; color:#666; margin-bottom:4px;">${r.borough} ${r.charger_names ? '— ' + r.charger_names : ''}</div>
-      <div style="font-size:11px; margin-bottom:8px;">${typeBadge} ${evBadge}</div>
+      <div style="font-weight:700; font-size:14px; margin-bottom:2px;"><a href="${mapUrl}" target="_blank" rel="noopener" style="color:#333; text-decoration:none; border-bottom:1px dotted #999;">${r.address}</a></div>
+      <div style="font-size:11px; color:#888; margin-bottom:4px;">${r.borough} · ${bldgTypeLabel} (${r.bldgclass})${smallFlag}</div>
+      ${chargerAddrLine}
+      <div style="font-size:11px; margin-bottom:8px;">${typeBadge} ${evBadge}${r.charger_names ? `<div style="color:#666; font-size:10px; margin-top:3px;">${r.charger_names}</div>` : ''}</div>
       <div style="font-size:24px; font-weight:700; color:${color}; margin-bottom:4px;">Risk: ${r.risk_score}</div>
       <table style="font-size:12px; width:100%;">
         <tr><td>Built</td><td style="text-align:right; font-weight:600">${yb}</td></tr>
@@ -240,8 +293,10 @@ DATA.results.forEach(r => {
 });
 
 function updateMarkers() {
+  const zoom = map.getZoom();
   allMarkers.forEach(({marker, record}) => {
-    if (passesFilter(record)) {
+    const visible = passesFilter(record) && passesZoom(record, zoom);
+    if (visible) {
       if (!map.hasLayer(marker)) map.addLayer(marker);
     } else {
       if (map.hasLayer(marker)) map.removeLayer(marker);
@@ -294,7 +349,7 @@ function renderTable() {
   const filtered = tableData.filter(passesFilter);
   filtered.forEach(r => {
     const cls = scoreClass(r.risk_score);
-    const yb = r.yearbuilt > 0 ? r.yearbuilt : '????';
+    const yb = r.yearbuilt > 0 ? r.yearbuilt : '—';
     const evLabel = r.has_chargers ? `<span style="color:#fff; font-weight:600">${r.total_ev_ports}</span>` : '<span style="color:#444">-</span>';
     const typeLabel = r.osm_parking_type === 'underground' ? '<span style="color:#00bcd4">underground</span>' :
                       r.osm_parking_type === 'multi-storey' ? 'multi-storey' : '';

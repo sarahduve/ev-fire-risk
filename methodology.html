@@ -48,9 +48,10 @@
   <nav>
     <div class="toc-label">Contents</div>
     <a href="#overview">Overview</a>
+    <a href="#why-garagearea" class="sub">Why garagearea, not just G-class</a>
     <a href="#scoring" class="sub">Scoring Formula</a>
     <a href="#data-sources">Data Sources</a>
-    <a href="#spatial-matching">Spatial Matching</a>
+    <a href="#spatial-matching">Charger Matching</a>
     <a href="#included">What's Included</a>
     <a href="#excluded">What's Excluded</a>
     <a href="#limitations">Known Limitations</a>
@@ -67,14 +68,30 @@
 
 <a href="index.html" class="back">&larr; Back to map</a>
 
-<h1>Methodology</h1>
-<p class="subtitle">How we score NYC parking garages for EV battery fire risk</p>
+<h1>Methodology <span style="color:#888; font-size:15px; font-weight:400; letter-spacing:0.5px;">v1</span></h1>
+<p class="subtitle">How we score NYC parking buildings for EV battery fire risk</p>
 
 <h2 id="overview">Overview</h2>
 
-<p>This tool scores 1,907 parking garages and buildings with EV chargers across New York City on a 0-100 risk scale. The score reflects how vulnerable each location is to an EV battery fire event in an enclosed structure — specifically, the factors that would determine whether a single-vehicle thermal runaway cascades into a multi-vehicle fire like the <a href="https://fortune.com/asia/2024/08/07/exploding-mercedes-benz-ev-parking-garage-bans-south-korea/">August 2024 Incheon, South Korea incident</a> (140 vehicles destroyed, 23 hospitalized, 8 hours to extinguish).</p>
+<p>This tool scores approximately 6,200 parking buildings across New York City on a 0-100 risk scale. The score reflects how vulnerable each location is to an EV battery fire event in an enclosed structure — specifically, the factors that would determine whether a single-vehicle thermal runaway cascades into a multi-vehicle fire like the <a href="https://fortune.com/asia/2024/08/07/exploding-mercedes-benz-ev-parking-garage-bans-south-korea/">August 2024 Incheon, South Korea incident</a> (140 vehicles destroyed, 23 hospitalized, 8 hours to extinguish).</p>
+
+<p>"Parking buildings" is broader than "parking garages" as most people think about them. Only about 1,600 of the scored buildings are standalone parking structures (PLUTO class G). The other ~4,700 are residential, office, or institutional buildings with <strong>dedicated parking space inside them</strong> — the kind of ground-floor or basement garage that sits under apartments, under an office tower, or under a hospital. Most NYC parking exists this way. See <a href="#why-garagearea">Why garagearea, not just G-class</a> below.</p>
 
 <p>The score does <strong>not</strong> predict the probability of an EV fire occurring. EVs catch fire <a href="https://theicct.org/clearing-the-air-evs-could-bring-lower-fire-risk-oct24/">20-60x less frequently</a> than gasoline vehicles (~25 per 100,000 vs ~1,530 per 100,000). The score instead measures <strong>how bad it would be if one did occur</strong> at this specific location.</p>
+
+<h2 id="why-garagearea">Why garagearea, not just G-class</h2>
+
+<p>Earlier pre-v1 versions of this map scored only PLUTO building class G (dedicated garages) plus any non-G building that happened to match an EV charger location. That second category definitionally meant "has EV charger," which made the map biased — any "buildings with parking" number we reported was inflated by EV presence rather than actual parking capacity. It also meant any apartment building with a real parking garage but no EV chargers was invisible to the tool.</p>
+
+<p>v1 replaces that with a more honest selection: a building is "a parking building" if it is either G-class OR has <strong>garagearea &ge; 1,000 sqft</strong> (roughly 3 or more cars) in PLUTO. PLUTO classifies buildings by their dominant use, so most NYC parking ends up inside buildings classified as something else:</p>
+
+<ul>
+<li>A luxury apartment tower with a 10,000 sqft basement parking garage is class D8 (elevator apartment), not G. The 377 E 33rd NYU-owned building — where a real parking garage sits under 23 floors of apartments — is one example.</li>
+<li>A condo complex with 200 parking spots is class R (condo), not G. Stuyvesant Town's garages are registered under large superblock BBLs whose primary use is residential.</li>
+<li>A hospital with a parking level is class I (institutional), not G. NYU Langone's Tisch Hospital garage is one example.</li>
+</ul>
+
+<p>Adding <code>garagearea &ge; 1000</code> to the selection adds about 4,500 buildings the previous version missed, most of them in the exact "people sleeping above parking" configuration that makes battery fires dangerous at night. The <a href="#ebikes">Reims, June 2025 e-scooter fire</a> — 4 dead in a social housing tower — happened in a building of this type.</p>
 
 <h2 id="scoring">Scoring Formula</h2>
 
@@ -114,7 +131,7 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 
 <p class="note"><strong>Can sprinklers stop an EV fire?</strong> No. Sprinklers cannot extinguish a lithium-ion thermal runaway — the fire happens inside a sealed battery pack. But <a href="https://link.springer.com/article/10.1007/s10694-024-01694-7">full-scale testing</a> (Fire Technology, 2024) found that sprinklers at adequate density <strong>prevent fire spread to adjacent vehicles</strong>, which is the difference between a single-car event and a 140-car catastrophe.</p>
 
-<p class="note"><strong>Can we get actual system specifications?</strong> Sprinkler engineering drawings filed with DOB are public records, obtainable through <a href="https://a810-bisweb.nyc.gov">DOB BIS Options</a> record requests (~$8/page) or <a href="https://a860-openrecords.nyc.gov/">FOIL requests</a>. These would show the actual GPM/SF a system was designed for. This is not scalable to 1,907 garages but is a viable path for investigating individual high-scoring locations.</p>
+<p class="note"><strong>Can we get actual system specifications?</strong> Sprinkler engineering drawings filed with DOB are public records, obtainable through <a href="https://a810-bisweb.nyc.gov">DOB BIS Options</a> record requests (~$8/page) or <a href="https://a860-openrecords.nyc.gov/">FOIL requests</a>. These would show the actual GPM/SF a system was designed for. This is not scalable to thousands of buildings but is a viable path for investigating individual high-scoring locations.</p>
 
 <h3>3. Multi-Story Structure (0-10 points)</h3>
 
@@ -155,12 +172,25 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 <h2 id="data-sources">Data Sources</h2>
 
 <h3>NYC PLUTO (Primary Land Use Tax Lot Output)</h3>
-<p>The foundation of the analysis. PLUTO contains building-level data for all ~870,000 NYC properties including building class, year built, number of floors, building area, and basement type.</p>
+<p>The foundation of the analysis. PLUTO contains building-level data for all ~870,000 NYC properties including building class, year built, number of floors, building area, basement type, and — critical to v1 — <strong>garagearea</strong> (sqft of dedicated parking space within a building).</p>
 <ul>
-<li><strong>Garage identification:</strong> Building classes G1 (commercial garage), GU/GW (condo garage), and multi-story G0 (residential garage with 2+ floors)</li>
+<li><strong>v1 building selection:</strong> G-class garages (G1/GU/GW and multi-story G0) OR non-G buildings with <code>garagearea &ge; 1,000</code>. See <a href="#why-garagearea">Why garagearea, not just G-class</a>.</li>
 <li><strong>Underground identification:</strong> PLUTO <code>bsmtcode</code> field (1=full basement, 2=partial basement) combined with OpenStreetMap <code>parking=underground</code> tags</li>
 <li><strong>Dataset:</strong> <a href="https://data.cityofnewyork.us/City-Government/Primary-Land-Use-Tax-Lot-Output-PLUTO-/64uk-42ks">NYC Open Data 64uk-42ks</a></li>
-<li><strong>Full dataset downloaded in bulk</strong> (857,161 records) for spatial matching — no per-record API calls</li>
+<li><strong>Full dataset downloaded in bulk</strong> (857,161 records) for local filtering — no per-record API calls (Socrata silently rate-limits individual queries)</li>
+</ul>
+
+<h3>NYC Planning Labs Geosearch (PAD-backed)</h3>
+<p>Used in v1 for address-to-BBL resolution of AFDC chargers. Geosearch is a free, keyless API maintained by the NYC Department of City Planning's Planning Labs team, wrapping the <strong>Property Address Directory (PAD)</strong> — the authoritative NYC dataset for mapping every address, including aliases, to its BBL.</p>
+<ul>
+<li><strong>Why this matters:</strong> A single tax lot can have multiple street addresses on different frontages. PLUTO exposes only the primary address; PAD exposes all of them. The NYU Langone building at 347 E 33 St (PLUTO primary address) also has "377 E 33 St" as an alias — which is the address AFDC uses for the charger. PAD knows 377 → BBL 1009390028. PLUTO alone does not.</li>
+<li><strong>Endpoint:</strong> <a href="https://geosearch.planninglabs.nyc/">geosearch.planninglabs.nyc</a></li>
+</ul>
+
+<h3>NYC ArcGIS MapPLUTO</h3>
+<p>Used in v1 as fallback for chargers whose address doesn't resolve via Geosearch. Exposes tax lot polygons (not just centroids) so we can do true point-in-polygon queries.</p>
+<ul>
+<li><strong>Endpoint:</strong> <a href="https://a841-dotweb01.nyc.gov/arcgis/rest/services/GAZETTEER/MapPLUTO/MapServer/0">ArcGIS REST Services / GAZETTEER / MapPLUTO</a></li>
 </ul>
 
 <h3>DOB Permit Issuance</h3>
@@ -191,11 +221,11 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 <ul>
 <li><strong>Queried using:</strong> <code>/v1/nearest.json</code> endpoint with 15 center points across NYC at 8-mile radius each, to ensure full geographic coverage</li>
 <li><strong>Filtered to:</strong> <code>facility_type</code> of PAY_GARAGE or PARKING_GARAGE only</li>
-<li><strong>Result:</strong> 271 unique garage charger stations after deduplication by station ID</li>
+<li><strong>Result:</strong> approximately 264 unique NYC garage charger stations after deduplication by station ID and filtering out-of-state entries</li>
 <li><strong>API:</strong> <a href="https://developer.nrel.gov/docs/transportation/alt-fuel-stations-v1/">NREL AFDC API v1</a> (free API key required)</li>
 </ul>
 
-<p class="note"><strong>Limitation:</strong> AFDC is voluntary — operators self-register. 271 stations is a lower bound. Some garages with chargers may not be in the federal database. We checked PlugShare and Recharged.com for additional sources but neither offers bulk data access.</p>
+<p class="note"><strong>Limitation:</strong> AFDC is voluntary — operators self-register. Our count is a lower bound. Some garages with chargers may not be in the federal database. We checked PlugShare and Recharged.com for additional sources but neither offers bulk data access.</p>
 
 <h3>OpenStreetMap</h3>
 <p>Community-edited map data. Queried via <a href="https://overpass-api.de/">Overpass API</a> for parking facilities tagged as <code>parking=underground</code> or <code>parking=multi-storey</code> within the NYC bounding box.</p>
@@ -204,59 +234,96 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 <li><strong>Coverage is incomplete</strong> — only ~52% of NYC parking entries have a type tag. We supplement with PLUTO basement codes.</li>
 </ul>
 
-<h2 id="spatial-matching">Spatial Matching</h2>
+<h2 id="spatial-matching">Charger Matching</h2>
 
-<p>Connecting charger stations to buildings requires spatial matching because the datasets don't share a common identifier.</p>
+<p>Connecting AFDC charger stations to specific NYC tax lots (BBLs) is the hardest data problem in this project. AFDC gives us the charger's coordinates plus its street address, but doesn't identify the building it's in. PLUTO tells us about buildings but not chargers. We need a reliable method to link them.</p>
 
-<h3>Approach</h3>
-<ol>
-<li><strong>Download full PLUTO</strong> (857,161 records) and build a spatial grid index with ~300ft cell size</li>
-<li><strong>For each AFDC charger station</strong>, find the nearest PLUTO lot within 800ft using the grid index (9 neighboring cells searched)</li>
-<li><strong>Aggregate charger data by BBL</strong> — multiple stations at the same lot are combined</li>
-<li><strong>Non-garage buildings with chargers</strong> (residential, office, etc.) are added to the scoring set alongside G-class garages</li>
-</ol>
+<p>Pre-v1 used a simple nearest-centroid approach: for each charger, find the PLUTO tax lot whose centroid is closest and call that the charger's building. This failed for two common cases:</p>
 
-<p>The grid index makes this O(n) instead of O(n&times;m), completing 271 station matches against 857K lots in ~0.1 seconds.</p>
+<ul>
+<li><strong>Superblocks.</strong> PLUTO centroids for large campuses (Stuyvesant Town, NYU Langone) can sit hundreds of feet from the charger's actual entrance. The "nearest centroid" to a Stuy Town charger was often a random apartment building across the sidewalk rather than the Stuy Town BBL itself.</li>
+<li><strong>Curb-placed AFDC coordinates.</strong> Many AFDC markers are at the curb, in the street ROW. The nearest PLUTO lot to a curb point can be the building across the street rather than the one hosting the garage entrance.</li>
+</ul>
 
-<h3>Why 800ft radius?</h3>
-<p>PLUTO lot coordinates represent the tax lot centroid, which can be hundreds of feet from the street address where a charger is listed — especially for large blocks. 800ft captures most same-block matches while avoiding cross-block false positives. In Manhattan, a typical block is ~250ft &times; 900ft.</p>
+<p>v1 replaces that with a cascade of matching methods, in priority order:</p>
+
+<h3>Step A: Address resolution via NYC PAD (97% of matches)</h3>
+
+<p>We query <a href="https://geosearch.planninglabs.nyc/">NYC Planning Labs Geosearch</a> with the charger's street address from AFDC. Geosearch is backed by the NYC <strong>Property Address Directory (PAD)</strong>, which maps every address-and-alias in the city to its BBL. PAD handles the common NYC quirk that one BBL can have multiple addresses on different street frontages — which PLUTO doesn't expose.</p>
+
+<p>Example: an AFDC charger at "377 E 33rd St" (the NYU Langone Garage H). PAD knows that address is an alias for BBL 1009390028, which is the luxury apartment tower whose primary PLUTO address is 347 E 33 Street. PLUTO alone has no record of "377 E 33rd" — PAD does.</p>
+
+<p>We bias the query with the charger's own lat/lon (<code>focus.point</code>) and skip results whose returned coordinates are more than 1,000 ft from the charger, so fuzzy text matches like "251 New Jersey Avenue" don't get returned when we asked for "251 Avenue C."</p>
+
+<h3>Step B: Point-in-polygon via ArcGIS MapPLUTO (1-2% of matches)</h3>
+
+<p>When the AFDC address doesn't resolve cleanly (typographical errors, stale address strings, facility renamings), we fall back to geometry. The <a href="https://a841-dotweb01.nyc.gov/arcgis/rest/services/GAZETTEER/MapPLUTO/MapServer/0">NYC ArcGIS MapPLUTO REST endpoint</a> exposes every tax lot's actual polygon. We query with the charger's lat/lon and ask which polygon contains it. If the point is inside a polygon, we have an unambiguous match.</p>
+
+<h3>Step C: Nearest-polygon-edge within 20 ft (1-2% of matches)</h3>
+
+<p>Points that are outside all polygons (curbside AFDC markers in the street) still usually have a building within a sidewalk's width. We use <a href="https://shapely.readthedocs.io/">shapely</a> to compute the distance from the charger to each nearby polygon edge and take the closest within 20 ft (approximately one sidewalk). More than 20 ft means the charger isn't adjacent to any building — usually a data error.</p>
+
+<h3>Step D: Unmatched (floating charger)</h3>
+
+<p>If all three steps fail, the charger is shown on the map as a "floating" dot with its AFDC street address label but no building association and no scoring effect. This is rare (typically 1 out of 264 chargers) and almost always due to AFDC data errors — e.g., a street address and a latitude/longitude that disagree with each other.</p>
+
+<p>Match results are cached in <code>charger_bbl_map.json</code> between runs so we don't re-query external APIs unless the cache is cleared.</p>
 
 <h2 id="included">What's Included</h2>
 
+<p>Every NYC tax lot where either (a) the PLUTO building class starts with G (dedicated parking/automotive use) or (b) PLUTO reports <code>garagearea &ge; 1,000 sqft</code> regardless of class. Approximate v1 counts:</p>
+
 <table>
-<tr><th>Category</th><th>Count</th><th>Source</th></tr>
-<tr><td>G1 commercial garages</td><td>1,357</td><td>PLUTO building class</td></tr>
-<tr><td>GU/GW condo garages</td><td>290</td><td>PLUTO building class</td></tr>
-<tr><td>Multi-story G0 residential garages</td><td>23</td><td>PLUTO building class + numfloors &gt; 1</td></tr>
-<tr><td>Non-garage buildings with EV chargers</td><td>241</td><td>AFDC + PLUTO spatial match</td></tr>
-<tr><td><strong>Total scored</strong></td><td><strong>1,907</strong></td><td></td></tr>
+<tr><th>Category</th><th>Approx. count</th><th>Source</th></tr>
+<tr><td>Standalone parking garages (G1/GU/GW)</td><td>1,650</td><td>PLUTO building class</td></tr>
+<tr><td>Multi-story G0 residential garages</td><td>&lt;50</td><td>PLUTO class + numfloors &gt; 1</td></tr>
+<tr><td>Under-residential (apartments, condos)</td><td>~3,000</td><td>PLUTO class D/C/R/A/B + garagearea &ge; 1,000</td></tr>
+<tr><td>Under-commercial (offices, retail, stores w/ apts)</td><td>~780</td><td>PLUTO class O/K/S + garagearea &ge; 1,000</td></tr>
+<tr><td>Institutional (hospitals, religious, schools)</td><td>~145</td><td>PLUTO class H/I/M + garagearea &ge; 1,000</td></tr>
+<tr><td>Other (warehouses, utilities, mixed)</td><td>~630</td><td>Other PLUTO classes + garagearea &ge; 1,000</td></tr>
+<tr><td><strong>Total scored</strong></td><td><strong>~6,300</strong></td><td></td></tr>
 </table>
+
+<p>Buildings with <code>garagearea</code> between 1,000 and 2,500 sqft (roughly 3-7 cars) are tagged with a <code>small_garage</code> flag. The scoring formula applies uniformly to them, but the flag exists so filtering and interpretation can distinguish small ground-floor parking from full multi-car garage operations.</p>
 
 <h2 id="excluded">What's Excluded</h2>
 
 <ul>
-<li><strong>Single-story residential garages (G0)</strong> — 2,416 structures, almost all under 1,000 sqft. These are private garages under houses, not public parking.</li>
-<li><strong>Surface parking lots (G6, G7)</strong> — 5,393 lots. Open-air lots have unlimited ventilation and no enclosure fire risk.</li>
-<li><strong>Gas stations and auto repair (G2-G5, G8-G9)</strong> — not parking garages.</li>
-<li><strong>City fleet stations</strong> — EV chargers at government facilities (DEP, DOT, DOC, etc.) were excluded after Street View verification showed most are in outdoor yards, surface lots, or driveways rather than enclosed structures.</li>
+<li><strong>Single-story G0 residential garages</strong> — approximately 2,400 structures, almost all under 1,000 sqft. Private driveway-size garages under houses, not public parking.</li>
+<li><strong>Surface parking lots (G6, G7)</strong> — open-air lots have unlimited ventilation and no enclosure fire risk.</li>
+<li><strong>Gas stations and auto repair (G2-G5, G8-G9)</strong> — not parking buildings.</li>
+<li><strong>Single-family homes with attached driveways</strong> — PLUTO's <code>garagearea</code> field appears to exclude residential attached garages (class A), so the 1,000 sqft threshold naturally excludes them even without explicit filtering.</li>
+<li><strong>Transportation buildings (class T)</strong> — piers, airport terminals, bus terminals, ferry buildings. PLUTO records large <code>garagearea</code> for these (Hudson River piers historically had vehicle/warehouse space) but they are not parking garages in any meaningful sense for this analysis. Managed by Port Authority, Hudson River Park Trust, etc. with their own fire safety programs.</li>
+<li><strong>Recreation and utility buildings (class Q, U)</strong> — parks department facilities, recreation centers, power substations. <code>garagearea</code> in these is typically vehicle maintenance space, not public/commercial parking.</li>
+<li><strong>City fleet stations</strong> — EV chargers at government facilities (DEP, DOT, DOC, etc.) that are in outdoor yards or surface lots rather than enclosed structures.</li>
+<li><strong>Out-of-state AFDC stations</strong> — a handful of Jersey City / Englewood entries that matched NYC bbox queries but aren't in NYC.</li>
 </ul>
 
 <h2 id="limitations">Known Limitations</h2>
 
+<h3>Scoring formula was calibrated for parking-dominant buildings</h3>
+<p>The formula — age + sprinkler maintenance + floors + violations + charger presence — was originally designed for standalone G-class parking garages. In v1 we apply it uniformly to non-G buildings (apartments, offices, institutional) with embedded parking. The <em>factors</em> still matter, but the <strong>"no sprinkler permit on record" penalty (+25) is particularly prone to misinterpretation for non-G buildings</strong>: an older apartment building may have never filed sprinkler work in DOB digital records for its ground-floor garage specifically, while the apartments above have sprinklers that the building data doesn't expose to us. Buildings in the "under_residential," "under_commercial," and "institutional" categories should be read with this caveat. This is a known calibration gap we expect to address in a future revision by either distinguishing per-level sprinkler maintenance or adjusting the penalty by class.</p>
+
 <h3>Sprinkler data measures maintenance, not capability</h3>
-<p>DOB digital records begin around 1990. A garage showing "no sprinkler permits" may have a functional system installed before records went digital. We cannot distinguish "no system" from "no digital record." However, any pre-1990 system without subsequent upgrades is almost certainly below the <a href="https://nfsa.org/2024/04/30/fire-protection-for-parking-garages/">2022 NFPA OH2 density standard</a> (33% higher than the previous requirement). The scoring reflects this: buildings with no evidence of recent fire suppression activity are at higher risk regardless of whether an older system exists, because that system was not designed for modern vehicle fire loads. Actual system specifications (GPM/SF) are available through DOB record requests but are not in any bulk dataset.</p>
+<p>DOB digital records begin around 1990. A building showing "no sprinkler permits" may have a functional system installed before records went digital. We cannot distinguish "no system" from "no digital record." However, any pre-1990 system without subsequent upgrades is almost certainly below the <a href="https://nfsa.org/2024/04/30/fire-protection-for-parking-garages/">2022 NFPA OH2 density standard</a> (33% higher than the previous requirement). The scoring reflects this: buildings with no evidence of recent fire suppression activity are at higher risk regardless of whether an older system exists, because that system was not designed for modern vehicle fire loads. Actual system specifications (GPM/SF) are available through DOB record requests but are not in any bulk dataset.</p>
+
+<h3>PLUTO garagearea is self-reported and imperfect</h3>
+<p>The <code>garagearea</code> field on PLUTO is populated during Department of Finance assessment and reflects what the city has on file. Some ground-floor garages may be under-reported; some "garagearea" values may conflate parking with storage or service space. The 1,000 sqft threshold filters the most obvious noise (single-car residential) but the exact size of the captured set will shift quarterly as PLUTO updates.</p>
 
 <h3>Underground classification is incomplete</h3>
-<p>PLUTO basement codes + OSM identify 156 underground garages. The true number in Manhattan alone is likely much higher — virtually every large residential or office building built since the 1960s has below-grade parking. The <a href="https://inrix.com/products/parking-data-software/">INRIX parking API</a> has a "Subterranean" classification for 350K+ facilities globally but requires enterprise licensing.</p>
+<p>PLUTO basement codes + OSM identify approximately 200 underground garages. The true number in Manhattan alone is likely much higher — virtually every large residential or office building built since the 1960s has below-grade parking. The <a href="https://inrix.com/products/parking-data-software/">INRIX parking API</a> has a "Subterranean" classification for 350K+ facilities globally but requires enterprise licensing.</p>
 
 <h3>Charger data is a lower bound</h3>
-<p>AFDC is voluntary and self-reported. Our 271 garage stations likely undercount the true number. Smaller operators and recently installed chargers may not be registered.</p>
+<p>AFDC is voluntary and self-reported. Our ~264 NYC garage stations likely undercount the true number. Smaller operators and recently installed chargers may not be registered.</p>
+
+<h3>Charger matching is ~99% but not 100%</h3>
+<p>The v1 PAD-plus-geometry cascade resolves almost every AFDC charger to the correct BBL, but rare cases remain where AFDC's street address and coordinate disagree with each other — one or both is wrong. Those chargers appear as unmatched "floating" dots on the map with no building association.</p>
 
 <h3>This is not a structural assessment</h3>
-<p>A high score means a garage has risk <em>factors</em> — it does not mean the garage is unsafe or will have a fire. Only a licensed engineer can assess structural integrity, and only an on-site fire safety inspection can determine actual suppression capability. The <a href="https://gothamist.com/news/deadly-manhattan-parking-garage-collapse-tied-to-unsafe-demolition-structural-neglect-city-report-finds">57 Ann Street collapse investigation</a> took two years to determine the actual cause.</p>
+<p>A high score means a building has risk <em>factors</em> — it does not mean the building is unsafe or will have a fire. Only a licensed engineer can assess structural integrity, and only an on-site fire safety inspection can determine actual suppression capability. The <a href="https://gothamist.com/news/deadly-manhattan-parking-garage-collapse-tied-to-unsafe-demolition-structural-neglect-city-report-finds">57 Ann Street collapse investigation</a> took two years to determine the actual cause.</p>
 
 <h3>Scores reflect data availability</h3>
-<p>A garage with extensive DOB records will have more data points to score against. Absence of violations may mean a clean record or may mean the building hasn't been inspected recently.</p>
+<p>A building with extensive DOB records will have more data points to score against. Absence of violations may mean a clean record or may mean the building hasn't been inspected recently.</p>
 
 <h2 id="background">Background Research</h2>
 

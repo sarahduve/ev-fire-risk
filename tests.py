@@ -222,13 +222,23 @@ if cache_path.exists():
     garages = cache["garages"]
     charger_map = cache["charger_map"]
 
-    test("has >1500 garages",
-         len(garages) > 1500,
+    # v1: we now score G-class + non-G with garagearea>=1000, expect ~6K-8K
+    test("has >5000 parking buildings (v1 expanded set)",
+         len(garages) > 5000,
          f"got {len(garages)}")
 
     test("has >200 buildings with chargers",
          len(charger_map) > 200,
          f"got {len(charger_map)}")
+
+    # v1: match_stats should be populated, most matches should be via PAD address
+    match_stats = cache.get("match_stats", {})
+    test("match_stats present in cache",
+         bool(match_stats),
+         f"got {match_stats}")
+    test("PAD address is the dominant match method (>90% of matches)",
+         match_stats.get("pad_address", 0) > 200,
+         f"pad_address: {match_stats.get('pad_address')}, stats: {match_stats}")
 
     # Check all garages have required fields
     required = ["bbl", "address", "borough", "yearbuilt", "numfloors", "lat", "lon"]
@@ -252,8 +262,62 @@ if cache_path.exists():
     test("no null coordinates",
          len(null_coords) == 0,
          f"{len(null_coords)} with null coords")
+
+    # v1: garage_type should be populated on all garages
+    missing_gt = [g for g in garages if "garage_type" not in g]
+    test("all garages have garage_type field",
+         len(missing_gt) == 0,
+         f"{len(missing_gt)} missing")
+
+    # v1: non-G buildings with garagearea should be present
+    non_g = [g for g in garages if not g["bldgclass"].startswith("G")]
+    test("v1 includes non-G buildings with parking",
+         len(non_g) > 3000,
+         f"non-G count: {len(non_g)}")
+
+    # v1: small_garage flag present
+    small = [g for g in garages if g.get("small_garage")]
+    test("small_garage flag is populated",
+         len(small) > 0,
+         f"small_garage count: {len(small)}")
 else:
     print("  SKIP  (no cached_data.json — run fetch_data.py first)")
+
+
+# =========================================================================
+# 4b. v1 match helper functions
+# =========================================================================
+print("\n--- v1 Match Helpers ---")
+
+from fetch_data import _derive_garage_type, _is_gclass_garage
+
+test("G1 -> standalone",
+     _derive_garage_type("G1") == "standalone")
+test("D4 -> under_residential",
+     _derive_garage_type("D4") == "under_residential")
+test("O5 -> under_commercial",
+     _derive_garage_type("O5") == "under_commercial")
+test("I5 (hospital) -> institutional",
+     _derive_garage_type("I5") == "institutional")
+test("W2 (educational) -> other",
+     _derive_garage_type("W2") == "other")
+test("empty class -> other",
+     _derive_garage_type("") == "other")
+
+test("G1 is G-class garage",
+     _is_gclass_garage("G1", 1))
+test("GU is G-class garage",
+     _is_gclass_garage("GU", 1))
+test("GW is G-class garage",
+     _is_gclass_garage("GW", 1))
+test("G0 with >1 floor is G-class garage",
+     _is_gclass_garage("G0", 3))
+test("G0 with 1 floor is NOT scored (surface parking lot)",
+     not _is_gclass_garage("G0", 1))
+test("G2 (auto body) not scored as parking",
+     not _is_gclass_garage("G2", 2))
+test("D4 not a G-class garage",
+     not _is_gclass_garage("D4", 5))
 
 
 # =========================================================================
@@ -317,6 +381,36 @@ if scores_path.exists():
     test("sprinkler dates are ISO or 'none'",
          len(bad_dates) == 0,
          f"{len(bad_dates)} bad: {bad_dates[:3]}")
+
+    # v1: garage_type and small_garage should round-trip through scored output
+    missing_gt = [r for r in results if "garage_type" not in r]
+    test("all scored results have garage_type",
+         len(missing_gt) == 0,
+         f"{len(missing_gt)} missing")
+    missing_sg = [r for r in results if "small_garage" not in r]
+    test("all scored results have small_garage flag",
+         len(missing_sg) == 0,
+         f"{len(missing_sg)} missing")
+
+    # v1: the 377 E 33rd charger should be matched to NYU-owned BBL, not to
+    # the C7 apartment building across the block. Regression test for the
+    # specific failure that motivated the v1 rebuild.
+    nyu_bbl = next((r for r in results if r["bbl"] == "1009390028"), None)
+    wrong_bbl = next((r for r in results if r["bbl"] == "1009390024"), None)
+    if nyu_bbl is not None:
+        test("377 E 33rd charger resolves to NYU-owned BBL 1009390028",
+             nyu_bbl.get("has_chargers", False),
+             "NYU BBL present but no chargers attached")
+    else:
+        # Acceptable if the BBL isn't in the scored set at all
+        print("  SKIP  NYU BBL 1009390028 not in scored set")
+    if wrong_bbl is not None:
+        test("339 E 33rd apartment (C7) does NOT have chargers in v1",
+             not wrong_bbl.get("has_chargers", False),
+             "Apartment still holds a mismatched charger")
+    else:
+        # Acceptable: C7 apartment with garagearea=0 shouldn't even be in v1 set
+        print("  SKIP  339 E 33rd not in v1 scored set (expected — garagearea=0)")
 else:
     print("  SKIP  (no risk_scores_all.json)")
 

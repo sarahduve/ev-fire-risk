@@ -2,7 +2,7 @@
 
 **[View the live map](https://sarahduve.github.io/ev-fire-risk/)** | **[Methodology & sources](https://sarahduve.github.io/ev-fire-risk/methodology.html)**
 
-An interactive risk assessment of 1,907 parking garages across New York City, scored by their vulnerability to electric vehicle battery fires in enclosed structures.
+An interactive risk assessment of ~6,200 parking buildings across New York City, scored by their vulnerability to electric vehicle battery fires in enclosed structures. Covers both standalone parking garages and residential / office / institutional buildings with dedicated parking space.
 
 ## Why this exists
 
@@ -14,15 +14,19 @@ NYC has thousands of parking garages, many built decades before EVs existed. Som
 
 ## What it shows
 
-1,907 garages scored 0-100 based on five factors:
+~6,200 buildings scored 0-100 based on five factors:
 
-- **Structural age (0-30 pts)** — Garages built before 1968 (pre-modern NYC building code) score highest.
-- **Fire suppression maintenance (0-25 pts)** — Cross-referenced against DOB permit records for sprinkler work. Garages with no maintenance on record, or whose last permit predates the [2022 NFPA density increase](https://nfsa.org/2024/04/30/fire-protection-for-parking-garages/), score higher.
+- **Structural age (0-30 pts)** — Buildings built before 1968 (pre-modern NYC building code) score highest.
+- **Fire suppression maintenance (0-25 pts)** — Cross-referenced against DOB permit records for sprinkler work. Buildings with no maintenance on record, or whose last permit predates the [2022 NFPA density increase](https://nfsa.org/2024/04/30/fire-protection-for-parking-garages/), score higher.
 - **Safety violations (0-20 pts)** — DOB violations for unsafe buildings, structural compromises, immediate emergencies, and sprinkler deficiencies. Tiered by severity.
-- **EV charger presence (0-15 pts)** — 257 garages with chargers (271 stations from [AFDC](https://developer.nrel.gov/docs/transportation/alt-fuel-stations-v1/)). Chargers concentrate vehicles at high state of charge. DC fast chargers weighted 3x.
-- **Multi-story structure (0-10 pts)** — More floors = harder evacuation, heat rises. 156 underground garages identified via PLUTO basement codes + OpenStreetMap.
+- **EV charger presence (0-15 pts)** — 250+ buildings with chargers (AFDC stations). Chargers concentrate vehicles at high state of charge. DC fast chargers weighted 3x.
+- **Multi-story structure (0-10 pts)** — More floors = harder evacuation, heat rises. Underground garages identified via PLUTO basement codes + OpenStreetMap.
 
 See the [full methodology](https://sarahduve.github.io/ev-fire-risk/methodology.html) for scoring details, data source documentation, and limitations.
+
+## Scoring history
+
+- **v1 (2026-04)** — Building selection rebuilt around PLUTO's `garagearea` field. Previous versions scored standalone G-class garages plus any non-G building with an EV charger match, which made the non-G subset definitionally "has EV charger." v1 scores every NYC building with `garagearea >= 1000 sqft` regardless of EV presence, catching the ~5,000 under-apartment / under-office / under-hospital garages that PLUTO classifies by the building above. Charger-to-building matching rewritten around NYC Planning Labs Geosearch (PAD-backed address lookup) with ArcGIS MapPLUTO point-in-polygon as fallback — resolves superblock cases (Stuy Town, NYU) that centroid-proximity matching previously mis-attributed to neighboring buildings.
 
 ## Data sources
 
@@ -35,6 +39,8 @@ See the [full methodology](https://sarahduve.github.io/ev-fire-risk/methodology.
 | [AFDC Alt Fuel Stations](https://developer.nrel.gov/docs/transportation/alt-fuel-stations-v1/) | EV charger locations, port counts, facility types |
 | [OpenStreetMap](https://www.openstreetmap.org/) via [Overpass API](https://overpass-api.de/) | Parking type classification (underground/multi-storey/surface) |
 
+v1 also uses [NYC Planning Labs Geosearch](https://geosearch.planninglabs.nyc/) (PAD-backed) for charger address resolution and the [NYC ArcGIS MapPLUTO](https://a841-dotweb01.nyc.gov/arcgis/rest/services/GAZETTEER/MapPLUTO/MapServer/0) endpoint for spatial fallback. Both are free and keyless.
+
 All NYC Open Data is free and keyless (Socrata API). AFDC requires a free [NREL API key](https://developer.nrel.gov/signup/).
 
 ## Running it yourself
@@ -42,10 +48,11 @@ All NYC Open Data is free and keyless (Socrata API). AFDC requires a free [NREL 
 ```bash
 git clone https://github.com/sarahduve/ev-fire-risk.git
 cd ev-fire-risk
+pip install -r requirements.txt
 
-# Step 1: Fetch raw data (~30 min — DOB API calls are the bottleneck)
-# Downloads PLUTO bulk data, queries DOB permits/violations, matches chargers
-# Saves to cached_data.json so you don't have to re-fetch for scoring changes
+# Step 1: Fetch raw data (~10 min)
+# Downloads PLUTO bulk data, queries DOB permits/violations, resolves chargers
+# via PAD. Saves to cached_data.json so you don't have to re-fetch for scoring.
 export NREL_API_KEY="your-key-here"
 python3 fetch_data.py
 
@@ -59,16 +66,18 @@ python3 build_map.py
 open ev_fire_risk_map.html
 ```
 
-Requires Python 3.10+ with no external dependencies (stdlib only).
+Requires Python 3.10+ and `shapely` (for point-in-polygon matching fallback).
 
 The fetch/score separation means you only re-run the slow API step when data is stale. Scoring and map changes are instant.
 
 ## Key limitations
 
 - **Fire suppression data measures maintenance, not capability.** DOB digital records start ~1990. "No permits on record" may mean no system, or a system with no recorded maintenance in 35+ years. Either way, it almost certainly doesn't meet the [2022 NFPA OH2 standard](https://nfsa.org/2024/04/30/fire-protection-for-parking-garages/) (33% higher sprinkler density). See [methodology](https://sarahduve.github.io/ev-fire-risk/methodology.html#fire-suppression-maintenance-0-25-points) for details.
-- **Charger data is a lower bound.** AFDC is voluntary and self-reported. Our 271 garage stations likely undercount the true number.
-- **Underground classification is incomplete.** PLUTO basement codes + OSM identify 156 underground garages. The true number is higher. [INRIX](https://inrix.com/products/parking-data-software/) has better data but requires enterprise licensing.
-- **This is not a structural assessment.** A high score means risk *factors* are present — it does not mean a fire will occur or that the garage is unsafe.
+- **Scoring formula is calibrated for parking-dominant buildings but applied uniformly.** An old apartment building with 5,000 sqft of ground-floor parking gets scored the same way as a standalone parking structure. The "no sprinkler permit on record" penalty (+25) is particularly likely to trigger for older non-G-class buildings where permit history may relate to non-parking portions. Interpret non-G-class scores with this caveat.
+- **Charger data is a lower bound.** AFDC is voluntary and self-reported. Listed garage stations undercount the true number.
+- **Underground classification is incomplete.** PLUTO basement codes + OSM identify ~200 underground garages. The true number is higher. [INRIX](https://inrix.com/products/parking-data-software/) has better data but requires enterprise licensing.
+- **`garagearea` is self-reported on PLUTO.** Some small ground-floor garages may be under-reported; some large ones may conflate parking with storage/service space.
+- **This is not a structural assessment.** A high score means risk *factors* are present — it does not mean a fire will occur or that the building is unsafe.
 
 ## License
 

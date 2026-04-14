@@ -173,6 +173,9 @@ def main():
         has_chargers = chargers is not None
         total_ports = sum(c["l2_ports"] + c["dcfast_ports"] for c in chargers) if chargers else 0
         charger_names = "; ".join(c["name"] for c in chargers) if chargers else ""
+        charger_addresses = "; ".join(
+            sorted(set(c.get("address", "") for c in chargers if c.get("address")))
+        ) if chargers else ""
 
         results.append({
             "risk_score": risk_score,
@@ -184,9 +187,13 @@ def main():
             "yearbuilt": g["yearbuilt"],
             "numfloors": g["numfloors"],
             "bldgarea_sqft": g["bldgarea"],
+            "garagearea_sqft": g.get("garagearea", 0),
+            "garage_type": g.get("garage_type", "other"),
+            "small_garage": g.get("small_garage", False),
             "has_chargers": has_chargers,
             "total_ev_ports": total_ports,
             "charger_names": charger_names,
+            "charger_addresses": charger_addresses,
             "sprinkler_permits_count": len(sp),
             "sprinkler_last_date": latest_sp,
             "fire_violations_count": len(viols),
@@ -224,20 +231,19 @@ def main():
             r["osm_parking_type"] = ""
             r["osm_name"] = ""
 
-    # Add PLUTO basement codes
-    print("Adding basement codes...")
-    try:
-        import urllib.request, urllib.parse
-        params = urllib.parse.urlencode({
-            "$where": "bldgclass in('G1','GU','GW') OR (bldgclass='G0' AND numfloors>1)",
-            "$select": "bbl,bsmtcode",
-            "$limit": 5000,
-        })
-        url = f"https://data.cityofnewyork.us/resource/64uk-42ks.json?{params}"
-        req = urllib.request.Request(url)
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            bsmt_data = json.loads(resp.read())
-        bsmt_map = {str(r.get("bbl", "")).split(".")[0].zfill(10): r.get("bsmtcode", "0") for r in bsmt_data}
+    # Add PLUTO basement codes from local bulk file (v1)
+    # Previously fetched via a separate Socrata call filtered by G-class, which
+    # wouldn't return codes for our v1 non-G buildings. Reading locally is also
+    # faster and avoids an extra API dependency.
+    print("Adding basement codes from pluto_all.json...")
+    bsmt_map = {}
+    pluto_path = DATA_DIR / "pluto_all.json"
+    if pluto_path.exists():
+        with open(pluto_path) as f:
+            pluto = json.load(f)
+        for r in pluto["records"]:
+            bbl = str(r.get("bbl", "")).split(".")[0].zfill(10)
+            bsmt_map[bbl] = r.get("bsmtcode", "0") or "0"
         for r in results:
             bsmt = bsmt_map.get(r["bbl"], "0")
             if bsmt in ("1", "2") and not r.get("osm_parking_type"):
@@ -245,8 +251,8 @@ def main():
             r["has_basement"] = bsmt in ("1", "2")
         underground = sum(1 for r in results if r.get("osm_parking_type") == "underground")
         print(f"  {underground} underground garages")
-    except Exception as e:
-        print(f"  Basement code fetch failed: {e}")
+    else:
+        print("  pluto_all.json not present; skipping basement codes")
         for r in results:
             r["has_basement"] = False
 
@@ -269,10 +275,11 @@ def main():
 
     with open(DATA_DIR / "risk_scores_all.csv", "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=[
-            "risk_score", "address", "borough", "bldgclass",
+            "risk_score", "address", "borough", "bldgclass", "garage_type",
             "yearbuilt", "numfloors", "has_chargers", "total_ev_ports",
             "sprinkler_permits_count", "sprinkler_last_date",
-            "fire_violations_count", "bldgarea_sqft", "lat", "lon", "reasons",
+            "fire_violations_count", "bldgarea_sqft", "garagearea_sqft",
+            "small_garage", "lat", "lon", "reasons",
         ])
         writer.writeheader()
         for r in results:
