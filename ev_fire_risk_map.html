@@ -91,12 +91,24 @@
 <div id="map"></div>
 <div class="panel-container" id="panel" style="height: 30vh;">
   <div class="resize-handle" id="resizeHandle"></div>
-  <div style="padding: 8px 24px 0; flex-shrink:0;">
+  <div style="padding: 8px 24px 0; flex-shrink:0; display:flex; gap:8px; align-items:center;">
     <input type="text" id="addressSearch" placeholder="Search addresses..." style="
-      width: 280px; padding: 5px 10px; background: #1a1a1a; border: 1px solid #333;
+      width: 273px; height: 30px; padding: 0 10px; background: #1a1a1a; border: 1px solid #333;
       border-radius: 4px; color: #e0e0e0; font-size: 12px; outline: none;
-      font-family: inherit;
+      font-family: inherit; box-sizing: border-box;
     " />
+    <select id="boroFilter" style="
+      height: 30px; padding: 0 8px; background: #1a1a1a; border: 1px solid #333;
+      border-radius: 4px; color: #e0e0e0; font-size: 12px; outline: none;
+      font-family: inherit; cursor: pointer; box-sizing: border-box;
+    ">
+      <option value="">All boroughs</option>
+      <option value="MN">Manhattan</option>
+      <option value="BK">Brooklyn</option>
+      <option value="QN">Queens</option>
+      <option value="BX">Bronx</option>
+      <option value="SI">Staten Island</option>
+    </select>
   </div>
   <div class="table-wrap">
     <table>
@@ -368,6 +380,7 @@ let tableData = DATA.results.map(r => ({
 }));
 
 let searchQuery = '';
+let boroFilter = '';
 
 document.getElementById('addressSearch').addEventListener('input', (e) => {
   searchQuery = e.target.value.trim().toUpperCase();
@@ -375,7 +388,14 @@ document.getElementById('addressSearch').addEventListener('input', (e) => {
   renderTable();
 });
 
+document.getElementById('boroFilter').addEventListener('change', (e) => {
+  boroFilter = e.target.value;
+  updateMarkers();
+  renderTable();
+});
+
 function passesSearch(r) {
+  if (boroFilter && r.borough !== boroFilter) return false;
   if (!searchQuery) return true;
   return (r.address || '').toUpperCase().includes(searchQuery) ||
          (r.charger_names || '').toUpperCase().includes(searchQuery) ||
