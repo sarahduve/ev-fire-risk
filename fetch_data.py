@@ -368,7 +368,7 @@ def match_chargers_to_garages(garages, stations):
     seen_extra_bbls = set()
     unmatched = []
     stats = {"pad_address": 0, "point_in_polygon": 0, "nearest_edge": 0,
-             "unmatched": 0, "cached": 0}
+             "unmatched": 0, "cached": 0, "pip_recheck": 0}
 
     for i, s in enumerate(stations):
         if s.get("facility_type") == "FLEET_STATION":
@@ -399,6 +399,31 @@ def match_chargers_to_garages(garages, stations):
             # Throttle external APIs
             time.sleep(0.05)
 
+        # If resolved BBL is not in our target set, try PIP to find the
+        # correct building.  Charger addresses often use a garage entrance
+        # on a different street than the building's PLUTO primary address,
+        # causing PAD to resolve to a neighboring lot.
+        if bbl and bbl not in garage_bbls:
+            pip_bbl, pip_method = _pip_and_nearest(
+                s["lat"], s["lon"], max_edge_ft=50,
+            )
+            if pip_bbl and pip_bbl in garage_bbls:
+                # PIP found a target building — use it instead
+                bbl = pip_bbl
+                method = pip_method
+                stats["pip_recheck"] += 1
+            elif pip_bbl and pip_bbl == bbl:
+                # PIP confirms charger is at this non-target building
+                # (PLUTO under-reports garagearea). Keep as extra garage.
+                pass
+            else:
+                # PIP found a different non-target BBL or nothing — ambiguous
+                bbl = None
+                method = None
+            cache[key] = {"bbl": bbl, "method": method,
+                          "address": s.get("address"), "name": s.get("name")}
+            time.sleep(0.15)
+
         if method and method in stats:
             stats[method] += 1
         elif method is None and bbl is None:
@@ -411,9 +436,9 @@ def match_chargers_to_garages(garages, stations):
         charger_map.setdefault(bbl, []).append(s)
 
         # If BBL isn't in our pre-expanded garage set, add it as an extra
-        # (this typically shouldn't happen much in v1 since we expanded to
-        # garagearea>=1000, but catches edge cases like chargers in buildings
-        # with garagearea below threshold or genuinely unusual classifications)
+        # (charger is confirmed at this building via PIP, but PLUTO doesn't
+        # report garagearea — e.g. 100 Jay St has a real garage entrance
+        # on York St but garagearea=0 in PLUTO)
         if bbl not in garage_bbls and bbl not in seen_extra_bbls:
             r = pluto_by_bbl.get(bbl)
             if r:
