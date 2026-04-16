@@ -121,9 +121,10 @@
           <th data-key="yearbuilt" data-type="num" data-tip="Year the building was constructed, per NYC PLUTO tax lot data">Built <span class="sort-arrow"></span></th>
           <th data-key="numfloors" data-type="num">Floors <span class="sort-arrow"></span></th>
           <th data-key="total_ev_ports" data-type="num" data-tip="Number of EV charging ports. L2 = Level 2 (240V AC, adds ~25mi/hr). DC = DC Fast (direct current, adds ~200mi/30min — higher thermal stress on batteries)">EV Ports <span class="sort-arrow"></span></th>
-          <th data-key="osm_parking_type" data-type="str" data-tip="Underground or multi-storey, from OpenStreetMap + PLUTO basement codes. Underground = worse ventilation, toxic gas buildup, harder firefighter access.">Type <span class="sort-arrow"></span></th>
+          <th data-key="osm_parking_type" data-type="str" data-tip="Underground or multi-story, from OpenStreetMap + PLUTO basement codes. Underground = worse ventilation, toxic gas buildup, harder firefighter access.">Type <span class="sort-arrow"></span></th>
           <th data-key="sprinkler_last_date" data-type="str" data-tip="Year of most recent DOB sprinkler installation or modification permit. 'none' = no permits in digital records (post-~1990). Building may still have a functioning system, but its design predates current NFPA fire-load standards for vehicles.">Last Sprinkler Permit <span class="sort-arrow"></span></th>
-          <th data-key="fire_violations_count" data-type="num" data-tip="DOB safety violations: immediate emergencies, unsafe building designations, structurally compromised buildings, and sprinkler deficiencies. Tiered by severity.">Violations <span class="sort-arrow"></span></th>
+          <th data-key="fire_violations_count" data-type="num" data-tip="DOB safety violations: immediate emergencies, unsafe building designations, structurally compromised buildings, and sprinkler deficiencies. Tiered by severity.">DOB Viol. <span class="sort-arrow"></span></th>
+          <th data-key="fdny_violations_open" data-type="num" data-tip="Open (unresolved) FDNY fire-protection violations from OATH/ECB hearings. Includes failed inspections, sprinkler maintenance failures, fire system deficiencies. Older open violations weighted more heavily in scoring.">FDNY Open <span class="sort-arrow"></span></th>
           <th data-key="_reasons" data-type="str" data-tip="Breakdown of what contributes to this garage's risk score">Risk Factors <span class="sort-arrow"></span></th>
         </tr>
       </thead>
@@ -276,7 +277,7 @@ DATA.results.forEach(r => {
 
   const yb = r.yearbuilt > 0 ? r.yearbuilt : 'Unknown';
   const typeBadge = isUnderground ? '<span style="color:#00bcd4; font-weight:600;">UNDERGROUND</span>' :
-                    r.osm_parking_type === 'multi-storey' ? '<span style="color:#888;">multi-storey</span>' : '';
+                    r.osm_parking_type === 'multi-storey' ? '<span style="color:#888;">multi-story</span>' : '';
   const evBadge = hasChargers ? `<span style="color:#44cc44; font-weight:600;" title="Level 2 (240V AC, slow) and/or DC Fast (direct current, rapid — higher thermal stress)">${r.total_ev_ports} EV ports</span>` : '<span style="color:#666;">no chargers</span>';
   // Building-type label for popup (decoded from garage_type set in score_garages.py)
   const bldgTypeLabels = {
@@ -308,10 +309,16 @@ DATA.results.forEach(r => {
   const chargerAddrLine = showSeparateChargerAddr
     ? `<div style="font-size:11px; color:#555; margin-bottom:4px;">⚡ Chargers at <a href="${mapUrl}" target="_blank" rel="noopener" style="color:#333; text-decoration:none; border-bottom:1px dotted #999;">${chargerAddr}</a></div>`
     : '';
+  const retrofitBadge = r.retrofit_flag === 'll26_retrofit'
+    ? '<div style="font-size:11px; color:#ff4444; font-weight:600; margin-bottom:4px;">LL26 sprinkler retrofit deadline (July 2019) likely missed</div>'
+    : r.retrofit_flag === 'll16_new'
+    ? '<div style="font-size:11px; color:#ff4444; font-weight:600; margin-bottom:4px;">LL16 sprinkler-at-construction requirement likely missed</div>'
+    : '';
   circle.bindPopup(`
     <div style="font-family: sans-serif; min-width: 220px;">
       <div style="font-weight:700; font-size:14px; margin-bottom:2px;"><a href="${mapUrl}" target="_blank" rel="noopener" style="color:#333; text-decoration:none; border-bottom:1px dotted #999;">${r.address}</a></div>
       <div style="font-size:11px; color:#888; margin-bottom:4px;">${r.borough} · ${bldgTypeLabel} (${r.bldgclass})${smallFlag}</div>
+      ${retrofitBadge}
       ${chargerAddrLine}
       <div style="font-size:11px; margin-bottom:8px;">${typeBadge} ${evBadge}${r.charger_names ? `<div style="color:#666; font-size:10px; margin-top:3px;">${r.charger_names}</div>` : ''}</div>
       <div style="font-size:24px; font-weight:700; color:${color}; margin-bottom:4px;">Risk: ${r.risk_score}</div>
@@ -319,7 +326,8 @@ DATA.results.forEach(r => {
         <tr><td>Built</td><td style="text-align:right; font-weight:600">${yb}</td></tr>
         <tr><td>Floors</td><td style="text-align:right; font-weight:600">${r.numfloors}</td></tr>
         <tr><td>Sprinkler Permits</td><td style="text-align:right; font-weight:600">${r.sprinkler_permits_count}</td></tr>
-        <tr><td>Safety Violations</td><td style="text-align:right; font-weight:600">${r.fire_violations_count}</td></tr>
+        <tr><td>DOB Violations</td><td style="text-align:right; font-weight:600">${r.fire_violations_count}</td></tr>
+        <tr><td>FDNY Open</td><td style="text-align:right; font-weight:600; ${r.fdny_violations_open > 0 ? 'color:#ff6644' : ''}">${r.fdny_violations_open}${r.fdny_violations_total > 0 ? ` / ${r.fdny_violations_total} total` : ''}</td></tr>
       </table>
       <div style="margin-top:8px; font-size:11px; color:#888;">
         ${r.reasons.join('<br>').replace(/\bL2\b/g, '<span title="Level 2: 240V AC, adds ~25 miles/hour of charge" style="border-bottom:1px dotted #aaa; cursor:help;">L2</span>').replace(/\bDC fast\b/g, '<span title="DC Fast Charging: direct current, adds ~200 miles in 30 min — higher thermal stress on batteries" style="border-bottom:1px dotted #aaa; cursor:help;">DC fast</span>')}
@@ -412,7 +420,7 @@ function renderTable() {
     const yb = r.yearbuilt > 0 ? r.yearbuilt : '—';
     const evLabel = r.has_chargers ? `<span style="color:#fff; font-weight:600">${r.total_ev_ports}</span>` : '<span style="color:#444">-</span>';
     const typeLabel = r.osm_parking_type === 'underground' ? '<span style="color:#00bcd4">underground</span>' :
-                      r.osm_parking_type === 'multi-storey' ? 'multi-storey' : '';
+                      r.osm_parking_type === 'multi-storey' ? 'multi-story' : '';
     const spDate = !r.sprinkler_last_date || r.sprinkler_last_date === 'none' ? '<span style="color:#ff4444">none</span>' : r.sprinkler_last_date.slice(0, 4);
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -425,6 +433,7 @@ function renderTable() {
       <td>${typeLabel}</td>
       <td>${spDate}</td>
       <td>${r.fire_violations_count}</td>
+      <td>${r.fdny_violations_open > 0 ? `<span style="color:#ff6644; font-weight:600">${r.fdny_violations_open}</span>` : '<span style="color:#444">0</span>'}</td>
       <td class="reasons">${r.reasons.map(s => s.replace(/\s*\(\+\d+\)/g, '')).join('; ')}</td>
     `;
     tr.style.cursor = 'pointer';
