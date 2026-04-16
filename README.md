@@ -14,11 +14,12 @@ NYC has thousands of parking garages, many built decades before EVs existed. Som
 
 ## What it shows
 
-~6,200 buildings scored 0-100 based on five factors:
+~6,200 buildings scored 0-100 based on six factors:
 
 - **Structural age (0-30 pts)** — Buildings built before 1968 (pre-modern NYC building code) score highest.
-- **Fire suppression maintenance (0-25 pts)** — Cross-referenced against DOB permit records for sprinkler work. Buildings with no maintenance on record, or whose last permit predates the [2022 NFPA density increase](https://nfsa.org/2024/04/30/fire-protection-for-parking-garages/), score higher.
-- **Safety violations (0-20 pts)** — DOB violations for unsafe buildings, structural compromises, immediate emergencies, and sprinkler deficiencies. Tiered by severity.
+- **Sprinkler system evidence (0-30 pts)** — Cross-references DOB sprinkler permits with FDNY fire-protection violations to determine whether a system exists. Buildings required by Local Law 26 or Local Law 16 to have sprinklers with no evidence of compliance score highest.
+- **DOB safety violations (0-20 pts)** — DOB violations for unsafe buildings, structural compromises, immediate emergencies, and sprinkler deficiencies. Tiered by severity.
+- **FDNY fire protection compliance (0-25 pts)** — Open (unresolved) FDNY fire-protection violations from OATH/ECB hearings. Time-weighted: older open violations indicate persistent non-compliance.
 - **EV charger presence (0-15 pts)** — 250+ buildings with chargers (AFDC stations). Chargers concentrate vehicles at high state of charge. DC fast chargers weighted 3x.
 - **Multi-story structure (0-10 pts)** — More floors = harder evacuation, heat rises. Underground garages identified via PLUTO basement codes + OpenStreetMap.
 
@@ -26,7 +27,7 @@ See the [full methodology](https://sarahduve.github.io/ev-fire-risk/methodology.
 
 ## Scoring history
 
-- **v1 (2026-04)** — Building selection rebuilt around PLUTO's `garagearea` field. Previous versions scored standalone G-class garages plus any non-G building with an EV charger match, which made the non-G subset definitionally "has EV charger." v1 scores every NYC building with `garagearea >= 1000 sqft` regardless of EV presence, catching the ~5,000 under-apartment / under-office / under-hospital garages that PLUTO classifies by the building above. Charger-to-building matching rewritten around NYC Planning Labs Geosearch (PAD-backed address lookup) with ArcGIS MapPLUTO point-in-polygon as fallback — resolves superblock cases (Stuy Town, NYU) that centroid-proximity matching previously mis-attributed to neighboring buildings.
+- **v1 (2026-04)** — Building selection rebuilt around PLUTO's `garagearea` field. Previous versions scored standalone G-class garages plus any non-G building with an EV charger match, which made the non-G subset definitionally "has EV charger." v1 scores every NYC building with `garagearea >= 1000 sqft` regardless of EV presence, catching the ~5,000 under-apartment / under-office / under-hospital garages that PLUTO classifies by the building above. Charger-to-building matching rewritten around NYC Planning Labs Geosearch (PAD-backed address lookup) with ArcGIS MapPLUTO point-in-polygon as fallback. Sprinkler factor rebuilt as evidence-based (DOB permits + FDNY confirmation + retrofit mandate flags). New FDNY fire-protection compliance factor added from OATH/ECB hearings data (time-weighted open violations).
 
 ## Data sources
 
@@ -35,7 +36,8 @@ See the [full methodology](https://sarahduve.github.io/ev-fire-risk/methodology.
 | [NYC PLUTO](https://data.cityofnewyork.us/City-Government/Primary-Land-Use-Tax-Lot-Output-PLUTO-/64uk-42ks) | Building class, year built, floors, basement, location (857K records bulk downloaded) |
 | [DOB Permit Issuance](https://data.cityofnewyork.us/Housing-Development/DOB-Permit-Issuance/ipu4-2q9a) | Historical sprinkler permits (pre-2021) |
 | [DOB NOW Build](https://data.cityofnewyork.us/Housing-Development/DOB-NOW-Build-Approved-Permits/rbx6-tga4) | Recent sprinkler permits (2021+) |
-| [DOB Violations](https://data.cityofnewyork.us/Housing-Development/DOB-Violations/3h2n-5cm9) | Safety violations by property |
+| [DOB Violations](https://data.cityofnewyork.us/Housing-Development/DOB-Violations/3h2n-5cm9) | DOB safety violations by property |
+| [OATH/ECB Hearings](https://data.cityofnewyork.us/City-Government/OATH-Hearings-Division-Case-Status/jz4z-kudi) | FDNY fire-protection violations (sprinkler maintenance, inspection/testing failures, compliance status) |
 | [AFDC Alt Fuel Stations](https://developer.nrel.gov/docs/transportation/alt-fuel-stations-v1/) | EV charger locations, port counts, facility types |
 | [OpenStreetMap](https://www.openstreetmap.org/) via [Overpass API](https://overpass-api.de/) | Parking type classification (underground/multi-storey/surface) |
 

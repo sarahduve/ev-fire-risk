@@ -50,7 +50,7 @@
     <div class="toc-label">Contents</div>
     <a href="#overview">Overview</a>
     <a href="#why-garagearea" class="sub">Why garagearea, not just G-class</a>
-    <a href="#scoring" class="sub">Scoring Formula</a>
+    <a href="#scoring" class="sub">Scoring Formula (6 factors)</a>
     <a href="#data-sources">Data Sources</a>
     <a href="#spatial-matching">Charger Matching</a>
     <a href="#included">What's Included</a>
@@ -96,11 +96,11 @@
 
 <h2 id="scoring">Scoring Formula</h2>
 
-<p>Each garage is scored on five factors. Points are additive, capped at 100:</p>
+<p>Each building is scored on six factors. Points are additive, capped at 100:</p>
 
 <div class="formula">
-Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(0-30) + (0-25) + (0-10) + (0-20) + (0-15)
+Score = Age + Sprinkler Evidence + Floors + DOB Violations + FDNY Compliance + EV Chargers<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(0-30) + (0-30) + (0-10) + (0-20) + (0-25) + (0-15)
 </div>
 
 <h3>1. Structural Age (0-30 points)</h3>
@@ -108,29 +108,39 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 <table>
 <tr><th>Year Built</th><th>Points</th><th>Rationale</th></tr>
 <tr><td>Before 1968</td><td>30</td><td>Built under pre-modern NYC building code. Maximum structural deterioration time. Original fire safety standards were designed for lighter vehicles and different fire profiles.</td></tr>
-<tr><td>1968-2003</td><td>15</td><td>Built under 1968 NYC Building Code but before IBC adoption. 50 psf design load standard.</td></tr>
-<tr><td>2004 or later</td><td>5</td><td>Built under International Building Code. Current 40 psf standard with modern fire safety requirements.</td></tr>
+<tr><td>1968-2003</td><td>15</td><td>Built under 1968 NYC Building Code but before IBC adoption.</td></tr>
+<tr><td>2004 or later</td><td>5</td><td>Built under International Building Code with modern fire safety requirements.</td></tr>
 <tr><td>Unknown</td><td>20</td><td>No year recorded in PLUTO — treated as likely pre-1968.</td></tr>
 </table>
 
-<p class="note"><strong>Why 1968?</strong> NYC adopted its first comprehensive modern building code in 1968. Garages built before this date were designed to varied and often undocumented standards. The <a href="https://www.nyc.gov/assets/buildings/building_code/1968_building_code_v2.pdf">1968 code</a> established uniform structural and fire safety requirements for the first time.</p>
+<p class="note"><strong>Why 1968?</strong> NYC adopted its first comprehensive modern building code in 1968. Buildings built before this date were designed to varied and often undocumented standards. The <a href="https://www.nyc.gov/assets/buildings/building_code/1968_building_code_v2.pdf">1968 code</a> established uniform structural and fire safety requirements for the first time.</p>
 
-<h3>2. Fire Suppression Design Currency (0-25 points)</h3>
+<h3 id="sprinkler-evidence">2. Sprinkler System Evidence (0-30 points)</h3>
 
-<p>This factor measures <strong>how current a building's sprinkler system design is</strong> relative to evolving fire safety standards — not whether a system exists or whether it's been maintained. We use DOB sprinkler permits (installation and modification records, digital since ~1990) as the signal. A building with no DOB sprinkler permits may have a functioning, annually-inspected system — but if that system hasn't been modified since installation, its design predates current fire-load standards for vehicles.</p>
+<p>This factor measures <strong>evidence that a building has a sprinkler system</strong>, combining two independent data sources:</p>
 
-<p class="note"><strong>Important distinction: DOB permits vs FDNY inspections.</strong> DOB sprinkler permits record <strong>installation and modification</strong> of systems. FDNY conducts separate <strong>annual inspections</strong> to verify existing systems work — but FDNY inspection data is not available as open data. A building with a 1985 sprinkler system that passes FDNY inspection every year would show "no sprinkler permit on record" in our data, because the system hasn't been <em>modified</em>. We cannot distinguish "well-maintained but old design" from "no system at all." What we CAN say: either way, the system was not designed for current fire loads.</p>
+<ul>
+<li><strong>DOB sprinkler permits</strong> — record installation and modification of systems. Digital records begin ~1990. A permit proves the system was installed or modified at some point.</li>
+<li><strong>FDNY fire-protection violations</strong> — when FDNY cites a building for "failure to maintain sprinkler/standpipe/suppression system" (charge code BF12), that citation <strong>proves the system exists</strong>. FDNY cannot cite for failure to maintain a system that isn't there.</li>
+</ul>
 
-<p>In 2022, <a href="https://nfsa.org/2024/04/30/fire-protection-for-parking-garages/">NFPA 13 reclassified parking garages</a> from Ordinary Hazard Group 1 to Group 2, increasing the required sprinkler water discharge density by <strong>33%</strong> (from 0.15 to 0.20 GPM/SF). This change was driven by the increased plastics and energy content in modern vehicles — including EV battery fire loads. A garage with a sprinkler system installed in 1985 — even if perfectly maintained and passing annual FDNY inspection — is delivering 33% less water per square foot than the current standard requires. San Francisco goes further, requiring <a href="https://sf-fire.org/429-sprinkler-protection-requirements-parking-spaces-associated-electric-vehicles-charging-stations">double the OH2 density</a> (0.40 GPM/SF) at DC fast charging spots.</p>
+<p class="note"><strong>Important distinction: DOB vs FDNY.</strong> DOB permits measure <strong>presence</strong> (was a system installed or modified?). FDNY violations measure <strong>maintenance</strong> (is the system being kept in working order?). A building can have a DOB permit AND open FDNY violations — system was installed correctly, but isn't being maintained. A building can have FDNY violations but no DOB permit — system exists (pre-1990 install) but was never modified in the digital era. These are different risk profiles, scored by different factors.</p>
 
 <table>
-<tr><th>Status</th><th>Points</th><th>What we know</th></tr>
-<tr><td>No sprinkler permits in DOB records</td><td>25</td><td>No sprinkler system was installed or modified in DOB digital records (post-~1990). Either no system exists, or the system's design predates 1990 — at minimum 32 years behind current NFPA 13 OH2 density standards.</td></tr>
-<tr><td>Last sprinkler permit before 2010</td><td>15</td><td>System was installed or last modified 12+ years before the 2022 NFPA OH1→OH2 reclassification. Design almost certainly below current vehicle fire-load density requirements.</td></tr>
-<tr><td>Sprinkler permit 2010 or later</td><td>0</td><td>Relatively recent installation or modification — though even post-2010 work may not meet the 2022 OH2 standard unless the project specifically targeted the density upgrade.</td></tr>
+<tr><th>Evidence</th><th>Points</th><th>What we know</th></tr>
+<tr><td>DOB sprinkler permit exists (any date)</td><td>0</td><td>System confirmed present with activity in modern DOB records.</td></tr>
+<tr><td>No DOB permit, but FDNY sprinkler violation confirms system</td><td>5</td><td>System confirmed present (FDNY proves it), but no modern installation/modification record. Likely a pre-1990 install.</td></tr>
+<tr><td>No DOB + no FDNY, but post-2004 residential &ge;4 floors</td><td>10</td><td><a href="https://www.milrose.com/insights/local-law-26-of-2004-deadline">Local Law 26 of 2004</a> required sprinklers at construction for residential buildings &ge;40 ft. Sprinkler install was likely bundled into the New Building (NB) permit, which our pipeline doesn't capture as a separate sprinkler record. Some uncertainty remains.</td></tr>
+<tr><td>No evidence + any other building</td><td>15</td><td>No DOB permit, no FDNY sprinkler violations. System status genuinely unknown. Some buildings may have pre-1990 systems that have never been cited; others may have no system at all.</td></tr>
+<tr><td>No evidence + pre-2004 residential &ge;10 floors</td><td>30</td><td>Local Law 26 required these buildings to <strong>retrofit sprinklers by July 1, 2019</strong>. A retrofit on an existing building requires its own dedicated DOB sprinkler permit. Absence of any permit is a strong signal the legally-mandated retrofit was missed. <strong>Flagged in the popup as LL26 retrofit deadline likely missed.</strong></td></tr>
+<tr><td>No evidence + post-1984 office &ge;7 floors</td><td>30</td><td><a href="https://www.ny-engineers.com/blog/when-are-sprinklers-required-in-nyc-office-buildings">Local Law 16 of 1984</a> required sprinklers at construction for new office buildings &ge;75 ft. No DOB permit for these buildings is concerning. <strong>Flagged as LL16.</strong></td></tr>
 </table>
 
+<p class="note"><strong>Why not use the permit DATE as a signal?</strong> We explored using the age of the most recent DOB sprinkler permit as a risk differentiator (e.g., "pre-2010 permit = higher risk"). This doesn't hold up to scrutiny: most NFPA 25-mandated sprinkler maintenance (annual inspections, head testing, flow tests) is performed by <a href="https://nyc-business.nyc.gov/nycbusiness/description/cof-s12">Certificate of Fitness holders</a> and does NOT require a DOB permit. A building with a 1995 DOB permit could have a perfectly maintained system with annual FDNY inspections for 30 years without ever filing another permit. The date of the permit tells us when the system was installed or last substantially modified — not its current condition. We use binary presence (permit or no permit) rather than date-based tiers.</p>
+
 <p class="note"><strong>Can sprinklers stop an EV fire?</strong> No. Sprinklers cannot extinguish a lithium-ion thermal runaway — the fire happens inside a sealed battery pack. But <a href="https://link.springer.com/article/10.1007/s10694-024-01694-7">full-scale testing</a> (Fire Technology, 2024) found that sprinklers at adequate density <strong>prevent fire spread to adjacent vehicles</strong>, which is the difference between a single-car event and a 140-car catastrophe.</p>
+
+<p class="note"><strong>NYC is behind on sprinkler density standards.</strong> In 2022, <a href="https://nfsa.org/2024/04/30/fire-protection-for-parking-garages/">NFPA 13 reclassified parking garages</a> from Ordinary Hazard Group 1 to Group 2 (OH1 &rarr; OH2), increasing the required sprinkler water discharge density by <strong>33%</strong> (0.15 &rarr; 0.20 GPM/SF) to address modern vehicle fire loads including EVs. <strong>NYC's 2022 Building Code still references NFPA 13-2016</strong>, meaning even brand-new NYC sprinkler permits default to the old OH1 density. This is a parallel to the <a href="#ebikes">LL39 / EN 15194 e-bike certification gap</a> — in both cases, NYC is behind on adopting stricter safety standards that specifically address vehicle/battery fire risks. San Francisco goes even further, requiring <a href="https://sf-fire.org/429-sprinkler-protection-requirements-parking-spaces-associated-electric-vehicles-charging-stations">double the OH2 density</a> (0.40 GPM/SF) at DC fast charging spots.</p>
 
 <p class="note"><strong>Can we get actual system specifications?</strong> Sprinkler engineering drawings filed with DOB are public records, obtainable through <a href="https://a810-bisweb.nyc.gov">DOB BIS Options</a> record requests (~$8/page) or <a href="https://a860-openrecords.nyc.gov/">FOIL requests</a>. These would show the actual GPM/SF a system was designed for. This is not scalable to thousands of buildings but is a viable path for investigating individual high-scoring locations.</p>
 
@@ -143,16 +153,35 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 <tr><td>1 floor</td><td>0</td><td>Single-level structure.</td></tr>
 </table>
 
-<h3>4. Safety Violations (0-20 points)</h3>
+<h3>4. DOB Safety Violations (0-20 points)</h3>
 
-<p>DOB violations are tiered by severity:</p>
+<p>NYC Department of Buildings violations, tiered by severity:</p>
 
 <table>
 <tr><th>Type</th><th>Points Each</th><th>Examples</th></tr>
-<tr><td>Critical</td><td>8</td><td>Immediate emergency orders, unsafe building designations, structurally compromised buildings</td></tr>
-<tr><td>High</td><td>5</td><td>Sprinkler deficiency violations (LL2604S)</td></tr>
+<tr><td>Critical</td><td>8</td><td>Immediate emergency orders (IMEGNCY), unsafe building designations, structurally compromised buildings</td></tr>
+<tr><td>High</td><td>5</td><td>Sprinkler deficiency violations</td></tr>
 <tr><td>Low</td><td>1 (max 3)</td><td>Photoluminescent exit sign violations, emergency power violations</td></tr>
 </table>
+
+<h3>5. FDNY Fire Protection Compliance (0-25 points)</h3>
+
+<p>This is a new factor based on FDNY fire-protection violation data from the <a href="https://data.cityofnewyork.us/City-Government/OATH-Hearings-Division-Case-Status/jz4z-kudi">OATH/ECB Hearings dataset</a> — the administrative hearings tribunal where FDNY violations get adjudicated. The FDNY-named datasets on NYC Open Data contain fewer than 50 records; the actual ~926,000 FDNY violation records live in the OATH dataset.</p>
+
+<p>We filter to fire-protection-relevant charges (sprinkler maintenance failures, inspection/testing failures, fire protection system deficiencies) and score only <strong>OPEN (unresolved) violations</strong>. Resolved violations ("All Terms Met") do not add to the score — a building that gets cited and fixes the problem is being managed, not neglected.</p>
+
+<p><strong>Time weighting:</strong> older open violations indicate persistent non-compliance and score higher. A building with a 10-year-old unresolved sprinkler maintenance violation has demonstrated sustained neglect — worse than a building with a recent citation still in its remediation window.</p>
+
+<table>
+<tr><th>Open violation type</th><th>0-2 years</th><th>2-5 years</th><th>5-10 years</th><th>10+ years</th></tr>
+<tr><td>BF12 — sprinkler/standpipe maintenance failure</td><td>3</td><td>5</td><td>7</td><td>10</td></tr>
+<tr><td>BF20 — inspection and testing failure</td><td>2</td><td>3</td><td>5</td><td>7</td></tr>
+<tr><td>Other fire protection system charges</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+</table>
+
+<p>Points from all open violations are summed and capped at 25. A building with many old, unresolved sprinkler violations can max out this factor.</p>
+
+<p class="note"><strong>Why do open violations persist?</strong> FDNY can issue citations and levy fines but cannot physically force a building to upgrade its systems. Penalties are often modest relative to the cost of compliance (a $1,500 fine vs. a $200,000 sprinkler upgrade). Many violations result from default judgments where the respondent never appeared. In our scored buildings, <strong>61% of open fire-protection violations are 5+ years old</strong>, and <strong>37% are 10+ years old</strong>. This is structural non-compliance, not recent oversights.</p>
 
 <p>Total violation points are capped at 20. We search for violation types: <code>IMEGNCY</code> (immediate emergency), <code>UB</code> (unsafe buildings), <code>COMPBLD</code> (structurally compromised), <code>LL2604S</code> (sprinkler), <code>LL2604E</code> (emergency power), and <code>LL2604</code> (photoluminescent).</p>
 
@@ -210,12 +239,25 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 </ul>
 
 <h3>DOB Violations</h3>
-<p>Building code violations. We search for safety-related violation types only.</p>
+<p>Building code violations from DOB. We search for safety-related violation types only.</p>
 <ul>
 <li><strong>Queried by:</strong> Borough code + block + lot (both padding variants)</li>
 <li><strong>Violation types:</strong> IMEGNCY, UB, COMPBLD, LL2604S, LL2604E, LL2604</li>
 <li><strong>Dataset:</strong> <a href="https://data.cityofnewyork.us/Housing-Development/DOB-Violations/3h2n-5cm9">NYC Open Data 3h2n-5cm9</a></li>
 </ul>
+
+<h3>FDNY Fire Protection Violations (via OATH/ECB)</h3>
+<p>FDNY violations are adjudicated through the Office of Administrative Trials and Hearings (OATH). The actual violation records (~926,000 total) live in the OATH ECB Hearings dataset — the FDNY-named datasets on NYC Open Data contain fewer than 50 records.</p>
+<ul>
+<li><strong>Dataset:</strong> <a href="https://data.cityofnewyork.us/City-Government/OATH-Hearings-Division-Case-Status/jz4z-kudi">OATH Hearings Division Case Status (jz4z-kudi)</a></li>
+<li><strong>Filtered to:</strong> <code>issuing_agency='FIRE DEPARTMENT OF NYC'</code></li>
+<li><strong>Fire-protection charges:</strong> BF12 (sprinkler/standpipe maintenance), BF20/VC20 (inspection and testing), plus general fire protection system charges. Excludes false-alarm management charges.</li>
+<li><strong>Status tracking:</strong> <code>compliance_status</code> distinguishes open ("Compliance Due" / "Both Due") from resolved ("All Terms Met") violations. Only open violations contribute to the score.</li>
+<li><strong>Matched to buildings by:</strong> borough + block + lot (constructed into BBL)</li>
+<li><strong>Result:</strong> ~350,000 fire-protection-relevant violations across ~926,000 total FDNY records; ~3,200 of our scored buildings have at least one match; ~1,400 have open violations contributing to score</li>
+</ul>
+
+<p class="note"><strong>Why OATH and not FDNY directly?</strong> FDNY publishes two named datasets on NYC Open Data (<a href="https://data.cityofnewyork.us/City-Government/fdny-violation/ktas-47y7">ktas-47y7</a> and <a href="https://data.cityofnewyork.us/City-Government/FDNY-Violations/avgm-ztsb">avgm-ztsb</a>) but they contain fewer than 50 records combined. The actual FDNY violation universe flows through the OATH hearings process and is only accessible in bulk via the OATH dataset. FDNY annual <em>inspection</em> data (as distinct from violation data) is not available as open data — it's maintained internally by FDNY and accessible only through <a href="https://a860-openrecords.nyc.gov/">FOIL requests</a> or the <a href="https://fires.fdnycloud.org/CitizenAccess/">FDNY Business Portal</a> (per-building lookup, not bulk).</p>
 
 <h3>AFDC Alternative Fuel Stations</h3>
 <p>US Department of Energy database of EV charger locations.</p>
@@ -282,7 +324,7 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 <tr><td>Under-commercial (offices, retail, stores w/ apts)</td><td>~780</td><td>PLUTO class O/K/S + garagearea &ge; 1,000</td></tr>
 <tr><td>Institutional (hospitals, religious, schools)</td><td>~145</td><td>PLUTO class H/I/M + garagearea &ge; 1,000</td></tr>
 <tr><td>Other (warehouses, utilities, mixed)</td><td>~630</td><td>Other PLUTO classes + garagearea &ge; 1,000</td></tr>
-<tr><td><strong>Total scored</strong></td><td><strong>~6,300</strong></td><td></td></tr>
+<tr><td><strong>Total scored</strong></td><td><strong>~6,200</strong></td><td></td></tr>
 </table>
 
 <p>Buildings with <code>garagearea</code> between 1,000 and 2,500 sqft (roughly 3-7 cars) are tagged with a <code>small_garage</code> flag. The scoring formula applies uniformly to them, but the flag exists so filtering and interpretation can distinguish small ground-floor parking from full multi-car garage operations.</p>
@@ -302,11 +344,20 @@ Score = Age + Sprinkler + Floors + Violations + EV Chargers<br>
 
 <h2 id="limitations">Known Limitations</h2>
 
-<h3>Scoring formula was calibrated for parking-dominant buildings</h3>
-<p>The formula — age + sprinkler maintenance + floors + violations + charger presence — was originally designed for standalone G-class parking garages. In v1 we apply it uniformly to non-G buildings (apartments, offices, institutional) with embedded parking. The <em>factors</em> still matter, but the <strong>"no sprinkler permit on record" penalty (+25) is particularly prone to misinterpretation for non-G buildings</strong>: an older apartment building may have never filed sprinkler work in DOB digital records for its ground-floor garage specifically, while the apartments above have sprinklers that the building data doesn't expose to us. Buildings in the "under_residential," "under_commercial," and "institutional" categories should be read with this caveat. This is a known calibration gap we expect to address in a future revision by either distinguishing per-level sprinkler maintenance or adjusting the penalty by class.</p>
+<h3>Sprinkler evidence is inferred, not confirmed</h3>
+<p>We combine two sources — DOB sprinkler permits and FDNY fire-protection violations — to infer whether a building has a sprinkler system. Neither source directly confirms current system status:</p>
+<ul>
+<li><strong>DOB permits</strong> confirm a system was installed or modified at some point. Most NFPA 25-mandated maintenance (annual inspections, head testing, flow tests) is performed by Certificate of Fitness holders and does NOT require a DOB permit. A building could have a perfectly maintained 30-year-old system with no DOB permit activity.</li>
+<li><strong>FDNY violations</strong> confirm the system existed at the time of the citation. A "failure to maintain sprinkler" violation proves the system is there but says nothing about whether it was subsequently fixed (unless the compliance status is still "open").</li>
+<li><strong>Absence of both</strong> is ambiguous: could mean no system, could mean a system that's never had DOB modifications or FDNY citations. For post-2004 residential buildings, sprinkler installation may have been bundled into the New Building (NB) permit, which our pipeline doesn't capture as a separate sprinkler record — we score these more leniently.</li>
+</ul>
+<p>For buildings where a legal mandate (LL26 or LL16) specifically required sprinklers and neither data source shows evidence, we flag the building and apply a higher penalty. For all other buildings with no evidence, we apply a moderate penalty that reflects genuine uncertainty. Bulk data cannot confirm system specifications (GPM/SF) — that requires DOB engineering drawings obtainable through record requests (~$8/page) or FOIL.</p>
 
-<h3>Sprinkler data measures maintenance, not capability</h3>
-<p>DOB digital records begin around 1990. A building showing "no sprinkler permits" may have a functional system installed before records went digital. We cannot distinguish "no system" from "no digital record." However, any pre-1990 system without subsequent upgrades is almost certainly below the <a href="https://nfsa.org/2024/04/30/fire-protection-for-parking-garages/">2022 NFPA OH2 density standard</a> (33% higher than the previous requirement). The scoring reflects this: buildings with no evidence of recent fire suppression activity are at higher risk regardless of whether an older system exists, because that system was not designed for modern vehicle fire loads. Actual system specifications (GPM/SF) are available through DOB record requests but are not in any bulk dataset.</p>
+<h3>FDNY violations reflect inspection bias</h3>
+<p>Buildings that get inspected more frequently (high-rise commercial, places of assembly, hospitals) will have more FDNY violations recorded than buildings that are rarely inspected (smaller residential, some commercial). A building with zero FDNY violations may be genuinely compliant — or may simply never have been inspected. The FDNY compliance factor scores only when violations ARE present; absence is treated as neutral, not positive.</p>
+
+<h3>Open vs enclosed parking structures</h3>
+<p>NFPA distinguishes between enclosed parking garages and "open parking structures" (multi-story with adequate ventilation through open sides). These have different sprinkler requirements. We cannot reliably distinguish them from PLUTO data — we exclude surface parking lots (G6/G7) but cannot differentiate an enclosed multi-story from an open-sided one within the remaining set. This may cause some open parking structures to be scored higher than their actual risk profile warrants.</p>
 
 <h3>PLUTO garagearea is self-reported and imperfect</h3>
 <p>The <code>garagearea</code> field on PLUTO is populated during Department of Finance assessment and reflects what the city has on file. Some ground-floor garages may be under-reported; some "garagearea" values may conflate parking with storage or service space. The 1,000 sqft threshold filters the most obvious noise (single-car residential) but the exact size of the captured set will shift quarterly as PLUTO updates.</p>
