@@ -17,10 +17,31 @@
   .sidebar a.sub.active { color: #ddd; }
   .sidebar .toc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #444; padding: 12px 12px 4px; }
   .container { max-width: 800px; padding: 40px 24px 80px 48px; flex: 1; min-width: 0; }
+  .mobile-toc-toggle {
+    display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+    width: 44px; height: 44px; border-radius: 50%; background: #ff8800; color: #000;
+    border: none; font-size: 20px; font-weight: 700; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5); line-height: 44px; text-align: center;
+  }
+  .mobile-toc {
+    display: none; position: fixed; bottom: 76px; right: 20px; z-index: 999;
+    background: #1a1a1a; border: 1px solid #333; border-radius: 8px;
+    padding: 12px 0; max-height: 60vh; overflow-y: auto; width: 220px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  }
+  .mobile-toc.open { display: block; }
+  .mobile-toc a { display: block; padding: 6px 16px; color: #aaa; text-decoration: none; font-size: 13px; }
+  .mobile-toc a:hover, .mobile-toc a:active { color: #fff; background: #222; }
+  .mobile-toc a.sub { padding-left: 28px; font-size: 12px; color: #777; }
   @media (max-width: 900px) {
     .page { display: block; }
     .sidebar { display: none; }
-    .container { padding: 40px 24px 80px; }
+    .container { padding: 24px 16px 80px; }
+    .mobile-toc-toggle { display: block; }
+    h1 { font-size: 22px; }
+    h2 { font-size: 17px; }
+    table { font-size: 12px; }
+    th, td { padding: 6px 8px; }
   }
   h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
   h2 { font-size: 20px; font-weight: 600; color: #fff; margin-top: 48px; margin-bottom: 16px; border-bottom: 1px solid #333; padding-bottom: 8px; }
@@ -494,6 +515,32 @@ navLinks.forEach(link => {
     }
   });
 });
+</script>
+
+<button class="mobile-toc-toggle" id="tocToggle" aria-label="Table of contents">&#9776;</button>
+<div class="mobile-toc" id="mobileToc">
+  <a href="#overview">Overview</a>
+  <a href="#why-garagearea" class="sub">Why garagearea</a>
+  <a href="#scoring" class="sub">Scoring Formula</a>
+  <a href="#data-sources">Data Sources</a>
+  <a href="#spatial-matching">Charger Matching</a>
+  <a href="#included">What's Included</a>
+  <a href="#excluded">What's Excluded</a>
+  <a href="#limitations">Known Limitations</a>
+  <a href="#background">Background Research</a>
+  <a href="#weight" class="sub">Why fire, not weight?</a>
+  <a href="#fire-behavior" class="sub">EV fire behavior</a>
+  <a href="#regulatory-gap" class="sub">The regulatory gap</a>
+  <a href="#detection-gap" class="sub">The detection gap</a>
+  <a href="#ebikes" class="sub">E-bikes &amp; detection vs bans</a>
+  <a href="#references">References</a>
+</div>
+<script>
+const tocToggle = document.getElementById('tocToggle');
+const mobileToc = document.getElementById('mobileToc');
+tocToggle.addEventListener('click', () => mobileToc.classList.toggle('open'));
+mobileToc.addEventListener('click', (e) => { if (e.target.tagName === 'A') mobileToc.classList.remove('open'); });
+document.addEventListener('click', (e) => { if (!mobileToc.contains(e.target) && e.target !== tocToggle) mobileToc.classList.remove('open'); });
 </script>
 </body>
 </html>
