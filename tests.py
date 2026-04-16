@@ -107,106 +107,119 @@ print("\n--- Scoring ---")
 
 from score_garages import score_garage
 
-# Test: pre-1968 building, no sprinklers, multi-story, no chargers, no violations
-result = score_garage(
-    {"yearbuilt": 1925, "numfloors": 4},
-    [],  # no sprinkler permits
-    [],  # no violations
-    None,  # no chargers
-)
-score, reasons, latest_sp = result
-test("pre-1968 + no sprinklers + 4 floors = 65",
-     score == 65,
+# Helper: build a complete garage dict for tests
+def garage(yearbuilt=2000, numfloors=1, bldgclass="G1"):
+    return {"yearbuilt": yearbuilt, "numfloors": numfloors, "bldgclass": bldgclass}
+
+# Test: pre-1968 G-class garage, no sprinklers, multi-story, no chargers, no violations, no FDNY
+# Expected: 30 (pre-1968) + 10 (>2 fl) + 15 (catchall: no DOB, no FDNY, not residential) = 55
+result = score_garage(garage(1925, 4, "G1"), [], [], None, [])
+score, reasons, latest_sp, retrofit_flag, fdny_open = result
+test("pre-1968 G1 + no sprinklers + 4 floors = 55 (was 65 in old scoring)",
+     score == 55,
      f"got {score}")
 test("latest sprinkler is 'none'",
      latest_sp == "none")
+test("no retrofit flag for G-class",
+     retrofit_flag is None)
 
-# Test: modern building with recent sprinkler work
-result2 = score_garage(
-    {"yearbuilt": 2010, "numfloors": 2},
-    [{"issuance_date": "03/15/2023"}],
-    [],
-    None,
-)
-score2, reasons2, latest_sp2 = result2
+# Test: modern building with recent sprinkler permit
+# Expected: 5 (modern) + 0 (DOB permit exists) + 5 (2 fl) = 10
+result2 = score_garage(garage(2010, 2, "G1"),
+                        [{"issuance_date": "03/15/2023"}], [], None, [])
+score2, _, latest_sp2, _, _ = result2
 test("2010 build + 2023 sprinkler + 2 floors = 10",
-     score2 == 10,
-     f"got {score2}")
+     score2 == 10, f"got {score2}")
 test("latest sprinkler date normalized",
-     latest_sp2 == "2023-03-15",
-     f"got '{latest_sp2}'")
+     latest_sp2 == "2023-03-15")
 
-# Test: with EV chargers (high density)
-result3 = score_garage(
-    {"yearbuilt": 1950, "numfloors": 1},
-    [],
-    [],
-    [{"l2_ports": 20, "dcfast_ports": 0}],
-)
-score3, _, _ = result3
-test("1950 + no sprinklers + 20 L2 ports = 70",
-     score3 == 70,
-     f"got {score3}")
+# Test: 1-floor garage with chargers, no sprinklers
+# Expected: 30 (pre-1968) + 15 (catchall) + 0 (1 fl) + 15 (high charger density) = 60
+result3 = score_garage(garage(1950, 1, "G1"), [], [],
+                        [{"l2_ports": 20, "dcfast_ports": 0}], [])
+score3, _, _, _, _ = result3
+test("1950 G1 + no sprinklers + 1fl + 20 L2 ports = 60",
+     score3 == 60, f"got {score3}")
 
-# Test: DC fast chargers weighted 3x
-result4 = score_garage(
-    {"yearbuilt": 2020, "numfloors": 1},
-    [{"issuance_date": "2022-01-01"}],
-    [],
-    [{"l2_ports": 0, "dcfast_ports": 7}],  # 7 * 3 = 21 weighted
-)
-score4, reasons4, _ = result4
+# Test: DC fast 3x weighting
+result4 = score_garage(garage(2020, 1, "G1"),
+                        [{"issuance_date": "2022-01-01"}], [],
+                        [{"l2_ports": 0, "dcfast_ports": 7}], [])
+score4, reasons4, _, _, _ = result4
 test("DC fast ports weighted 3x (7 DC = 21 weighted = 15 pts)",
-     score4 == 20,  # 5 (modern) + 0 (sprinkler ok) + 0 (1 floor) + 15 (chargers)
-     f"got {score4}")
+     score4 == 20, f"got {score4}")  # 5 modern + 0 sprinkler + 0 floor + 15 charger
 test("reasons mention DC fast",
-     any("DC fast" in r for r in reasons4),
-     f"reasons: {reasons4}")
+     any("DC fast" in r for r in reasons4))
 
-# Test: violation tiering
-result5 = score_garage(
-    {"yearbuilt": 2000, "numfloors": 1},
-    [{"issuance_date": "2015-01-01"}],
-    [
-        {"violation_type": "IMEGNCY-IMMEDIATE EMERGENCY"},
-        {"violation_type": "IMEGNCY-IMMEDIATE EMERGENCY"},
-        {"violation_type": "LL2604-PHOTOLUMINESCENT"},
-    ],
-    None,
-)
-score5, reasons5, _ = result5
-# 15 (pre-2004) + 0 (sprinkler ok) + 0 (1 floor) + 17 (min(2*8+1, 20)) = 32
-# viol_pts = min(2*8 + 0*5 + 1*1, 20) = 17, but only critical pts (16) are added
-# to score since critical > 0; the low violation's 1pt is in viol_pts but
-# score adds viol_pts (17) when critical > 0... wait let me re-check the code
-# Actually: viol_pts = min(16 + 0 + 1, 20) = 17, score += 17
+# Test: critical violation tiering
+# 15 (pre-2004) + 0 (sprinkler permit exists) + 0 (1 fl) + 17 (2 critical + 1 low) = 32
+result5 = score_garage(garage(2000, 1, "G1"),
+                        [{"issuance_date": "2015-01-01"}],
+                        [{"violation_type": "IMEGNCY"}, {"violation_type": "IMEGNCY"},
+                         {"violation_type": "LL2604"}], None, [])
+score5, _, _, _, _ = result5
 test("critical + low violations scored correctly",
-     score5 == 32,
-     f"got {score5}, reasons: {reasons5}")
+     score5 == 32, f"got {score5}")
 
 # Test: unknown year
-result6 = score_garage(
-    {"yearbuilt": 0, "numfloors": 1},
-    [],
-    [],
-    None,
-)
-score6, _, _ = result6
-test("unknown year = 20 pts",
-     score6 == 45,  # 20 (unknown) + 25 (no sprinkler)
-     f"got {score6}")
+# 20 (unknown) + 15 (catchall) = 35
+result6 = score_garage(garage(0, 1, "G1"), [], [], None, [])
+score6, _, _, _, _ = result6
+test("unknown year G1 = 35 (was 45 in old scoring)",
+     score6 == 35, f"got {score6}")
 
-# Test: score capped at 100
-result7 = score_garage(
-    {"yearbuilt": 1900, "numfloors": 10},
-    [],
-    [{"violation_type": "IMEGNCY-IMMEDIATE EMERGENCY"}] * 5,
-    [{"l2_ports": 30, "dcfast_ports": 5}],
-)
-score7, _, _ = result7
-test("score capped at 100",
-     score7 == 100,
-     f"got {score7}")
+# Test: score capped at 100 (need FDNY violations to push past 90 with current factors)
+# 30 (pre-1968) + 15 (catchall) + 10 (multi) + 20 (5 critical capped) + 15 (chargers)
+# + 25 (FDNY cap with many old open BF12) = 115 → capped at 100
+many_fdny = [{"is_open": True, "is_resolved": False, "date": "2010-01-01",
+              "charges": [{"code": "BF12", "desc": "FAIL TO MAINTAIN SPK"}]}] * 10
+result7 = score_garage(garage(1900, 10, "G1"), [],
+                        [{"violation_type": "IMEGNCY"}] * 5,
+                        [{"l2_ports": 30, "dcfast_ports": 5}], many_fdny)
+score7, _, _, _, _ = result7
+test("score capped at 100 (with many old FDNY violations)",
+     score7 == 100, f"got {score7}")
+
+# v1 NEW: LL26 retrofit flag triggers for pre-2004 residential >=10 floors with no evidence
+# 15 (pre-2004) + 30 (LL26 retrofit) + 10 (multi-story) = 55
+result_ll26 = score_garage(garage(1960, 12, "D4"), [], [], None, [])
+score_ll26, _, _, flag_ll26, _ = result_ll26
+test("LL26 retrofit flag triggers for pre-2004 residential >=10 floors no evidence",
+     flag_ll26 == "ll26_retrofit",
+     f"got flag={flag_ll26}, score={score_ll26}")
+
+# v1 NEW: post-2004 residential >=4 floors gets +10 (NB-bundling adjustment)
+# 5 (modern) + 10 (post-2004 res NB-bundling) + 5 (2 fl) wait no, 2 fl gets +5 only if >1
+# actually only +5 if >1, 0 if 1 floor. Let's use 5 floors for a clear test.
+# 5 (modern) + 10 (post-2004 res adjustment) + 10 (>2 fl) = 25
+result_post04 = score_garage(garage(2010, 5, "D4"), [], [], None, [])
+score_post04, _, _, flag_post04, _ = result_post04
+test("post-2004 residential >=4 floors with no evidence gets +10 sprinkler (NB bundle)",
+     score_post04 == 25 and flag_post04 is None,
+     f"got score={score_post04}, flag={flag_post04}")
+
+# v1 NEW: FDNY violation as proof of sprinkler system
+# 15 (pre-2004) + 5 (FDNY confirms) + 0 (1 fl) = 20
+fdny_evidence = [{"is_open": False, "is_resolved": True, "date": "2015-01-01",
+                  "charges": [{"code": "BF12", "desc": "FAIL TO MAINTAIN SPK STD SUPP SYST"}]}]
+result_fdny = score_garage(garage(1990, 1, "G1"), [], [], None, fdny_evidence)
+score_fdny, _, _, _, _ = result_fdny
+test("FDNY sprinkler violation = sprinkler presence confirmation (+5)",
+     score_fdny == 20, f"got {score_fdny}")
+
+# v1 NEW: open FDNY BF12 violations from 10+ years ago = +10 each (capped at +25)
+fdny_old_open = [
+    {"is_open": True, "is_resolved": False, "date": "2010-01-01",
+     "charges": [{"code": "BF12", "desc": "FAIL TO MAINTAIN SPK STD SUPP SYST"}]},
+    {"is_open": True, "is_resolved": False, "date": "2008-01-01",
+     "charges": [{"code": "BF12", "desc": "FAIL TO MAINTAIN SPK STD SUPP SYST"}]},
+]
+# 15 (pre-2004) + 5 (FDNY confirms) + 0 (1 fl) + 20 (2 BF12 10+y open) = 40
+result_old = score_garage(garage(1990, 1, "G1"), [], [], None, fdny_old_open)
+score_old, _, _, _, fdny_open = result_old
+test("Two BF12 violations from 10+ years ago add +20 (2 × 10pts)",
+     score_old == 40 and fdny_open == 2,
+     f"got score={score_old}, fdny_open={fdny_open}")
 
 
 # =========================================================================

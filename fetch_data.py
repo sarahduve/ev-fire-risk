@@ -548,6 +548,128 @@ def bulk_violations(garage_bbls):
 
 
 # ---------------------------------------------------------------------------
+# 4b. FDNY violations from OATH/ECB hearings dataset (jz4z-kudi)
+#
+# Why OATH and not the FDNY-specific datasets? The FDNY-named datasets on NYC
+# Open Data (ktas-47y7, avgm-ztsb) contain only 1-44 records each. The actual
+# FDNY violation universe (~926K records) is in the OATH ECB hearings dataset
+# because that's where Fire Code violations get adjudicated. We filter by
+# issuing_agency='FIRE DEPARTMENT OF NYC' and the relevant fire-protection
+# charge codes.
+#
+# Key fields:
+#   compliance_status: 'All Terms Met' (resolved), 'Compliance Due' (still
+#     unfixed), 'Both Due' (unfixed + owes money), 'Penalty Due' (fixed, owes)
+#   hearing_result: 'IN VIOLATION' (proven), 'DEFAULTED' (no-show), etc.
+#
+# Most charges per ticket have a charge_1 / charge_2 / charge_3 / charge_4
+# field — a single inspection visit can result in multiple charges.
+# ---------------------------------------------------------------------------
+
+# Charge codes that map to fire suppression / fire protection systems.
+# BF12 = "FAIL TO MAINTAIN SPK STD SUPP SYST" (sprinkler/standpipe direct)
+# BF20 = "INSPECTION AND TESTING" (general fire system test failure)
+FDNY_FIRE_CODES = ("BF12", "BF20")
+FDNY_FIRE_DESC_KEYWORDS = (
+    "FIRE PROTECTION SYSTEM",
+    "INSPECTION AND TESTING",
+    "FAIL TO CONDUCT REQUIRED TEST",
+    "FAIL TO MAINTAIN SPK",
+    "PORTABLE FIRE EXTINGUISHER",
+    "STANDPIPE",
+)
+
+# Excluded keyword: false-alarm management is technically a fire system charge
+# but doesn't speak to suppression readiness. Filter it out.
+FDNY_FIRE_DESC_EXCLUDE = ("UNNECESSARY UNWARRANTED ALARM", "UNWANTED ALARM")
+
+
+def _is_fire_suppression_charge(rec):
+    """Return True if any charge on this ticket is fire-suppression-relevant."""
+    for i in ("1", "2", "3", "4"):
+        code = (rec.get(f"charge_{i}_code") or "").upper()
+        desc = (rec.get(f"charge_{i}_code_description") or "").upper()
+        if not code and not desc:
+            continue
+        if any(ex in desc for ex in FDNY_FIRE_DESC_EXCLUDE):
+            continue
+        if code in FDNY_FIRE_CODES:
+            return True
+        if any(kw in desc for kw in FDNY_FIRE_DESC_KEYWORDS):
+            return True
+    return False
+
+
+def _fdny_bbl(rec):
+    """Construct BBL from FDNY violation location fields."""
+    boro_name = (rec.get("violation_location_borough") or "").upper()
+    boro_code = {"MANHATTAN": "1", "BRONX": "2", "BROOKLYN": "3",
+                 "QUEENS": "4", "STATEN ISLAND": "5"}.get(boro_name, "0")
+    block = (rec.get("violation_location_block_no") or "").zfill(5)
+    lot = (rec.get("violation_location_lot_no") or "").lstrip("0").zfill(4)
+    return f"{boro_code}{block}{lot}"
+
+
+def _is_open_fdny(rec):
+    """Open = building still has work to do (compliance not met)."""
+    return (rec.get("compliance_status") or "") in ("Compliance Due", "Both Due")
+
+
+def _is_resolved_fdny(rec):
+    return (rec.get("compliance_status") or "") == "All Terms Met"
+
+
+def bulk_fdny_violations(garage_bbls):
+    """Download all FDNY violations from OATH dataset, filter to fire-protection
+    charges affecting the garage BBL set, and return a BBL -> [{...}] map."""
+    print("  Downloading FDNY violations from OATH/ECB hearings dataset...")
+    base_url = "https://data.cityofnewyork.us/resource/jz4z-kudi.json"
+    where = "issuing_agency='FIRE DEPARTMENT OF NYC'"
+    select = ("ticket_number,violation_date,violation_location_borough,"
+              "violation_location_block_no,violation_location_lot_no,"
+              "hearing_result,compliance_status,balance_due,penalty_imposed,"
+              "charge_1_code,charge_1_code_description,"
+              "charge_2_code,charge_2_code_description,"
+              "charge_3_code,charge_3_code_description,"
+              "charge_4_code,charge_4_code_description")
+    raw = _bulk_paginate(base_url, where, select, "FDNY violations")
+    print(f"    Downloaded {len(raw)} FDNY violations total")
+
+    fire_recs = [r for r in raw if _is_fire_suppression_charge(r)]
+    print(f"    {len(fire_recs)} are fire-suppression-relevant")
+
+    by_bbl = {}
+    open_count = resolved_count = 0
+    for rec in fire_recs:
+        bbl = _fdny_bbl(rec)
+        if bbl not in garage_bbls:
+            continue
+        # Trim record to what's useful downstream
+        trimmed = {
+            "date": (rec.get("violation_date") or "")[:10],
+            "compliance_status": rec.get("compliance_status") or "",
+            "hearing_result": rec.get("hearing_result") or "",
+            "is_open": _is_open_fdny(rec),
+            "is_resolved": _is_resolved_fdny(rec),
+            "charges": [
+                {"code": rec.get(f"charge_{i}_code") or "",
+                 "desc": rec.get(f"charge_{i}_code_description") or ""}
+                for i in ("1", "2", "3", "4")
+                if rec.get(f"charge_{i}_code") or rec.get(f"charge_{i}_code_description")
+            ],
+        }
+        by_bbl.setdefault(bbl, []).append(trimmed)
+        if trimmed["is_open"]:
+            open_count += 1
+        elif trimmed["is_resolved"]:
+            resolved_count += 1
+
+    print(f"    Matched {len(by_bbl)} garages with FDNY fire-protection violations")
+    print(f"    {open_count} open (unresolved) | {resolved_count} resolved (closed)")
+    return by_bbl
+
+
+# ---------------------------------------------------------------------------
 # 5. Main
 # ---------------------------------------------------------------------------
 
@@ -583,6 +705,9 @@ def main():
     violation_map = bulk_violations(garage_bbls)
     print(f"  Total: {sum(1 for v in violation_map.values() if v)} garages have safety violations")
 
+    print("\nBulk downloading FDNY fire-protection violations from OATH/ECB...")
+    fdny_map = bulk_fdny_violations(garage_bbls)
+
     # Save cache
     cache = {
         "fetched": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -590,6 +715,7 @@ def main():
         "charger_map": charger_map,
         "unmatched_chargers": unmatched,
         "match_stats": match_stats,
+        "fdny_violation_map": fdny_map,
         "sprinkler_map": sprinkler_map,
         "violation_map": violation_map,
     }

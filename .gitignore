@@ -3,6 +3,8 @@ pluto_all.json
 afdc_data_full.json
 charger_bbl_map.json
 cached_data.json
+fdny_violations_raw.json
+fdny_by_bbl.json
 
 # Python
 __pycache__/
