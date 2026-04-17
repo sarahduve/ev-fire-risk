@@ -733,6 +733,14 @@ def main():
     print("\nBulk downloading FDNY fire-protection violations from OATH/ECB...")
     fdny_map = bulk_fdny_violations(garage_bbls)
 
+    # v1.3 DOB signals. Implemented in patch_cache_v1_3 so the same code path
+    # works for both full-fetch and incremental patch flows.
+    print("\nBulk downloading DOB ECB + DOB NOW + LL2604 (v1.3 signals)...")
+    from patch_cache_v1_3 import pull_dob_ecb, pull_dob_now, pull_ll2604_active
+    dob_ecb_map = pull_dob_ecb(garage_bbls)
+    dob_now_map = pull_dob_now(garage_bbls)
+    ll2604_map = pull_ll2604_active(garage_bbls)
+
     # Save cache
     cache = {
         "fetched": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -743,6 +751,9 @@ def main():
         "fdny_violation_map": fdny_map,
         "sprinkler_map": sprinkler_map,
         "violation_map": violation_map,
+        "dob_ecb_map": dob_ecb_map,
+        "dob_now_map": dob_now_map,
+        "ll2604_map": ll2604_map,
     }
 
     cache_path = DATA_DIR / "cached_data.json"

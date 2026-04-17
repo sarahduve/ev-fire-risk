@@ -71,6 +71,7 @@
     <div class="toc-label">Contents</div>
     <a href="#overview">Overview</a>
     <a href="#why-garagearea" class="sub">Why garagearea, not just G-class</a>
+    <a href="#reading-the-map" class="sub">Reading the Map</a>
     <a href="#scoring" class="sub">Scoring Formula (6 factors)</a>
     <a href="#data-sources">Data Sources</a>
     <a href="#spatial-matching">Charger Matching</a>
@@ -90,7 +91,7 @@
 
 <a href="index.html" class="back">&larr; Back to map</a>
 
-<h1>Methodology <span style="color:#888; font-size:15px; font-weight:400; letter-spacing:0.5px;">v1.2</span></h1>
+<h1>Methodology <span style="color:#888; font-size:15px; font-weight:400; letter-spacing:0.5px;">v1.3</span></h1>
 <p class="subtitle">How we score NYC parking buildings for EV battery fire risk</p>
 
 <h2 id="overview">Overview</h2>
@@ -114,6 +115,40 @@
 </ul>
 
 <p>Adding <code>garagearea &ge; 1000</code> to the selection adds about 4,500 buildings the previous version missed, most of them in the exact "people sleeping above parking" configuration that makes battery fires dangerous at night. The <a href="#ebikes">Reims, June 2025 e-scooter fire</a> — 4 dead in a social housing tower — happened in a building of this type.</p>
+
+<h2 id="reading-the-map">Reading the Map</h2>
+
+<p>Every dot on the map encodes four things. Each visual channel maps to an independent dimension of risk, so you can scan multiple things at once:</p>
+
+<table>
+  <thead>
+    <tr><th>Channel</th><th>Dimension</th><th>Details</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Color</strong></td>
+      <td>Risk score (likelihood this building has a bad outcome)</td>
+      <td>Red = high (70+), orange = elevated (50-69), yellow = moderate (30-49), green = low (&lt;30). See the <a href="#scoring">Scoring Formula</a> below.</td>
+    </tr>
+    <tr>
+      <td><strong>Size</strong></td>
+      <td>Garage capacity (how many cars are at stake)</td>
+      <td>Square-root-scaled on PLUTO <code>garagearea</code>. Bigger dot = bigger garage. Roughly: 1K sqft → 3.5px, 10K sqft → 5px, 100K sqft → 9px, 250K+ sqft → 14px (capped). Buildings with <code>garagearea = 0</code> in PLUTO use a default 5px. Size does <strong>not</strong> encode risk; color does.</td>
+    </tr>
+    <tr>
+      <td><strong>Border</strong></td>
+      <td>EV charger presence (binary)</td>
+      <td>White ring = one or more AFDC-listed EV chargers at this building. Black border otherwise. Charger count is already baked into the score via the EV bonus — the ring is just a "heads up, EVs congregate here" flag.</td>
+    </tr>
+    <tr>
+      <td><strong>Opacity</strong></td>
+      <td>Data confidence</td>
+      <td>Three tiers based on the combined count of DOB sprinkler permits + FDNY violation records for the building. Solid (~49% of buildings): 3+ records on file. Medium (~11%): 1-2 records; thin data backing. Translucent (~39%): no records either way; the score is inferred from the absence of evidence and should be interpreted with caution. See <a href="#sprinkler-evidence">Sprinkler System Evidence</a> for how we reason about this.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="note"><strong>The charger tooltip on the legend used to say "dot size scales with port count."</strong> That was true in earlier versions but is wrong now — we decoupled size from chargers because it double-counted the EV factor (already in the score) and visually implied "more charging = more danger," which contradicts this tool's own framing that parked EVs are the risk, not charging itself.</div>
 
 <h2 id="scoring">Scoring Formula</h2>
 
@@ -521,6 +556,7 @@ navLinks.forEach(link => {
 <div class="mobile-toc" id="mobileToc">
   <a href="#overview">Overview</a>
   <a href="#why-garagearea" class="sub">Why garagearea</a>
+  <a href="#reading-the-map" class="sub">Reading the Map</a>
   <a href="#scoring" class="sub">Scoring Formula</a>
   <a href="#data-sources">Data Sources</a>
   <a href="#spatial-matching">Charger Matching</a>

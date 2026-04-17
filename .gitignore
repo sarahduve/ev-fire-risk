@@ -9,7 +9,5 @@ fdny_by_bbl.json
 # Python
 __pycache__/
 
-# Draft content (not ready for public)
-twitter_thread_draft.md
 research/
 .DS_Store

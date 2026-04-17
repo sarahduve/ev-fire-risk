@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <title>NYC EV Fire Risk — Parking Garages</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0a0a0a; color: #e0e0e0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
@@ -27,6 +28,7 @@
   .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
 
   /* Resizable panel */
+  .mobile-table-toggle { display: none; }
   .panel-container { flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; }
   .resize-handle {
     height: 6px; background: #222; cursor: ns-resize; flex-shrink: 0;
@@ -35,13 +37,16 @@
   }
   .resize-handle:hover, .resize-handle.active { background: #335; }
   .resize-handle::after { content: ''; width: 40px; height: 2px; background: #666; border-radius: 1px; }
-  .table-wrap { flex: 1; overflow-y: auto; padding: 0 24px 16px; }
+  .table-wrap { flex: 1; overflow-y: auto; overflow-x: auto; padding: 0 24px 16px; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+  td.reasons { max-width: 500px; }
+  thead { position: sticky; top: 0; z-index: 10; background: #0a0a0a; }
   th {
-    text-align: left; padding: 6px 8px; border-bottom: 1px solid #333;
+    text-align: left; padding: 6px 8px;
+    box-shadow: inset 0 -1px 0 #333;
     color: #888; font-weight: 500; font-size: 11px; text-transform: uppercase;
-    letter-spacing: 0.5px; position: sticky; top: 0; background: #0a0a0a;
+    letter-spacing: 0.5px; background: #0a0a0a;
     cursor: pointer; user-select: none;
   }
   th:hover { color: #ccc; }
@@ -65,12 +70,80 @@
     background: #1a1a1a; color: #ccc; border: 1px solid #444; border-radius: 6px;
     padding: 8px 12px; font-size: 12px; font-weight: 400; text-transform: none;
     letter-spacing: 0; line-height: 1.4; white-space: normal; width: 260px;
-    z-index: 1000; pointer-events: none; margin-bottom: 6px;
+    z-index: 9999; pointer-events: none; margin-bottom: 6px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.5);
   }
   th[data-tip]:hover::after { left: 0; transform: none; bottom: auto; top: 100%; margin-top: 4px; margin-bottom: 0; z-index: 9999; }
   .legend-item[data-tip]:hover::after { bottom: auto; top: 100%; margin-top: 6px; margin-bottom: 0; }
+  /* First legend item (High risk) is at the left edge — anchor tooltip left so it doesn't clip */
+  .legend-item:first-child[data-tip]:hover::after { left: 0; transform: none; }
   .col-name { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .header { padding: 10px 14px; }
+    .header h1 { font-size: 15px; }
+    .header .desc-text { display: none; }
+    .header .desc-link { font-size: 12px; }
+    .stats { gap: 8px; padding: 8px 14px; flex-wrap: wrap; justify-content: space-between; }
+    .stat .n { font-size: 20px; }
+    .stat .label { font-size: 9px; }
+    .stat[data-filter] { padding: 4px 6px; }
+    .legend { flex-wrap: wrap; gap: 8px 14px; padding: 6px 14px; font-size: 11px; border-bottom: 1px solid #222; }
+    .legend-item[style*="margin-left"] { margin-left: 0 !important; border-left: none !important; padding-left: 0 !important; }
+    #map { min-height: 45vh; }
+    .panel-container {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 0 !important;
+      overflow: hidden; transition: height 0.25s ease; z-index: 900;
+      background: #0a0a0a; border-top: 1px solid #333;
+    }
+    .panel-container.mobile-open { height: 70vh !important; overflow: visible; }
+    .resize-handle { display: none; }
+    .mobile-table-toggle {
+      display: block; position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+      z-index: 1000; padding: 10px 24px; background: #ff8800; color: #000;
+      border: none; border-radius: 20px; font-size: 14px; font-weight: 600;
+      cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      font-family: inherit;
+    }
+    .table-wrap { padding: 0 10px 10px; overflow-x: auto; }
+    table { font-size: 11px; }
+    th, td { padding: 4px 3px; white-space: nowrap; }
+    td.col-name { white-space: normal; max-width: 140px; font-size: 10px; }
+    th { font-size: 9px; }
+    #addressSearch { width: 140px !important; font-size: 11px !important; }
+    #boroFilter { font-size: 11px !important; }
+    .panel-container > div:nth-child(2) { padding: 6px 10px 0 !important; }
+    /* Hide Risk Factors, Last Sprinkler Permit, Type on mobile */
+    th:nth-child(11), td:nth-child(11),
+    th:nth-child(8), td:nth-child(8),
+    th:nth-child(7), td:nth-child(7) { display: none; }
+    body.details-open .leaflet-control-zoom { display: none; }
+    [data-tip]:hover::after { display: none; }
+    [data-tip].tap-open::after {
+      content: attr(data-tip); display: block;
+      position: absolute; left: 50%; transform: translateX(-50%);
+      top: 100%; margin-top: 6px;
+      background: #1a1a1a; color: #ccc; border: 1px solid #444; border-radius: 6px;
+      padding: 10px 14px; font-size: 12px; font-weight: 400; text-transform: none;
+      letter-spacing: 0; line-height: 1.4; white-space: normal;
+      width: 240px; max-width: calc(100vw - 24px);
+      z-index: 2000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    /* Floating tooltip banner — for table headers (JS-controlled). */
+    #mobile-tooltip {
+      display: none; position: fixed; left: 12px; right: 12px;
+      bottom: calc(70vh + 8px);
+      background: #1a1a1a; color: #ccc; border: 1px solid #444; border-radius: 6px;
+      padding: 10px 14px; font-size: 12px; line-height: 1.4;
+      z-index: 2000; box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    #mobile-tooltip.open { display: block; }
+    .leaflet-popup-content-wrapper { max-width: 280px !important; }
+    .leaflet-popup-content { max-height: 50vh; overflow-y: auto; font-size: 12px !important; margin: 10px !important; }
+    .leaflet-popup-content table { font-size: 12px !important; }
+  }
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -78,8 +151,8 @@
 </head>
 <body>
 <div class="header">
-  <h1>NYC EV Fire Risk — All Parking Garages <span style="color:#888; font-size:13px; font-weight:400;">v1</span></h1>
-  <p>Every NYC building with parking space scored by structural age, fire suppression status, DOB violations, and EV charger presence. <a href="methodology.html" target="_blank" style="color:#6cacff;">Methodology &amp; sources</a> <span id="last-updated" style="float:right; color:#555; font-size:12px;"></span></p>
+  <h1>NYC EV Fire Risk — All Parking Garages <span style="color:#888; font-size:13px; font-weight:400;">v1.3</span></h1>
+  <p><span class="desc-text">Every NYC building with parking space scored by structural age, fire suppression status, DOB violations, and EV charger presence. </span><a href="methodology.html" target="_blank" class="desc-link" style="color:#6cacff;">Methodology &amp; sources</a> <span id="last-updated" style="float:right; color:#555; font-size:12px;"></span></p>
 </div>
 <div class="stats" id="stats"></div>
 <div class="legend">
@@ -87,9 +160,13 @@
   <div class="legend-item" data-tip="Older building with limited fire suppression history"><div class="legend-dot" style="background:#ff8800"></div> Elevated (50-69)</div>
   <div class="legend-item" data-tip="Some risk factors but partially mitigated by sprinkler work or newer construction"><div class="legend-dot" style="background:#ffcc00"></div> Moderate (30-49)</div>
   <div class="legend-item" data-tip="Modern construction (post-2004) with recent sprinkler work"><div class="legend-dot" style="background:#44cc44"></div> Low (&lt;30)</div>
-  <div class="legend-item" data-tip="EV chargers concentrate vehicles at high state of charge, increasing thermal runaway risk. Dot size scales with port count." style="margin-left:16px; border-left:1px solid #444; padding-left:16px;"><div class="legend-dot" style="background:transparent; border:2px solid #fff; width:10px; height:10px;"></div> <span class="tip">Has EV chargers</span></div>
+  <div class="legend-item" data-tip="White ring indicates EV chargers are present at this building. Chargers concentrate vehicles at high state of charge, which is in the score; they don't affect dot size." style="margin-left:16px; border-left:1px solid #444; padding-left:16px;"><div class="legend-dot" style="background:transparent; border:2px solid #fff; width:10px; height:10px;"></div> <span class="tip">Has EV chargers</span></div>
+  <div class="legend-item" data-tip="Dot size scales with PLUTO garagearea_sqft. Bigger dot = more cars at stake if something goes wrong (risk exposure). Buildings with no reported garagearea use a default size." style="margin-left:16px;"><div style="display:flex; align-items:center; gap:3px;"><div class="legend-dot" style="background:#888; width:5px; height:5px;"></div><div class="legend-dot" style="background:#888; width:10px; height:10px;"></div></div> <span class="tip">= garage size</span></div>
+  <div class="legend-item" data-tip="Opacity scales with how much data we have on the building (DOB sprinkler permits + FDNY violation records combined). Solid = 3+ records, medium = 1-2 records, translucent = no records (score inferred from absence of data)." style="margin-left:16px;"><div style="display:flex; align-items:center; gap:3px;"><div class="legend-dot" style="background:#888; opacity:0.9; width:10px; height:10px;"></div><div class="legend-dot" style="background:#888; opacity:0.65; width:10px; height:10px;"></div><div class="legend-dot" style="background:#888; opacity:0.4; width:10px; height:10px;"></div></div> <span class="tip">= data confidence</span></div>
 </div>
 <div id="map"></div>
+<button class="mobile-table-toggle" id="tableToggle">View Details</button>
+<div id="mobile-tooltip"></div>
 <div class="panel-container" id="panel" style="height: 30vh;">
   <div class="resize-handle" id="resizeHandle"></div>
   <div style="padding: 8px 24px 0; flex-shrink:0; display:flex; gap:8px; align-items:center;">
@@ -123,7 +200,7 @@
           <th data-key="total_ev_ports" data-type="num" data-tip="Number of EV charging ports. L2 = Level 2 (240V AC, adds ~25mi/hr). DC = DC Fast (direct current, adds ~200mi/30min — higher thermal stress on batteries)">EV Ports <span class="sort-arrow"></span></th>
           <th data-key="osm_parking_type" data-type="str" data-tip="Underground or multi-story, from OpenStreetMap + PLUTO basement codes. Underground = worse ventilation, toxic gas buildup, harder firefighter access.">Type <span class="sort-arrow"></span></th>
           <th data-key="sprinkler_last_date" data-type="str" data-tip="Year of most recent DOB sprinkler installation or modification permit. 'none' = no permits in digital records (post-~1990). Building may still have a functioning system (DOB permits record installation/modification, not ongoing FDNY-inspected maintenance), but any such system predates current editions of NFPA 13 sprinkler standards.">Last Sprinkler Permit <span class="sort-arrow"></span></th>
-          <th data-key="fire_violations_count" data-type="num" data-tip="DOB safety violations: immediate emergencies, unsafe building designations, structurally compromised buildings, and sprinkler deficiencies. Tiered by severity.">DOB Viol. <span class="sort-arrow"></span></th>
+          <th data-key="legacy_dob_keyword_count" data-type="num" data-tip="DOB safety violations: immediate emergencies, unsafe building designations, structurally compromised buildings, and sprinkler deficiencies. Tiered by severity.">DOB Viol. <span class="sort-arrow"></span></th>
           <th data-key="fdny_violations_open" data-type="num" data-tip="Open (unresolved) FDNY fire-protection violations from OATH/ECB hearings. Includes failed inspections, sprinkler maintenance failures, fire system deficiencies. Older open violations weighted more heavily in scoring.">FDNY Open <span class="sort-arrow"></span></th>
           <th data-key="_reasons" data-type="str" data-tip="Breakdown of what contributes to this garage's risk score">Risk Factors <span class="sort-arrow"></span></th>
         </tr>
@@ -172,22 +249,11 @@ function passesFilter(r) {
   return true;
 }
 
-// Zoom-level visibility: at broad zoom, only show high/elevated. Reveal more
-// as user zooms in. Prevents 7K+ dots from overwhelming the city view while
-// preserving full detail at neighborhood scale.
-//
-// zoom < 13  -> high + elevated only
-// zoom 13-14 -> + moderate
-// zoom >= 15 -> + low
-// "With EV chargers" filter overrides zoom (always show chargers when that
-// filter is active).
-function passesZoom(r, zoom) {
-  if (activeFilter === 'chargers') return r.has_chargers; // always show
-  if (r.risk_score >= 50) return true;  // high + elevated always
-  if (zoom >= 13 && r.risk_score >= 30) return true;  // + moderate at neighborhood zoom
-  if (zoom >= 15) return true;  // + low at block zoom
-  return false;
-}
+// All dots visible at all zoom levels. (We used to hide low/moderate when
+// zoomed out, but it was confusing to have the set of visible dots change
+// as you zoomed. With sqrt-scaled sizing most low-score dots are small
+// anyway, and color salience keeps red/orange visible.)
+function passesZoom(_r, _zoom) { return true; }
 
 function toggleFilter(f) {
   activeFilter = activeFilter === f ? null : f;
@@ -236,15 +302,14 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
 map.on('zoomend', () => updateMarkers());
 
 // Custom panes so high-risk dots always render above the orange/yellow mass.
-// Default markerPane z-index is 600. We layer: low < moderate < elevated < high.
+// Strictly score-ordered — chargers still get the white border indicator,
+// but no z-index priority that would bury high-risk dots.
 map.createPane('lowPane').style.zIndex = 601;
 map.createPane('moderatePane').style.zIndex = 602;
 map.createPane('elevatedPane').style.zIndex = 603;
 map.createPane('highPane').style.zIndex = 604;
-map.createPane('chargerPane').style.zIndex = 605;
 
 function riskPane(r) {
-  if (r.has_chargers) return 'chargerPane';
   if (r.risk_score >= 70) return 'highPane';
   if (r.risk_score >= 50) return 'elevatedPane';
   if (r.risk_score >= 30) return 'moderatePane';
@@ -259,10 +324,26 @@ DATA.results.forEach(r => {
   const color = scoreColor(r.risk_score);
   const hasChargers = r.has_chargers;
   const isUnderground = r.osm_parking_type === 'underground';
-  const radius = hasChargers ? Math.max(6, Math.min(14, r.total_ev_ports)) : 5;
+
+  // Size: sqrt-scaled garage capacity (compresses the 1K-250K sqft range to
+  // readable dot sizes). Buildings with garagearea=0 get a middle default of 5px
+  // since we don't know the scale.
+  const garageArea = r.garagearea_sqft || 0;
+  const radius = garageArea > 0
+    ? Math.max(3, Math.min(14, 3 + Math.sqrt(garageArea) / 50))
+    : 5;
+
+  // Border: binary "has chargers" indicator (white ring)
   const borderColor = hasChargers ? '#fff' : '#000';
   const weight = hasChargers ? 2 : 1;
-  const opacity = hasChargers ? 0.7 : 0.4;
+
+  // Opacity: data confidence. Three tiers based on total DOB sprinkler
+  // permits + FDNY violation records for this building.
+  //   0 records   -> 0.40 (translucent; score inferred from absence of data)
+  //   1-2 records -> 0.65 (medium; thin data backing)
+  //   3+ records  -> 0.90 (solid; well-documented)
+  const records = (r.sprinkler_permits_count || 0) + (r.fdny_violations_total || 0);
+  const fillOpacity = records >= 3 ? 0.90 : records >= 1 ? 0.65 : 0.40;
 
   const circle = L.circleMarker([r.lat, r.lon], {
     pane: riskPane(r),
@@ -270,8 +351,8 @@ DATA.results.forEach(r => {
     fillColor: color,
     color: borderColor,
     weight: weight,
-    opacity: opacity + 0.1,
-    fillOpacity: opacity,
+    opacity: fillOpacity + 0.1,
+    fillOpacity: fillOpacity,
   }).addTo(map);
   allMarkers.push({marker: circle, record: r});
 
@@ -326,7 +407,7 @@ DATA.results.forEach(r => {
         <tr><td>Built</td><td style="text-align:right; font-weight:600">${yb}</td></tr>
         <tr><td>Floors</td><td style="text-align:right; font-weight:600">${r.numfloors}</td></tr>
         <tr><td>Sprinkler Permits</td><td style="text-align:right; font-weight:600">${r.sprinkler_permits_count}</td></tr>
-        <tr><td>DOB Violations</td><td style="text-align:right; font-weight:600">${r.fire_violations_count}</td></tr>
+        <tr><td>DOB Violations</td><td style="text-align:right; font-weight:600">${r.legacy_dob_keyword_count}</td></tr>
         <tr><td>FDNY Open</td><td style="text-align:right; font-weight:600; ${r.fdny_violations_open > 0 ? 'color:#ff6644' : ''}">${r.fdny_violations_open}${r.fdny_violations_total > 0 ? ` / ${r.fdny_violations_total} total` : ''}</td></tr>
       </table>
       ${(r.fdny_violations_open > 0) ? `<div style="margin-top:4px; font-size:11px;"><a href="https://data.cityofnewyork.us/City-Government/OATH-Hearings-Division-Case-Status/jz4z-kudi/explore/query/SELECT%20ticket_number%2C%20violation_date%2C%20issuing_agency%2C%20charge_1_code_description%2C%20charge_2_code_description%2C%20compliance_status%2C%20hearing_result%20WHERE%20violation_location_borough%3D%27${boroughFull.toUpperCase()}%27%20AND%20violation_location_block_no%3D%27${r.bbl.slice(1,6)}%27%20AND%20violation_location_lot_no%3D%27${r.bbl.slice(6,10)}%27%20AND%20issuing_agency%20IN%20(%27FIRE%20DEPARTMENT%20OF%20NYC%27)%20AND%20compliance_status%20IN%20(%27Compliance%20Due%27%2C%27Both%20Due%27)%20ORDER%20BY%20violation_date%20DESC" target="_blank" rel="noopener" style="color:#6cacff;">View FDNY violations on NYC Open Data &rarr;</a></div>` : ''}
@@ -356,31 +437,86 @@ const handle = document.getElementById('resizeHandle');
 let dragging = false;
 let startY, startHeight;
 
-handle.addEventListener('mousedown', (e) => {
+function startDrag(y) {
   dragging = true;
-  startY = e.clientY;
+  startY = y;
   startHeight = panel.offsetHeight;
   handle.classList.add('active');
-  document.body.style.cursor = 'ns-resize';
-  e.preventDefault();
-});
-
-document.addEventListener('mousemove', (e) => {
+}
+function doDrag(y) {
   if (!dragging) return;
-  const delta = startY - e.clientY;
+  const delta = startY - y;
   const newHeight = Math.max(60, Math.min(window.innerHeight - 150, startHeight + delta));
   panel.style.height = newHeight + 'px';
   map.invalidateSize();
-});
-
-document.addEventListener('mouseup', () => {
+}
+function endDrag() {
   if (dragging) {
     dragging = false;
     handle.classList.remove('active');
     document.body.style.cursor = '';
     map.invalidateSize();
   }
+}
+handle.addEventListener('mousedown', (e) => { startDrag(e.clientY); document.body.style.cursor = 'ns-resize'; e.preventDefault(); });
+document.addEventListener('mousemove', (e) => doDrag(e.clientY));
+document.addEventListener('mouseup', endDrag);
+handle.addEventListener('touchstart', (e) => { startDrag(e.touches[0].clientY); e.preventDefault(); }, { passive: false });
+document.addEventListener('touchmove', (e) => { if (dragging) { doDrag(e.touches[0].clientY); e.preventDefault(); } }, { passive: false });
+document.addEventListener('touchend', endDrag);
+
+// Mobile table toggle
+const tableToggle = document.getElementById('tableToggle');
+tableToggle.addEventListener('click', () => {
+  const isOpen = panel.classList.toggle('mobile-open');
+  document.body.classList.toggle('details-open', isOpen);
+  tableToggle.textContent = isOpen ? 'Close Details' : 'View Details';
+  setTimeout(() => map.invalidateSize(), 300);
 });
+
+// Shorten table headers on mobile (and auto-add a tooltip with the full label)
+if (window.matchMedia('(max-width: 600px)').matches) {
+  const shorten = {
+    legacy_dob_keyword_count: { short: 'DOB', full: 'DOB safety violations' },
+    fdny_violations_open: { short: 'FDNY', full: 'Open FDNY fire-protection violations' },
+    yearbuilt: { short: 'Built', full: 'Year built (per NYC PLUTO)' },
+    numfloors: { short: 'Fl.', full: 'Number of floors in the building' },
+    total_ev_ports: { short: 'EV', full: 'Number of EV charging ports (L2 + DC fast)' },
+  };
+  document.querySelectorAll('th[data-key]').forEach(th => {
+    const k = th.dataset.key;
+    if (shorten[k]) {
+      const arrow = th.querySelector('.sort-arrow');
+      th.childNodes[0].textContent = shorten[k].short + ' ';
+      if (arrow) th.appendChild(arrow);
+      // Preserve an existing data-tip if more detailed, else use the auto one
+      if (!th.dataset.tip) th.dataset.tip = shorten[k].full;
+    }
+  });
+}
+
+// Tap-to-toggle tooltips on touch devices
+if ('ontouchstart' in window) {
+  const floatTip = document.getElementById('mobile-tooltip');
+  document.addEventListener('click', (e) => {
+    const tip = e.target.closest('[data-tip]');
+    document.querySelectorAll('.tap-open').forEach(el => { if (el !== tip) el.classList.remove('tap-open'); });
+    // Table headers use a real DOM tooltip (pseudo-element positioning is unreliable
+    // inside a fixed-position bottom sheet with scrollable ancestors)
+    if (tip && tip.tagName === 'TH') {
+      if (floatTip.dataset.for === tip.dataset.key) {
+        floatTip.classList.remove('open'); floatTip.dataset.for = '';
+      } else {
+        floatTip.textContent = tip.dataset.tip;
+        floatTip.classList.add('open'); floatTip.dataset.for = tip.dataset.key;
+      }
+      e.stopPropagation();
+    } else {
+      floatTip.classList.remove('open'); floatTip.dataset.for = '';
+      if (tip) { tip.classList.toggle('tap-open'); e.stopPropagation(); }
+    }
+  });
+}
 
 // --- Sortable table ---
 let currentSort = { key: null, dir: null };
@@ -412,45 +548,60 @@ function passesSearch(r) {
          (r.charger_addresses || '').toUpperCase().includes(searchQuery);
 }
 
+const MOBILE_ROW_CAP = 500;
+const isMobile = () => window.matchMedia('(max-width: 600px)').matches;
+let visibleRows = [];  // lookup by row index for delegated click
 function renderTable() {
   const tbody = document.getElementById('tbody');
-  tbody.innerHTML = '';
   const filtered = tableData.filter(r => passesFilter(r) && passesSearch(r));
-  filtered.forEach(r => {
+  const cap = isMobile() ? MOBILE_ROW_CAP : filtered.length;
+  visibleRows = filtered.slice(0, cap);
+  const html = visibleRows.map((r, i) => {
     const cls = scoreClass(r.risk_score);
     const yb = r.yearbuilt > 0 ? r.yearbuilt : '—';
     const evLabel = r.has_chargers ? `<span style="color:#fff; font-weight:600">${r.total_ev_ports}</span>` : '<span style="color:#444">-</span>';
     const typeLabel = r.osm_parking_type === 'underground' ? '<span style="color:#00bcd4">underground</span>' :
                       r.osm_parking_type === 'multi-storey' ? 'multi-story' : '';
     const spDate = !r.sprinkler_last_date || r.sprinkler_last_date === 'none' ? '<span style="color:#ff4444">none</span>' : r.sprinkler_last_date.slice(0, 4);
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
+    return `<tr data-i="${i}" style="cursor:pointer">
       <td><span class="score ${cls}">${r.risk_score}</span></td>
-      <td>${r.address}</td>
+      <td class="col-name">${r.address}</td>
       <td>${r.borough}</td>
       <td>${yb}</td>
       <td>${r.numfloors}</td>
       <td>${evLabel}</td>
       <td>${typeLabel}</td>
       <td>${spDate}</td>
-      <td>${r.fire_violations_count}</td>
+      <td>${r.legacy_dob_keyword_count}</td>
       <td>${r.fdny_violations_open > 0 ? `<span style="color:#ff6644; font-weight:600">${r.fdny_violations_open}</span>` : '<span style="color:#444">0</span>'}</td>
       <td class="reasons">${r.reasons.map(s => s.replace(/\s*\(\+\d+\)/g, '')).join('; ')}</td>
-    `;
-    tr.style.cursor = 'pointer';
-    tr.addEventListener('click', () => {
-      const marker = markerMap[r.lat + ',' + r.lon];
-      if (marker) {
-        // Open popup first, then pan so the popup is visible
-        marker.openPopup();
-        map.setView([r.lat + 0.001, r.lon], 17, {animate: true});
-      } else {
-        map.setView([r.lat, r.lon], 17);
-      }
-    });
-    tbody.appendChild(tr);
-  });
+    </tr>`;
+  }).join('');
+  const footer = filtered.length > cap
+    ? `<tr><td colspan="11" style="text-align:center; padding:12px; color:#888; font-style:italic; background:#111;">Showing top ${cap} of ${filtered.length.toLocaleString()} — sort, search, or filter to narrow results</td></tr>`
+    : '';
+  tbody.innerHTML = html + footer;
 }
+// Delegated click on tbody — much faster than 6K individual listeners
+document.getElementById('tbody').addEventListener('click', (e) => {
+  const tr = e.target.closest('tr[data-i]');
+  if (!tr) return;
+  const r = visibleRows[parseInt(tr.dataset.i)];
+  if (!r) return;
+  // If the mobile panel is open, close it so the user can see the map
+  if (panel.classList.contains('mobile-open')) {
+    panel.classList.remove('mobile-open');
+    document.body.classList.remove('details-open');
+    tableToggle.textContent = 'View Details';
+  }
+  const marker = markerMap[r.lat + ',' + r.lon];
+  if (marker) {
+    marker.openPopup();
+    map.setView([r.lat + 0.001, r.lon], 17, {animate: true});
+  } else {
+    map.setView([r.lat, r.lon], 17);
+  }
+});
 
 function sortTable(key, type) {
   if (currentSort.key === key) {

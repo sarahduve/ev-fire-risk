@@ -107,6 +107,119 @@ def _age_bucket(years):
     return "10+y"
 
 
+# v1.3 DOB weights — per FDNY-expert guidance. Age multiplier applied only to
+# ECB Class 1/2 records (not DOB NOW Parking Structures — LL126 program is ~4
+# months old, so age signal is uninformative there).
+ECB_WEIGHTS = {
+    "construction_fire":  6,
+    "construction_other": 3,
+    "elevator_fireman":   4,
+    "elevator_other":     1,
+    "class2_fire":        2,
+}
+
+
+def _age_multiplier(years):
+    """Older uncured Class 1/2 indicates structural non-compliance."""
+    if years < 3:  return 1.0
+    if years < 5:  return 1.25
+    if years < 10: return 1.5
+    return 2.0
+
+
+def _score_dob_parking_structure(dob_now_recs):
+    """DOB NOW Parking Structures (LL126) — failure to file OR failure to correct
+    an 'unsafe' inspection report. Flat, no age decay.
+    Take the HIGHER of PS-INITL (+8, never filed) or PS-UNSAFE (+12, filed+unsafe),
+    since they're mutually informative signals about the same building.
+    """
+    if not dob_now_recs:
+        return 0, []
+    has_unsafe = any(r.get("class") == "ps_unsafe" for r in dob_now_recs)
+    has_initl = any(r.get("class") == "ps_initl" for r in dob_now_recs)
+    if has_unsafe:
+        return 12, ["DOB LL126: Unsafe parking-structure inspection report, not corrected (+12)"]
+    if has_initl:
+        return 8, ["DOB LL126: Required parking-structure inspection report never filed (+8)"]
+    return 0, []
+
+
+def _score_dob_now_fire_systems(dob_now_recs):
+    """Other DOB NOW device_types: sprinklers, emergency power, photoluminescent,
+    structurally-compromised buildings. Small volumes, flat weights."""
+    if not dob_now_recs:
+        return 0, []
+    points = 0
+    parts = []
+    if any(r.get("class") == "sprinkler" for r in dob_now_recs):
+        points += 6
+        parts.append("sprinkler system filing")
+    if any(r.get("class") == "emergency_power" for r in dob_now_recs):
+        points += 6
+        parts.append("emergency power filing")
+    if any(r.get("class") == "photoluminescent" for r in dob_now_recs):
+        points += 1
+        parts.append("exit-sign filing")
+    if any(r.get("class") == "structurally_compromised" for r in dob_now_recs):
+        points += 8
+        parts.append("structurally compromised")
+    if points == 0:
+        return 0, []
+    return points, [f"DOB NOW open {', '.join(parts)} violation(s) (+{points})"]
+
+
+def _score_dob_ecb(ecb_recs):
+    """ECB Class 1 + fire-relevant Class 2 violations, age-multiplied.
+    Capped at 15 to prevent any single building from being dominated by ECB alone."""
+    if not ecb_recs:
+        return 0, []
+    points = 0.0
+    counts = {k: 0 for k in ECB_WEIGHTS}
+    for r in ecb_recs:
+        cls = r.get("class")
+        if cls not in ECB_WEIGHTS:
+            continue
+        years = _years_open(r.get("date", ""))
+        points += ECB_WEIGHTS[cls] * _age_multiplier(years)
+        counts[cls] += 1
+    points = min(int(round(points)), 15)
+    if points == 0:
+        return 0, []
+    # Concise reason text
+    labels = {
+        "construction_fire":  "fire-egress/alarm Class 1",
+        "construction_other": "other Class 1 construction",
+        "elevator_fireman":   "elevator fireman-service",
+        "elevator_other":     "other Class 1 elevator",
+        "class2_fire":        "fire-relevant Class 2",
+    }
+    parts = [f"{counts[k]} {labels[k]}" for k in counts if counts[k] > 0]
+    return points, [f"DOB ECB: {', '.join(parts)} (+{points}, age-weighted)"]
+
+
+def _score_ll2604_active(ll2604_recs):
+    """Active Local Law 26/2004 violations — small volume, high-specificity.
+    LL26 of 2004 required exit signs, emergency power, and sprinkler retrofit
+    for multi-story residential by 2019."""
+    if not ll2604_recs:
+        return 0, []
+    points = 0
+    parts = []
+    by_class = {r.get("class") for r in ll2604_recs}
+    if "ll2604_sprinkler" in by_class:
+        points += 2
+        parts.append("sprinkler")
+    if "ll2604_emergency_power" in by_class:
+        points += 1
+        parts.append("emergency power")
+    if "ll2604_photoluminescent" in by_class:
+        points += 1
+        parts.append("photoluminescent")
+    if points == 0:
+        return 0, []
+    return points, [f"LL26/2004 retrofit mandate: active {', '.join(parts)} violation(s) (+{points})"]
+
+
 def _score_fdny_compliance(fdny_recs):
     """Sum points for OPEN fire-protection violations, time-weighted."""
     if not fdny_recs:
@@ -186,7 +299,8 @@ def _score_sprinkler_evidence(garage, has_dob, has_fdny, retrofit_flag):
     return 15, "No DOB sprinkler permit on record and no FDNY violation confirming a system; sprinkler status unknown (+15)"
 
 
-def score_garage(garage, sprinkler_permits, violations, charger_info, fdny_violations=None):
+def score_garage(garage, sprinkler_permits, violations, charger_info,
+                 fdny_violations=None, dob_ecb=None, dob_now=None, ll2604=None):
     """
     Score 0-100.
 
@@ -194,9 +308,16 @@ def score_garage(garage, sprinkler_permits, violations, charger_info, fdny_viola
       - Age (0-30): pre-1968=30, 1968-2003=15, 2004+=5, unknown=20
       - Sprinkler System Evidence (0-30): tiered by evidence + retrofit mandate
       - Multi-story (0-10)
-      - DOB Safety violations (0-20): tiered by severity
+      - DOB LL126 Parking Structure (0-12): PS-UNSAFE=+12 or PS-INITL=+8 (take max)
+      - DOB ECB Class 1/2 fire-relevant (0-15): weighted by category, age-multiplied
+      - DOB NOW fire-system filings (0-20): sprinkler/EP/photoluminescent/SCB
+      - Legacy LL2604 active (0-4): small-volume LL26/2004 mandate signal
       - FDNY Fire Protection Compliance (0-25): time-weighted open violations
       - EV charger bonus (0-15)
+
+    Note: `violations` (3h2n-5cm9 keyword filter) is kept in the signature for
+    backwards compat but is no longer scored in v1.3+. LL2604 extracted from
+    there is now passed separately as `ll2604`.
     """
     score = 0
     reasons = []
@@ -243,31 +364,30 @@ def score_garage(garage, sprinkler_permits, violations, charger_info, fdny_viola
         score += 5
         reasons.append(f"{int(floors)} floors (+5)")
 
-    # DOB Safety violations — tiered
-    critical = high = low = 0
-    for v in violations:
-        vtype = (v.get("violation_type") or "").upper()
-        if "IMEGNCY" in vtype or "UNSAFE" in vtype or "COMPROMISED" in vtype:
-            critical += 1
-        elif "SPRINKLER" in vtype:
-            high += 1
-        else:
-            low += 1
+    # v1.3 DOB signals (replaces legacy violation_map / 3h2n-5cm9 keyword filter)
+    # (1) LL126 parking-structure inspection program — DOB NOW
+    ps_pts, ps_reasons = _score_dob_parking_structure(dob_now or [])
+    if ps_pts > 0:
+        score += ps_pts
+        reasons.extend(ps_reasons)
 
-    viol_pts = min(critical * 8 + high * 5 + low * 1, 20)
-    if critical > 0:
-        score += viol_pts
-        reasons.append(f"{critical} DOB critical violation(s) (emergency/unsafe/structural) (+{min(critical * 8, 20)})")
-    if high > 0:
-        if critical == 0:
-            score += min(high * 5, 20)
-            reasons.append(f"{high} DOB sprinkler violation(s) (+{min(high * 5, 20)})")
-        else:
-            reasons.append(f"{high} DOB sprinkler violation(s)")
-    if low > 0:
-        if critical == 0 and high == 0:
-            score += min(low, 3)
-            reasons.append(f"{low} DOB minor violation(s) (+{min(low, 3)})")
+    # (2) Other DOB NOW fire-system device filings (sprinkler, EP, photoluminescent, SCB)
+    now_pts, now_reasons = _score_dob_now_fire_systems(dob_now or [])
+    if now_pts > 0:
+        score += now_pts
+        reasons.extend(now_reasons)
+
+    # (3) DOB ECB Class 1 + fire-relevant Class 2 (age-multiplied, capped at 15)
+    ecb_pts, ecb_reasons = _score_dob_ecb(dob_ecb or [])
+    if ecb_pts > 0:
+        score += ecb_pts
+        reasons.extend(ecb_reasons)
+
+    # (4) Legacy LL2604 active records (small but high-specificity)
+    ll_pts, ll_reasons = _score_ll2604_active(ll2604 or [])
+    if ll_pts > 0:
+        score += ll_pts
+        reasons.extend(ll_reasons)
 
     # FDNY Fire Protection Compliance — time-weighted open violations
     fdny_pts, fdny_reasons, fdny_open_count = _score_fdny_compliance(fdny_violations)
@@ -308,10 +428,16 @@ def main():
     sprinkler_map = cache["sprinkler_map"]
     violation_map = cache["violation_map"]
     fdny_map = cache.get("fdny_violation_map", {})
+    dob_ecb_map = cache.get("dob_ecb_map", {})
+    dob_now_map = cache.get("dob_now_map", {})
+    ll2604_map = cache.get("ll2604_map", {})
 
     print(f"  {len(garages)} garages, fetched {cache['fetched']}")
     print(f"  {len(charger_map)} with chargers")
     print(f"  {len(fdny_map)} with FDNY fire-protection violations")
+    print(f"  {len(dob_ecb_map)} with DOB ECB Class 1/2 fire-relevant")
+    print(f"  {len(dob_now_map)} with DOB NOW parking-structure / fire-system filings")
+    print(f"  {len(ll2604_map)} with active LL2604 records")
 
     print("Scoring...")
     results = []
@@ -321,8 +447,13 @@ def main():
         viols = violation_map.get(bbl, [])
         chargers = charger_map.get(bbl, None)
         fdny = fdny_map.get(bbl, [])
+        dob_ecb = dob_ecb_map.get(bbl, [])
+        dob_now = dob_now_map.get(bbl, [])
+        ll2604 = ll2604_map.get(bbl, [])
 
-        risk_score, reasons, latest_sp, retrofit_flag, fdny_open = score_garage(g, sp, viols, chargers, fdny)
+        risk_score, reasons, latest_sp, retrofit_flag, fdny_open = score_garage(
+            g, sp, viols, chargers, fdny, dob_ecb=dob_ecb, dob_now=dob_now, ll2604=ll2604
+        )
 
         has_chargers = chargers is not None
         total_ports = sum(c["l2_ports"] + c["dcfast_ports"] for c in chargers) if chargers else 0
@@ -350,10 +481,25 @@ def main():
             "charger_addresses": charger_addresses,
             "sprinkler_permits_count": len(sp),
             "sprinkler_last_date": latest_sp,
-            "fire_violations_count": len(viols),
+            # Legacy keyword-filter count (SPRINKLER|UNSAFE|COMPROMISED|IMEGNCY|LL2604
+            # from 3h2n-5cm9). Not scored in v1.3+ — kept for UI continuity until the
+            # table/popup references are replaced with the v1.3 signal fields.
+            "legacy_dob_keyword_count": len(viols),
             "fdny_violations_total": len(fdny),
             "fdny_violations_open": fdny_open,
             "retrofit_flag": retrofit_flag,
+            "dob_ecb_count": len(dob_ecb),
+            "dob_now_ps_status": (
+                "unsafe" if any(r.get("class") == "ps_unsafe" for r in dob_now)
+                else "initl" if any(r.get("class") == "ps_initl" for r in dob_now)
+                else ""
+            ),
+            "dob_now_fire_system_count": sum(
+                1 for r in dob_now
+                if r.get("class") in ("sprinkler", "emergency_power",
+                                       "photoluminescent", "structurally_compromised")
+            ),
+            "ll2604_active_count": len(ll2604),
             "lat": g["lat"],
             "lon": g["lon"],
         })
@@ -435,7 +581,7 @@ def main():
             "risk_score", "address", "borough", "bldgclass", "garage_type",
             "yearbuilt", "numfloors", "has_chargers", "total_ev_ports",
             "sprinkler_permits_count", "sprinkler_last_date",
-            "fire_violations_count", "bldgarea_sqft", "garagearea_sqft",
+            "legacy_dob_keyword_count", "bldgarea_sqft", "garagearea_sqft",
             "small_garage", "lat", "lon", "reasons",
         ])
         writer.writeheader()
