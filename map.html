@@ -104,14 +104,15 @@
        Anchor to left edge of legend item, fixed width with viewport cap, so the
        tooltip doesn't clip off-screen on Elevated/Moderate/Low and doesn't
        collapse to a narrow word-per-line column. */
-    .legend-item[data-tip].tap-open::after { left: 0; right: auto; transform: none; width: 260px; max-width: calc(100vw - 32px); }
-    /* Right-side items (Low on row 1, data confidence on row 2): anchor right so
-       the tooltip doesn't overflow the viewport on the right side. nth-child
-       counts ALL siblings including .legend-break. Narrower width (220px) so
-       that the tooltip's left edge also fits, since these items sit partway
-       across the row and 260px would clip the left edge. */
+    /* 220px fits at any horizontal position on iPhone-class viewports
+       regardless of where the legend item sits — middle items (Moderate,
+       garage size) and right-edge items (Low, data confidence) are both
+       covered. */
+    .legend-item[data-tip].tap-open::after { left: 0; right: auto; transform: none; width: 220px; max-width: calc(100vw - 32px); }
+    /* Right-side items (Low on row 1, data confidence on row 2): anchor right
+       so the tooltip flows leftward. */
     .legend-item:nth-child(4)[data-tip].tap-open::after,
-    .legend-item:last-child[data-tip].tap-open::after { left: auto; right: 0; width: 220px; }
+    .legend-item:last-child[data-tip].tap-open::after { left: auto; right: 0; }
     /* Hard-break between the 4 tier filters and the reference items (Has EV chargers, garage size, data confidence) */
     .legend-break { display: block; flex-basis: 100%; width: 0; height: 0; }
     #map { min-height: 45vh; }
