@@ -88,16 +88,22 @@
     .header h1 { font-size: 15px; }
     .header .desc-text { display: none; }
     .header .desc-link { font-size: 12px; }
-    .stats { gap: 8px; padding: 8px 14px; flex-wrap: wrap; justify-content: space-between; }
-    .stat .n { font-size: 20px; }
-    .stat .label { font-size: 9px; }
-    .stat[data-filter] { padding: 4px 6px; }
+    .stats { gap: 4px; padding: 8px 10px; flex-wrap: nowrap; justify-content: space-between; overflow-x: hidden; }
+    .stat .n { font-size: 18px; }
+    .stat .label { font-size: 8px; letter-spacing: 0.3px; }
+    .stat[data-filter] { padding: 3px 4px; }
+    /* Drop the vertical separator between moderate and chargers on mobile — it's decorative and costs space */
+    .stats > div:not(.stat) { display: none; }
     .legend { flex-wrap: wrap; gap: 6px 10px; padding: 6px 10px; font-size: 10px; border-bottom: 1px solid #222; }
     .legend-item { padding: 2px 4px; gap: 4px; }
     .legend-item[style*="margin-left"] { margin-left: 0 !important; border-left: none !important; padding-left: 4px !important; }
     .legend-dot { width: 9px; height: 9px; }
     /* Hide the parenthetical range on narrow screens — the tier name alone is enough */
     .legend-item .range { display: none; }
+    /* Legend tooltips on mobile: anchor left + fit the viewport. Previously only
+       the first-child (High) was anchor-left, so Elevated/Moderate/Low tooltips
+       centered on their item and clipped off the left edge. */
+    .legend-item[data-tip]:hover::after { left: 0; right: auto; transform: none; width: auto; max-width: calc(100vw - 32px); }
     /* Hard-break between the 4 tier filters and the reference items (Has EV chargers, garage size, data confidence) */
     .legend-break { display: block; flex-basis: 100%; width: 0; height: 0; }
     #map { min-height: 45vh; }
