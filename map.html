@@ -164,7 +164,10 @@
     }
     #mobile-tooltip.open { display: block; }
     .leaflet-popup-content-wrapper { max-width: 280px !important; }
-    .leaflet-popup-content { max-height: 50vh; overflow-y: auto; font-size: 12px !important; margin: 10px !important; }
+    /* Popup height is controlled by Leaflet's maxHeight option (260px) in the
+       bindPopup call — don't also set CSS max-height here or the two can
+       conflict and Leaflet's autoPan sizing gets confused. */
+    .leaflet-popup-content { font-size: 12px !important; margin: 10px !important; }
     .leaflet-popup-content table { font-size: 12px !important; }
   }
 </style>
@@ -440,7 +443,14 @@ DATA.results.forEach(r => {
         ${r.reasons.join('<br>').replace(/\bL2\b/g, '<span title="Level 2: 240V AC, adds ~25 miles/hour of charge" style="border-bottom:1px dotted #aaa; cursor:help;">L2</span>').replace(/\bDC fast\b/g, '<span title="DC Fast Charging: direct current, adds ~200 miles in 30 min — higher thermal stress on batteries" style="border-bottom:1px dotted #aaa; cursor:help;">DC fast</span>')}
       </div>
     </div>
-  `);
+  `, {
+    // maxHeight forces internal scrolling when popup content exceeds this, so
+    // the popup itself stays compact enough to fit within the mobile map area.
+    // Address line always renders first at top, scroll for more.
+    maxHeight: 260,
+    autoPanPaddingTopLeft: [10, 10],
+    autoPanPaddingBottomRight: [10, 60],
+  });
   markerMap[r.lat + ',' + r.lon] = circle;
 });
 
@@ -620,9 +630,14 @@ document.getElementById('tbody').addEventListener('click', (e) => {
     tableToggle.textContent = 'View Details';
   }
   const marker = markerMap[r.lat + ',' + r.lon];
+  // Set view first, then open popup so Leaflet's autoPan can pan the map to
+  // fit the popup within the current viewport. The previous approach applied
+  // a fixed +0.001 lat offset tuned for desktop's tall map; on mobile's short
+  // map this pushed the marker close enough to the top that the popup
+  // (opening upward) got clipped by the legend bar.
   if (marker) {
+    map.setView([r.lat, r.lon], 17, {animate: true});
     marker.openPopup();
-    map.setView([r.lat + 0.001, r.lon], 17, {animate: true});
   } else {
     map.setView([r.lat, r.lon], 17);
   }
