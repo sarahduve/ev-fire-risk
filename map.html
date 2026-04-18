@@ -107,9 +107,11 @@
     .legend-item[data-tip].tap-open::after { left: 0; right: auto; transform: none; width: 260px; max-width: calc(100vw - 32px); }
     /* Right-side items (Low on row 1, data confidence on row 2): anchor right so
        the tooltip doesn't overflow the viewport on the right side. nth-child
-       counts ALL siblings including .legend-break. */
+       counts ALL siblings including .legend-break. Narrower width (220px) so
+       that the tooltip's left edge also fits, since these items sit partway
+       across the row and 260px would clip the left edge. */
     .legend-item:nth-child(4)[data-tip].tap-open::after,
-    .legend-item:last-child[data-tip].tap-open::after { left: auto; right: 0; }
+    .legend-item:last-child[data-tip].tap-open::after { left: auto; right: 0; width: 220px; }
     /* Hard-break between the 4 tier filters and the reference items (Has EV chargers, garage size, data confidence) */
     .legend-break { display: block; flex-basis: 100%; width: 0; height: 0; }
     #map { min-height: 45vh; }
