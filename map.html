@@ -100,10 +100,11 @@
     .legend-dot { width: 9px; height: 9px; }
     /* Hide the parenthetical range on narrow screens — the tier name alone is enough */
     .legend-item .range { display: none; }
-    /* Legend tooltips on mobile: anchor left + fit the viewport. Previously only
-       the first-child (High) was anchor-left, so Elevated/Moderate/Low tooltips
-       centered on their item and clipped off the left edge. */
-    .legend-item[data-tip]:hover::after { left: 0; right: auto; transform: none; width: auto; max-width: calc(100vw - 32px); }
+    /* Legend tooltips on mobile: mobile uses .tap-open::after (not :hover::after).
+       Anchor to left edge of legend item, fixed width with viewport cap, so the
+       tooltip doesn't clip off-screen on Elevated/Moderate/Low and doesn't
+       collapse to a narrow word-per-line column. */
+    .legend-item[data-tip].tap-open::after { left: 0; right: auto; transform: none; width: 260px; max-width: calc(100vw - 32px); }
     /* Hard-break between the 4 tier filters and the reference items (Has EV chargers, garage size, data confidence) */
     .legend-break { display: block; flex-basis: 100%; width: 0; height: 0; }
     #map { min-height: 45vh; }
