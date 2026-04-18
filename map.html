@@ -173,7 +173,9 @@
   }
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol@0.79.0/dist/L.Control.Locate.min.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.locatecontrol@0.79.0/dist/L.Control.Locate.min.js"></script>
 <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "bc897d96bd014c40a0227f4db0b258d3"}'></script>
 </head>
 <body>
@@ -325,6 +327,18 @@ const map = L.map('map').setView([40.735, -73.99], 13);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; OpenStreetMap &copy; CARTO',
   maxZoom: 19
+}).addTo(map);
+
+// "Locate me" control (blue dot). Shows on desktop + mobile. User must tap
+// the crosshair button to trigger (one-shot); doesn't auto-prompt on load.
+L.control.locate({
+  position: 'topleft',
+  setView: 'untilPan',  // center map on user's location once, stop following if they pan
+  keepCurrentZoomLevel: true,
+  flyTo: false,
+  showPopup: false,
+  strings: { title: 'Show my location' },
+  locateOptions: { enableHighAccuracy: true, maximumAge: 60000 },
 }).addTo(map);
 
 // Re-evaluate visibility when zoom changes (reveals moderate/low as user zooms in)
