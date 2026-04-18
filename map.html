@@ -92,8 +92,12 @@
     .stat .n { font-size: 20px; }
     .stat .label { font-size: 9px; }
     .stat[data-filter] { padding: 4px 6px; }
-    .legend { flex-wrap: wrap; gap: 8px 14px; padding: 6px 14px; font-size: 11px; border-bottom: 1px solid #222; }
-    .legend-item[style*="margin-left"] { margin-left: 0 !important; border-left: none !important; padding-left: 0 !important; }
+    .legend { flex-wrap: wrap; gap: 6px 10px; padding: 6px 10px; font-size: 10px; border-bottom: 1px solid #222; }
+    .legend-item { padding: 2px 4px; gap: 4px; }
+    .legend-item[style*="margin-left"] { margin-left: 0 !important; border-left: none !important; padding-left: 4px !important; }
+    .legend-dot { width: 9px; height: 9px; }
+    /* Hide the parenthetical range on narrow screens — the tier name alone is enough */
+    .legend-item .range { display: none; }
     /* Hard-break between the 4 tier filters and the reference items (Has EV chargers, garage size, data confidence) */
     .legend-break { display: block; flex-basis: 100%; width: 0; height: 0; }
     #map { min-height: 45vh; }
@@ -161,10 +165,10 @@
 </div>
 <div class="stats" id="stats"></div>
 <div class="legend">
-  <div class="legend-item" data-filter="high" data-tip="Pre-1968 building + no sprinkler permits + multi-story or safety violations"><div class="legend-dot" style="background:#ff4444"></div> High risk (70+)</div>
-  <div class="legend-item" data-filter="elevated" data-tip="Older building with limited fire suppression history"><div class="legend-dot" style="background:#ff8800"></div> Elevated (50-69)</div>
-  <div class="legend-item" data-filter="moderate" data-tip="Some risk factors but partially mitigated by sprinkler work or newer construction"><div class="legend-dot" style="background:#ffcc00"></div> Moderate (30-49)</div>
-  <div class="legend-item" data-filter="low" data-tip="Modern construction (post-2004) with recent sprinkler work"><div class="legend-dot" style="background:#44cc44"></div> Low (&lt;30)</div>
+  <div class="legend-item" data-filter="high" data-tip="Pre-1968 building + no sprinkler permits + multi-story or safety violations"><div class="legend-dot" style="background:#ff4444"></div> High<span class="range"> risk (70+)</span></div>
+  <div class="legend-item" data-filter="elevated" data-tip="Older building with limited fire suppression history"><div class="legend-dot" style="background:#ff8800"></div> Elevated<span class="range"> (50-69)</span></div>
+  <div class="legend-item" data-filter="moderate" data-tip="Some risk factors but partially mitigated by sprinkler work or newer construction"><div class="legend-dot" style="background:#ffcc00"></div> Moderate<span class="range"> (30-49)</span></div>
+  <div class="legend-item" data-filter="low" data-tip="Modern construction (post-2004) with recent sprinkler work"><div class="legend-dot" style="background:#44cc44"></div> Low<span class="range"> (&lt;30)</span></div>
   <div class="legend-break"></div>
   <div class="legend-item" data-tip="White ring indicates EV chargers are present at this building. Chargers concentrate vehicles at high state of charge, which is in the score; they don't affect dot size." style="margin-left:16px; border-left:1px solid #444; padding-left:16px;"><div class="legend-dot" style="background:transparent; border:2px solid #fff; width:10px; height:10px;"></div> <span class="tip">Has EV chargers</span></div>
   <div class="legend-item" data-tip="Dot size scales with PLUTO garagearea_sqft. Bigger dot = more cars at stake if something goes wrong (risk exposure). Buildings with no reported garagearea use a default size." style="margin-left:16px;"><div style="display:flex; align-items:center; gap:3px;"><div class="legend-dot" style="background:#888; width:5px; height:5px;"></div><div class="legend-dot" style="background:#888; width:10px; height:10px;"></div></div> <span class="tip">= garage size</span></div>
