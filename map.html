@@ -24,7 +24,10 @@
   .stat.elevated .n { color: #ff8800; }
   .stat.moderate .n { color: #ffcc00; }
   .legend { display: flex; gap: 16px; padding: 8px 24px; background: #111; font-size: 12px; flex-shrink: 0; }
-  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; padding: 2px 6px; border-radius: 4px; }
+  .legend-item[data-filter]:hover { background: #1a1a1a; }
+  .legend-item[data-filter].active { background: #222; outline: 1px solid #555; }
+  .legend-break { display: none; }
   .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
 
   /* Resizable panel */
@@ -91,6 +94,8 @@
     .stat[data-filter] { padding: 4px 6px; }
     .legend { flex-wrap: wrap; gap: 8px 14px; padding: 6px 14px; font-size: 11px; border-bottom: 1px solid #222; }
     .legend-item[style*="margin-left"] { margin-left: 0 !important; border-left: none !important; padding-left: 0 !important; }
+    /* Hard-break between the 4 tier filters and the reference items (Has EV chargers, garage size, data confidence) */
+    .legend-break { display: block; flex-basis: 100%; width: 0; height: 0; }
     #map { min-height: 45vh; }
     .panel-container {
       position: fixed; bottom: 0; left: 0; right: 0; height: 0 !important;
@@ -156,10 +161,11 @@
 </div>
 <div class="stats" id="stats"></div>
 <div class="legend">
-  <div class="legend-item" data-tip="Pre-1968 building + no sprinkler permits + multi-story or safety violations"><div class="legend-dot" style="background:#ff4444"></div> High risk (70+)</div>
-  <div class="legend-item" data-tip="Older building with limited fire suppression history"><div class="legend-dot" style="background:#ff8800"></div> Elevated (50-69)</div>
-  <div class="legend-item" data-tip="Some risk factors but partially mitigated by sprinkler work or newer construction"><div class="legend-dot" style="background:#ffcc00"></div> Moderate (30-49)</div>
-  <div class="legend-item" data-tip="Modern construction (post-2004) with recent sprinkler work"><div class="legend-dot" style="background:#44cc44"></div> Low (&lt;30)</div>
+  <div class="legend-item" data-filter="high" data-tip="Pre-1968 building + no sprinkler permits + multi-story or safety violations"><div class="legend-dot" style="background:#ff4444"></div> High risk (70+)</div>
+  <div class="legend-item" data-filter="elevated" data-tip="Older building with limited fire suppression history"><div class="legend-dot" style="background:#ff8800"></div> Elevated (50-69)</div>
+  <div class="legend-item" data-filter="moderate" data-tip="Some risk factors but partially mitigated by sprinkler work or newer construction"><div class="legend-dot" style="background:#ffcc00"></div> Moderate (30-49)</div>
+  <div class="legend-item" data-filter="low" data-tip="Modern construction (post-2004) with recent sprinkler work"><div class="legend-dot" style="background:#44cc44"></div> Low (&lt;30)</div>
+  <div class="legend-break"></div>
   <div class="legend-item" data-tip="White ring indicates EV chargers are present at this building. Chargers concentrate vehicles at high state of charge, which is in the score; they don't affect dot size." style="margin-left:16px; border-left:1px solid #444; padding-left:16px;"><div class="legend-dot" style="background:transparent; border:2px solid #fff; width:10px; height:10px;"></div> <span class="tip">Has EV chargers</span></div>
   <div class="legend-item" data-tip="Dot size scales with PLUTO garagearea_sqft. Bigger dot = more cars at stake if something goes wrong (risk exposure). Buildings with no reported garagearea use a default size." style="margin-left:16px;"><div style="display:flex; align-items:center; gap:3px;"><div class="legend-dot" style="background:#888; width:5px; height:5px;"></div><div class="legend-dot" style="background:#888; width:10px; height:10px;"></div></div> <span class="tip">= garage size</span></div>
   <div class="legend-item" data-tip="Opacity scales with how much data we have on the building (DOB sprinkler permits + FDNY violation records combined). Solid = 3+ records, medium = 1-2 records, translucent = no records (score inferred from absence of data)." style="margin-left:16px;"><div style="display:flex; align-items:center; gap:3px;"><div class="legend-dot" style="background:#888; opacity:0.9; width:10px; height:10px;"></div><div class="legend-dot" style="background:#888; opacity:0.65; width:10px; height:10px;"></div><div class="legend-dot" style="background:#888; opacity:0.4; width:10px; height:10px;"></div></div> <span class="tip">= data confidence</span></div>
@@ -244,6 +250,7 @@ function passesFilter(r) {
   if (activeFilter === 'high') return r.risk_score >= 70;
   if (activeFilter === 'elevated') return r.risk_score >= 50 && r.risk_score < 70;
   if (activeFilter === 'moderate') return r.risk_score >= 30 && r.risk_score < 50;
+  if (activeFilter === 'low') return r.risk_score < 30;
   if (activeFilter === 'chargers') return r.has_chargers;
   if (activeFilter === 'underground') return r.osm_parking_type === 'underground';
   return true;
@@ -263,7 +270,7 @@ function toggleFilter(f) {
 }
 
 function updateStats() {
-  document.querySelectorAll('.stat[data-filter]').forEach(el => {
+  document.querySelectorAll('.stat[data-filter], .legend-item[data-filter]').forEach(el => {
     el.classList.toggle('active', el.dataset.filter === activeFilter);
   });
 }
@@ -283,7 +290,7 @@ document.getElementById('stats').innerHTML = `
   <div style="border-left:1px solid #333; margin-left:-12px;"></div>
   <div class="stat" data-filter="chargers"><div class="n" style="color:#fff;">${withChargers}</div><div class="label">With EV Chargers</div></div>
 `;
-document.querySelectorAll('.stat[data-filter]').forEach(el => {
+document.querySelectorAll('.stat[data-filter], .legend-item[data-filter]').forEach(el => {
   el.style.cursor = 'pointer';
   el.addEventListener('click', () => {
     const f = el.dataset.filter;
