@@ -320,12 +320,22 @@ document.querySelectorAll('.stat[data-filter], .legend-item[data-filter]').forEa
 });
 
 // Map
-// preferCanvas: render 6k+ circleMarkers to a single <canvas> per pane instead
-// of one SVG node each. Major pan/zoom perf win on mobile.
-const map = L.map('map', { preferCanvas: true }).setView([40.735, -73.99], 13);
+// Canvas renderer with padding:0.5 — canvas covers 1.5x viewport in each
+// direction, so you can pan further before the dots blank out waiting for
+// redraw. Default padding is 0.1 (too small for a fast-scrolling mobile pan).
+const map = L.map('map', {
+  preferCanvas: true,
+  renderer: L.canvas({ padding: 0.5 }),
+}).setView([40.735, -73.99], 13);
+// updateWhenIdle:false — fetch tiles during pan, not only after it stops.
+// Leaflet defaults this to true on mobile, which is the "newly uncovered
+// area renders late" behavior on fast scroll. keepBuffer widens the
+// already-loaded tile ring around the viewport.
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; OpenStreetMap &copy; CARTO',
-  maxZoom: 19
+  maxZoom: 19,
+  updateWhenIdle: false,
+  keepBuffer: 4,
 }).addTo(map);
 
 // "Locate me" control (blue dot). Shows on desktop + mobile. User must tap
