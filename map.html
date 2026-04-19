@@ -140,10 +140,9 @@
     td.col-name { white-space: normal; max-width: 140px; font-size: 10px; }
     th { font-size: 9px; }
     /* Mobile filter row: 2×2 grid so search+boro take row 1, garage-type
-       + pending-EV take row 2. Each cell flexes to fill half the row so
-       the widgets align cleanly instead of clumping. */
+       + pending-EV take row 2. Each cell is exactly half the row width. */
     .filter-row { gap: 6px; }
-    .filter-row > * { flex: 1 1 calc(50% - 3px); min-width: 0; }
+    .filter-row > * { flex: 0 0 calc(50% - 3px); min-width: 0; }
     #addressSearch { width: auto !important; font-size: 11px !important; }
     #boroFilter, #bldgFilter { font-size: 11px !important; width: 100%; }
     .filter-row label { font-size: 11px; white-space: nowrap; justify-content: center; }
