@@ -177,7 +177,7 @@
 </head>
 <body>
 <div class="header">
-  <h1>NYC EV Fire Risk — All Parking Garages <span style="color:#888; font-size:13px; font-weight:400;">v1.3</span></h1>
+  <h1>NYC EV Fire Risk — All Parking Garages <span style="color:#888; font-size:13px; font-weight:400;">v2.0</span></h1>
   <p><span class="desc-text">Every NYC building with parking space scored by structural age, fire suppression status, DOB violations, and EV charger presence. </span><a href="methodology.html" target="_blank" class="desc-link" style="color:#6cacff;">Methodology &amp; sources</a> <span id="last-updated" style="float:right; color:#555; font-size:12px;"></span></p>
 </div>
 <div class="stats" id="stats"></div>
@@ -214,12 +214,27 @@
       <option value="BX">Bronx</option>
       <option value="SI">Staten Island</option>
     </select>
+    <select id="bldgFilter" title="Filter by what kind of building the garage is part of" style="
+      height: 30px; padding: 0 8px; background: #1a1a1a; border: 1px solid #333;
+      border-radius: 4px; color: #e0e0e0; font-size: 12px; outline: none;
+      font-family: inherit; cursor: pointer; box-sizing: border-box;
+    ">
+      <option value="">All garage types</option>
+      <option value="standalone">Standalone parking</option>
+      <option value="under_residential">Under residential</option>
+      <option value="under_commercial">Under office / retail</option>
+      <option value="institutional">Institutional</option>
+    </select>
+    <label title="Garages flagged as 'pending EV install' by either signal: (1) AFDC has a 'planned' charger station registered but not yet energized, or (2) DOB has a 2025+ electrical permit mentioning EV chargers but no matching AFDC listing. Click Address in popup → Google Street View to eyeball." style="display:flex; align-items:center; gap:5px; font-size:12px; color:#e0e0e0; cursor:pointer; user-select:none; padding: 0 6px; height: 30px; border: 1px solid #333; border-radius: 4px; background: #1a1a1a; box-sizing: border-box;">
+      <input type="checkbox" id="pendingEvFilter" style="margin:0;"/>
+      Pending EV install
+    </label>
   </div>
   <div class="table-wrap">
     <table>
       <thead>
         <tr id="thead-row">
-          <th data-key="risk_score" data-type="num" data-tip="Combined risk score (0-100) based on structural age, fire suppression status, safety violations, and EV charger presence">Score <span class="sort-arrow"></span></th>
+          <th data-key="risk_score" data-type="num" data-tip="Fire Risk Index — weighted combination of sprinkler-system evidence, retrofit mandate status, DOB ECB violations, DOB NOW parking-structure filings, LL26/2004 retrofit violations, FDNY fire-protection violations, and EV charger presence. Higher = worse. Not bounded at 100; see methodology.">Index <span class="sort-arrow"></span></th>
           <th data-key="address" data-type="str">Address <span class="sort-arrow"></span></th>
           <th data-key="borough" data-type="str">Boro <span class="sort-arrow"></span></th>
           <th data-key="yearbuilt" data-type="num" data-tip="Year the building was constructed, per NYC PLUTO tax lot data">Built <span class="sort-arrow"></span></th>
@@ -227,9 +242,9 @@
           <th data-key="total_ev_ports" data-type="num" data-tip="Number of EV charging ports. L2 = Level 2 (240V AC, adds ~25mi/hr). DC = DC Fast (direct current, adds ~200mi/30min — higher thermal stress on batteries)">EV Ports <span class="sort-arrow"></span></th>
           <th data-key="osm_parking_type" data-type="str" data-tip="Underground or multi-story, from OpenStreetMap + PLUTO basement codes. Underground = worse ventilation, toxic gas buildup, harder firefighter access.">Type <span class="sort-arrow"></span></th>
           <th data-key="sprinkler_last_date" data-type="str" data-tip="Year of most recent DOB sprinkler installation or modification permit. 'none' = no permits in digital records (post-~1990). Building may still have a functioning system (DOB permits record installation/modification, not ongoing FDNY-inspected maintenance), but any such system predates current editions of NFPA 13 sprinkler standards.">Last Sprinkler Permit <span class="sort-arrow"></span></th>
-          <th data-key="legacy_dob_keyword_count" data-type="num" data-tip="DOB safety violations: immediate emergencies, unsafe building designations, structurally compromised buildings, and sprinkler deficiencies. Tiered by severity.">DOB Viol. <span class="sort-arrow"></span></th>
+          <th data-key="dob_fire_records" data-type="num" data-tip="DOB fire-relevant records: active ECB Class 1/2 violations (fire keyword), DOB NOW fire-system filings (sprinkler / emergency power / photoluminescent / structurally compromised), and active LL26/2004 retrofit violations. Higher-severity records also drive the Fire Risk Index directly.">DOB Fire <span class="sort-arrow"></span></th>
           <th data-key="fdny_violations_open" data-type="num" data-tip="Open (unresolved) FDNY fire-protection violations from OATH/ECB hearings. Includes failed inspections, sprinkler maintenance failures, fire system deficiencies. Older open violations weighted more heavily in scoring.">FDNY Open <span class="sort-arrow"></span></th>
-          <th data-key="_reasons" data-type="str" data-tip="Breakdown of what contributes to this garage's risk score">Risk Factors <span class="sort-arrow"></span></th>
+          <th data-key="_reasons" data-type="str" data-tip="Breakdown of what contributes to this garage's Fire Risk Index">Risk Factors <span class="sort-arrow"></span></th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
@@ -267,6 +282,7 @@ let activeBldgFilter = null; // null = all, or 'standalone', 'under_residential'
 
 function passesFilter(r) {
   if (activeBldgFilter && r.garage_type !== activeBldgFilter) return false;
+  if (pendingEvOnly && !(r.pending_ev_permit || r.has_planned_chargers_afdc)) return false;
   if (!activeFilter) return true;
   if (activeFilter === 'high') return r.risk_score >= 70;
   if (activeFilter === 'elevated') return r.risk_score >= 50 && r.risk_score < 70;
@@ -366,6 +382,13 @@ function riskPane(r) {
   return 'lowPane';
 }
 
+// Known superblock / multi-garage complexes where one BBL hides N physical
+// facilities. Keyed by BBL; content rendered as an in-popup banner. Long-term
+// fix is a complex-aware UI; this is the stopgap for the worst offender.
+const COMPLEX_NOTES = {
+  '1009720001': 'This complex (Stuyvesant Town) contains 6 distinct parking garages, all under single ownership. Score reflects aggregate compliance across all facilities.',
+};
+
 // Markers — index by station address + lat for table row lookup
 const markerMap = {};
 const allMarkers = []; // {marker, record} pairs
@@ -445,25 +468,108 @@ DATA.results.forEach(r => {
     : r.retrofit_flag === 'll16_new'
     ? '<div style="font-size:11px; color:#ff4444; font-weight:600; margin-bottom:4px;">LL16 sprinkler-at-construction requirement likely missed</div>'
     : '';
+  const complexNote = COMPLEX_NOTES[r.bbl]
+    ? `<div style="font-size:11px; color:#333; background:#fff6d6; border-left:3px solid #e0b400; padding:5px 7px; margin-bottom:6px; line-height:1.35;">${COMPLEX_NOTES[r.bbl]}</div>`
+    : '';
+  // Pending install badge combines two signals:
+  //   - AFDC "planned" stations (operator registered with AFDC but not yet
+  //     energized — AFDC's own forward-looking view)
+  //   - DOB electrical permits mentioning EV chargers filed 2025+ with no
+  //     AFDC listing (DOB-side forward-looking view from our permit dive)
+  // Shown together with source attribution so users can see which signal(s)
+  // triggered the flag.
+  const pendingBits = [];
+  if (r.has_planned_chargers_afdc) {
+    pendingBits.push(`AFDC: ${r.planned_ev_ports_afdc || 0} planned port(s) registered`);
+  }
+  if (r.pending_ev_permit) {
+    pendingBits.push(`DOB: ${r.pending_ev_permit_count || 0} recent electrical permit(s) mentioning EV chargers${r.pending_ev_permit_latest ? ` (latest ${r.pending_ev_permit_latest})` : ''}`);
+  }
+  const pendingEvBadge = pendingBits.length
+    ? `<div style="font-size:11px; color:#1c5e1c; background:#e6f4ea; border-left:3px solid #34a853; padding:5px 7px; margin-bottom:6px; line-height:1.35;"><strong>Pending EV install</strong> (not yet operational):<br>${pendingBits.map(b => '• ' + b).join('<br>')}</div>`
+    : '';
+  // v1.3 DOB composite — sum across the three fire-relevant DOB sources.
+  // Tooltip on the popup row breaks out each contributor so a user hovering
+  // the count can see "ECB=3, DOB NOW fire systems=1, LL26/2004=0".
+  const dobEcb = r.dob_ecb_count || 0;
+  const dobNowFs = r.dob_now_fire_system_count || 0;
+  const ll2604 = r.ll2604_active_count || 0;
+  const dobFireCount = dobEcb + dobNowFs + ll2604;
+  const dobFireBreakdownTitle = `ECB fire-relevant: ${dobEcb}; DOB NOW fire systems: ${dobNowFs}; LL26/2004 active: ${ll2604}`;
+  // Link builders for NYC Open Data.
+  // FDNY link → OATH/ECB Hearings dataset (jz4z-kudi). Uses borough names,
+  // OATH's compliance_status field, and issuing_agency filter.
+  const fdnyOathUrl = () => {
+    const q = `SELECT ticket_number, violation_date, issuing_agency, charge_1_code_description, charge_2_code_description, compliance_status, hearing_result WHERE violation_location_borough='${boroughFull.toUpperCase()}' AND violation_location_block_no='${r.bbl.slice(1,6)}' AND violation_location_lot_no='${r.bbl.slice(6,10)}' AND issuing_agency IN ('FIRE DEPARTMENT OF NYC') AND compliance_status IN ('Compliance Due','Both Due') ORDER BY violation_date DESC`;
+    return `https://data.cityofnewyork.us/City-Government/OATH-Hearings-Division-Case-Status/jz4z-kudi/explore/query/${encodeURIComponent(q)}`;
+  };
+  // DOB ECB link → the DOB ECB Violations dataset (6bgk-3dad). This is the
+  // same source patch_cache_v1_3.py pulls from, so the visible records
+  // match our counts. Uses numeric borough code (1=MN, 2=BX, 3=BK, 4=QN,
+  // 5=SI) and ecb_violation_status='ACTIVE'.
+  const dobEcbOpenDataUrl = () => {
+    const q = `SELECT issue_date, severity, violation_type, violation_description, ecb_violation_status, certification_status WHERE boro='${r.bbl[0]}' AND block='${r.bbl.slice(1,6)}' AND lot='${r.bbl.slice(6,10)}' AND ecb_violation_status='ACTIVE' ORDER BY issue_date DESC`;
+    return `https://data.cityofnewyork.us/Housing-Development/DOB-ECB-Violations/6bgk-3dad/explore/query/${encodeURIComponent(q)}`;
+  };
+  // EV charger electrical permit link → DOB NOW Electrical Permit Applications
+  // (dm9a-ab7w). Filters by BBL + keyword grep on job_description. Covers
+  // post-2019 only; pre-2019 DOB permit records don't have description text
+  // in the Socrata dataset (see research/fetch_ev_permits.py).
+  const dobEvPermitUrl = () => {
+    const q = `SELECT filing_number, filing_date, job_description, filing_status, job_status, job_start_date WHERE gis_bbl='${r.bbl}' AND (upper(job_description) LIKE '%EV CHARG%' OR upper(job_description) LIKE '%EVSE%' OR upper(job_description) LIKE '%CHARGING STATION%' OR upper(job_description) LIKE '%ELECTRIC VEHICLE CHARG%') ORDER BY filing_date DESC`;
+    return `https://data.cityofnewyork.us/City-Government/DOB-NOW-Electrical-Permit-Applications/dm9a-ab7w/explore/query/${encodeURIComponent(q)}`;
+  };
+  // Hazard-mechanism breakdown. Shows which failure modes drove the score
+  // and, for each mechanism that hit its cap, the raw (pre-cap) value so a
+  // journalist can see "this building has 113 points of sprinkler signal
+  // but the Index only counts 30 to prevent double-counting across DOB +
+  // FDNY + ECB."
+  const hazardsBlock = (() => {
+    const hz = r.hazards || {};
+    const caps = (DATA && DATA.hazard_caps) || {};
+    const entries = Object.entries(hz).filter(([, v]) => v > 0);
+    if (!entries.length) return '';
+    entries.sort((a, b) => b[1] - a[1]);
+    const rows = entries.map(([mech, raw]) => {
+      const cap = caps[mech];
+      const label = mech.replace(/_/g, ' ');
+      const capped = cap !== undefined && raw > cap;
+      const display = capped
+        ? `${raw} <span style="color:#aaa;">→ capped at ${cap}</span>`
+        : `${raw}`;
+      return `<div style="display:flex; justify-content:space-between; color:#666;"><span>${label}</span><span>${display}</span></div>`;
+    }).join('');
+    return `<div style="margin-top:8px; font-size:10px; border-top:1px solid #eee; padding-top:6px;">
+      <div style="color:#888; font-weight:600; margin-bottom:3px;">Hazard contributions (raw points before cap)</div>
+      ${rows}
+    </div>`;
+  })();
   circle.bindPopup(`
     <div style="font-family: sans-serif; min-width: 220px;">
       <div style="font-weight:700; font-size:14px; margin-bottom:2px;"><a href="${mapUrl}" target="_blank" rel="noopener" style="color:#333; text-decoration:none; border-bottom:1px dotted #999;">${r.address}</a></div>
       <div style="font-size:11px; color:#888; margin-bottom:4px;">${r.borough} · ${bldgTypeLabel} (${r.bldgclass})${smallFlag}</div>
+      ${complexNote}
+      ${pendingEvBadge}
       ${retrofitBadge}
       ${chargerAddrLine}
       <div style="font-size:11px; margin-bottom:8px;">${typeBadge} ${evBadge}${r.charger_names ? `<div style="color:#666; font-size:10px; margin-top:3px;">${r.charger_names}</div>` : ''}</div>
-      <div style="font-size:24px; font-weight:700; color:${color}; margin-bottom:4px;">Risk: ${r.risk_score}</div>
+      <div style="font-size:24px; font-weight:700; color:${color}; margin-bottom:0;">Fire Risk Index: ${r.risk_score}</div>
+      ${r.percentile_rank !== undefined ? `<div style="font-size:11px; color:#777; margin-bottom:8px;">Worse than ${r.percentile_rank}% of NYC garages</div>` : ''}
       <table style="font-size:12px; width:100%;">
         <tr><td>Built</td><td style="text-align:right; font-weight:600">${yb}</td></tr>
         <tr><td>Floors</td><td style="text-align:right; font-weight:600">${r.numfloors}</td></tr>
         <tr><td>Sprinkler Permits</td><td style="text-align:right; font-weight:600">${r.sprinkler_permits_count}</td></tr>
-        <tr><td>DOB Violations</td><td style="text-align:right; font-weight:600">${r.legacy_dob_keyword_count}</td></tr>
+        <tr><td>DOB Fire Records</td><td style="text-align:right; font-weight:600; ${dobFireCount > 0 ? 'color:#ff6644' : ''}" title="${dobFireBreakdownTitle}">${dobFireCount}</td></tr>
+        ${r.dob_now_ps_status ? `<tr><td colspan="2" style="font-size:10px; color:#ff4444; padding-top:0;">DOB NOW parking-structure: ${r.dob_now_ps_status === 'unsafe' ? 'unsafe condition' : 'initial report (pre-cure)'}</td></tr>` : ''}
         <tr><td>FDNY Open</td><td style="text-align:right; font-weight:600; ${r.fdny_violations_open > 0 ? 'color:#ff6644' : ''}">${r.fdny_violations_open}${r.fdny_violations_total > 0 ? ` / ${r.fdny_violations_total} total` : ''}</td></tr>
       </table>
-      ${(r.fdny_violations_open > 0) ? `<div style="margin-top:4px; font-size:11px;"><a href="https://data.cityofnewyork.us/City-Government/OATH-Hearings-Division-Case-Status/jz4z-kudi/explore/query/SELECT%20ticket_number%2C%20violation_date%2C%20issuing_agency%2C%20charge_1_code_description%2C%20charge_2_code_description%2C%20compliance_status%2C%20hearing_result%20WHERE%20violation_location_borough%3D%27${boroughFull.toUpperCase()}%27%20AND%20violation_location_block_no%3D%27${r.bbl.slice(1,6)}%27%20AND%20violation_location_lot_no%3D%27${r.bbl.slice(6,10)}%27%20AND%20issuing_agency%20IN%20(%27FIRE%20DEPARTMENT%20OF%20NYC%27)%20AND%20compliance_status%20IN%20(%27Compliance%20Due%27%2C%27Both%20Due%27)%20ORDER%20BY%20violation_date%20DESC" target="_blank" rel="noopener" style="color:#6cacff;">View FDNY violations on NYC Open Data &rarr;</a></div>` : ''}
+      ${(r.fdny_violations_open > 0) ? `<div style="margin-top:4px; font-size:11px;"><a href="${fdnyOathUrl()}" target="_blank" rel="noopener" style="color:#6cacff;">View FDNY violations on NYC Open Data &rarr;</a></div>` : ''}
+      ${(dobEcb > 0) ? `<div style="margin-top:4px; font-size:11px;"><a href="${dobEcbOpenDataUrl()}" target="_blank" rel="noopener" style="color:#6cacff;" title="Shows ALL active DOB ECB violations for this building, not just the fire-relevant subset we score. Scan the descriptions to see which records contributed to the DOB Fire Records count above. Does not include DOB NOW Safety Violations or LL26/2004 records (separate datasets).">View all active DOB ECB violations on NYC Open Data &rarr;</a></div>` : ''}
+      ${(r.pending_ev_permit || r.has_chargers || r.has_planned_chargers_afdc) ? `<div style="margin-top:4px; font-size:11px;"><a href="${dobEvPermitUrl()}" target="_blank" rel="noopener" style="color:#6cacff;" title="DOB NOW Electrical Permit Applications for this BBL whose description mentions EV chargers. Post-2019 only (older electrical permits don't have descriptions in Socrata). Useful for verifying installs and seeing permit history.">View EV charger electrical permits on NYC Open Data &rarr;</a></div>` : ''}
       <div style="margin-top:8px; font-size:11px; color:#888;">
-        ${r.reasons.join('<br>').replace(/\bL2\b/g, '<span title="Level 2: 240V AC, adds ~25 miles/hour of charge" style="border-bottom:1px dotted #aaa; cursor:help;">L2</span>').replace(/\bDC fast\b/g, '<span title="DC Fast Charging: direct current, adds ~200 miles in 30 min — higher thermal stress on batteries" style="border-bottom:1px dotted #aaa; cursor:help;">DC fast</span>')}
+        ${r.reasons.map(s => s.replace(/\s*\(\+\d+(?:[.,]\s*age-weighted)?\)/g, '')).join('<br>').replace(/\bL2\b/g, '<span title="Level 2: 240V AC, adds ~25 miles/hour of charge" style="border-bottom:1px dotted #aaa; cursor:help;">L2</span>').replace(/\bDC fast\b/g, '<span title="DC Fast Charging: direct current, adds ~200 miles in 30 min — higher thermal stress on batteries" style="border-bottom:1px dotted #aaa; cursor:help;">DC fast</span>')}
       </div>
+      ${hazardsBlock}
     </div>
   `, {
     // autoPan padding: give Leaflet room to keep the popup fully visible
@@ -581,6 +687,12 @@ let currentSort = { key: null, dir: null };
 let tableData = DATA.results.map(r => ({
   ...r,
   _reasons: r.reasons.join('; '),
+  // v1.3 DOB composite: sum of ECB fire-relevant + DOB NOW fire-system +
+  // LL26/2004 active records. Replaces the old legacy keyword count for
+  // table sorting / display.
+  dob_fire_records: (r.dob_ecb_count || 0)
+    + (r.dob_now_fire_system_count || 0)
+    + (r.ll2604_active_count || 0),
 }));
 
 let searchQuery = '';
@@ -594,6 +706,19 @@ document.getElementById('addressSearch').addEventListener('input', (e) => {
 
 document.getElementById('boroFilter').addEventListener('change', (e) => {
   boroFilter = e.target.value;
+  updateMarkers();
+  renderTable();
+});
+
+document.getElementById('bldgFilter').addEventListener('change', (e) => {
+  activeBldgFilter = e.target.value || null;
+  updateMarkers();
+  renderTable();
+});
+
+let pendingEvOnly = false;
+document.getElementById('pendingEvFilter').addEventListener('change', (e) => {
+  pendingEvOnly = e.target.checked;
   updateMarkers();
   renderTable();
 });
@@ -630,9 +755,9 @@ function renderTable() {
       <td>${evLabel}</td>
       <td>${typeLabel}</td>
       <td>${spDate}</td>
-      <td>${r.legacy_dob_keyword_count}</td>
+      <td>${r.dob_fire_records > 0 ? `<span style="color:#ff6644; font-weight:600">${r.dob_fire_records}</span>` : '<span style="color:#444">0</span>'}</td>
       <td>${r.fdny_violations_open > 0 ? `<span style="color:#ff6644; font-weight:600">${r.fdny_violations_open}</span>` : '<span style="color:#444">0</span>'}</td>
-      <td class="reasons">${r.reasons.map(s => s.replace(/\s*\(\+\d+\)/g, '')).join('; ')}</td>
+      <td class="reasons">${r.reasons.map(s => s.replace(/\s*\(\+\d+(?:[.,]\s*age-weighted)?\)/g, '')).join('; ')}</td>
     </tr>`;
   }).join('');
   const footer = filtered.length > cap
