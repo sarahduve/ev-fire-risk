@@ -321,6 +321,12 @@ document.querySelectorAll('.stat[data-filter], .legend-item[data-filter]').forEa
 
 // Map
 const map = L.map('map').setView([40.735, -73.99], 13);
+// Drag tolerance: default 3px means a mousedown + >=3px cursor drift before
+// mouseup becomes a drag (no click fires on the marker underneath). With
+// 6px-diameter small dots, trying to click one almost always drifts past
+// 3px and the map pans by a pixel instead of opening the popup. Bumping to
+// 15 lets imprecise clicks still register.
+map.dragging._draggable.options.clickTolerance = 15;
 // updateWhenIdle:false — fetch tiles during pan, not only after it stops.
 // Leaflet defaults this to true on mobile. Keeping this on; it's harmless.
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
