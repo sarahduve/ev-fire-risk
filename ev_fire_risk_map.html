@@ -81,6 +81,10 @@
   /* First legend item (High risk) is at the left edge — anchor tooltip left so it doesn't clip */
   .legend-item:first-child[data-tip]:hover::after { left: 0; transform: none; }
   .col-name { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* Pending-EV label: long form on desktop, short "Pending ⚡" on mobile
+     (override in the mobile @media block below). */
+  .pending-long { display: inline; }
+  .pending-short { display: none; }
 
   /* Mobile */
   @media (max-width: 600px) {
@@ -135,19 +139,24 @@
     th, td { padding: 4px 3px; white-space: nowrap; }
     td.col-name { white-space: normal; max-width: 140px; font-size: 10px; }
     th { font-size: 9px; }
-    #addressSearch { width: 140px !important; font-size: 11px !important; }
-    #boroFilter, #bldgFilter { font-size: 11px !important; }
-    #bldgFilter { max-width: 140px; }
-    /* Pending-EV label wraps to its own row on mobile to stay visible —
-       the filter row already has flex-wrap, this just makes sure the
-       label doesn't get squeezed. */
-    .filter-row label { font-size: 11px; white-space: nowrap; }
+    /* Mobile filter row: 2×2 grid so search+boro take row 1, garage-type
+       + pending-EV take row 2. Each cell flexes to fill half the row so
+       the widgets align cleanly instead of clumping. */
+    .filter-row { gap: 6px; }
+    .filter-row > * { flex: 1 1 calc(50% - 3px); min-width: 0; }
+    #addressSearch { width: auto !important; font-size: 11px !important; }
+    #boroFilter, #bldgFilter { font-size: 11px !important; width: 100%; }
+    .filter-row label { font-size: 11px; white-space: nowrap; justify-content: center; }
+    /* Swap long label for short "Pending ⚡" on mobile */
+    .pending-long { display: none; }
+    .pending-short { display: inline; }
     .panel-container > div:nth-child(2) { padding: 6px 10px 0 !important; }
     /* Hide Risk Factors, Last Sprinkler Permit, Type on mobile */
     th:nth-child(11), td:nth-child(11),
     th:nth-child(8), td:nth-child(8),
     th:nth-child(7), td:nth-child(7) { display: none; }
-    body.details-open .leaflet-control-zoom { display: none; }
+    body.details-open .leaflet-control-zoom,
+    body.details-open .leaflet-control-locate { display: none; }
     [data-tip]:hover::after { display: none; }
     [data-tip].tap-open::after {
       content: attr(data-tip); display: block;
@@ -230,9 +239,9 @@
       <option value="under_commercial">Under office / retail</option>
       <option value="institutional">Institutional</option>
     </select>
-    <label title="Garages flagged as 'pending EV install' by either signal: (1) AFDC has a 'planned' charger station registered but not yet energized, or (2) DOB has a 2025+ electrical permit mentioning EV chargers but no matching AFDC listing. Click Address in popup → Google Street View to eyeball." style="display:flex; align-items:center; gap:5px; font-size:12px; color:#e0e0e0; cursor:pointer; user-select:none; padding: 0 6px; height: 30px; border: 1px solid #333; border-radius: 4px; background: #1a1a1a; box-sizing: border-box;">
+    <label id="pendingEvLabel" data-tip="Garages flagged as 'pending EV install' by either signal: (1) AFDC has a 'planned' charger station registered but not yet energized, or (2) DOB has a 2025+ electrical permit mentioning EV chargers but no matching AFDC listing." style="display:flex; align-items:center; gap:5px; font-size:12px; color:#e0e0e0; cursor:pointer; user-select:none; padding: 0 8px; height: 30px; border: 1px solid #333; border-radius: 4px; background: #1a1a1a; box-sizing: border-box;">
       <input type="checkbox" id="pendingEvFilter" style="margin:0;"/>
-      Pending EV install
+      <span class="pending-long">Pending EV install</span><span class="pending-short">Pending ⚡</span>
     </label>
   </div>
   <div class="table-wrap">
