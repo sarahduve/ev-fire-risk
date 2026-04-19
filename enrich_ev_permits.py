@@ -126,13 +126,25 @@ def enrich(permits):
         by_bbl[p["bbl"]].append(p)
 
     flagged = 0
+    with_any_ev_permit = 0
     for r in scored:
         bbl = r["bbl"]
+        perms = by_bbl.get(bbl, [])
+
+        # Always surface permit count so the UI can decide whether to show a
+        # "View EV charger electrical permits" deep link. Without this, the
+        # link fired on any building with has_chargers=True and dead-ended
+        # at an empty result page for ~81% of cases (pre-2019 installs,
+        # umbrella ALT permits, non-keyword descriptions).
+        r["dob_ev_permit_count"] = len(perms)
+        if perms:
+            with_any_ev_permit += 1
+
+        # pending_ev_permit remains a separate flag: DOB permit 2025+ AND
+        # no AFDC existing charger (forward-looking leading indicator).
         if bbl in afdc_bbls:
-            # Already has AFDC existing charger — not "pending" from our lens
             r["pending_ev_permit"] = False
             continue
-        perms = by_bbl.get(bbl, [])
         if not perms:
             r["pending_ev_permit"] = False
             continue
@@ -153,6 +165,7 @@ def enrich(permits):
 
     print(f"Flagged {flagged} BBLs with pending_ev_permit=True "
           f"(latest permit {RECENT_CUTOFF}+, no AFDC existing charger)")
+    print(f"{with_any_ev_permit} BBLs have at least one DOB EV-keyword permit")
 
     with open(path, "w") as f:
         json.dump(data, f, indent=2)

@@ -136,7 +136,12 @@
     td.col-name { white-space: normal; max-width: 140px; font-size: 10px; }
     th { font-size: 9px; }
     #addressSearch { width: 140px !important; font-size: 11px !important; }
-    #boroFilter { font-size: 11px !important; }
+    #boroFilter, #bldgFilter { font-size: 11px !important; }
+    #bldgFilter { max-width: 140px; }
+    /* Pending-EV label wraps to its own row on mobile to stay visible —
+       the filter row already has flex-wrap, this just makes sure the
+       label doesn't get squeezed. */
+    .filter-row label { font-size: 11px; white-space: nowrap; }
     .panel-container > div:nth-child(2) { padding: 6px 10px 0 !important; }
     /* Hide Risk Factors, Last Sprinkler Permit, Type on mobile */
     th:nth-child(11), td:nth-child(11),
@@ -196,7 +201,7 @@
 <div id="mobile-tooltip"></div>
 <div class="panel-container" id="panel" style="height: 30vh;">
   <div class="resize-handle" id="resizeHandle"></div>
-  <div style="padding: 8px 24px 0; flex-shrink:0; display:flex; gap:8px; align-items:center;">
+  <div class="filter-row" style="padding: 8px 24px 0; flex-shrink:0; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
     <input type="text" id="addressSearch" placeholder="Search addresses..." style="
       width: 244px; height: 30px; padding: 0 10px; background: #1a1a1a; border: 1px solid #333;
       border-radius: 4px; color: #e0e0e0; font-size: 12px; outline: none;
@@ -565,7 +570,7 @@ DATA.results.forEach(r => {
       </table>
       ${(r.fdny_violations_open > 0) ? `<div style="margin-top:4px; font-size:11px;"><a href="${fdnyOathUrl()}" target="_blank" rel="noopener" style="color:#6cacff;">View FDNY violations on NYC Open Data &rarr;</a></div>` : ''}
       ${(dobEcb > 0) ? `<div style="margin-top:4px; font-size:11px;"><a href="${dobEcbOpenDataUrl()}" target="_blank" rel="noopener" style="color:#6cacff;" title="Shows ALL active DOB ECB violations for this building, not just the fire-relevant subset we score. Scan the descriptions to see which records contributed to the DOB Fire Records count above. Does not include DOB NOW Safety Violations or LL26/2004 records (separate datasets).">View all active DOB ECB violations on NYC Open Data &rarr;</a></div>` : ''}
-      ${(r.pending_ev_permit || r.has_chargers || r.has_planned_chargers_afdc) ? `<div style="margin-top:4px; font-size:11px;"><a href="${dobEvPermitUrl()}" target="_blank" rel="noopener" style="color:#6cacff;" title="DOB NOW Electrical Permit Applications for this BBL whose description mentions EV chargers. Post-2019 only (older electrical permits don't have descriptions in Socrata). Useful for verifying installs and seeing permit history.">View EV charger electrical permits on NYC Open Data &rarr;</a></div>` : ''}
+      ${(r.dob_ev_permit_count > 0) ? `<div style="margin-top:4px; font-size:11px;"><a href="${dobEvPermitUrl()}" target="_blank" rel="noopener" style="color:#6cacff;" title="DOB NOW Electrical Permit Applications for this BBL whose description mentions EV chargers. Post-2019 only — buildings with pre-2019 installs or permits filed under generic descriptions won't show this link.">View ${r.dob_ev_permit_count} EV charger electrical permit${r.dob_ev_permit_count === 1 ? '' : 's'} on NYC Open Data &rarr;</a></div>` : ''}
       <div style="margin-top:8px; font-size:11px; color:#888;">
         ${r.reasons.map(s => s.replace(/\s*\(\+\d+(?:[.,]\s*age-weighted)?\)/g, '')).join('<br>').replace(/\bL2\b/g, '<span title="Level 2: 240V AC, adds ~25 miles/hour of charge" style="border-bottom:1px dotted #aaa; cursor:help;">L2</span>').replace(/\bDC fast\b/g, '<span title="DC Fast Charging: direct current, adds ~200 miles in 30 min — higher thermal stress on batteries" style="border-bottom:1px dotted #aaa; cursor:help;">DC fast</span>')}
       </div>
