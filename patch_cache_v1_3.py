@@ -65,8 +65,20 @@ ECB_BAD_CERT = {
     None,
 }
 FIRE_KEYWORDS = (
-    "UNSAFE", "FIRE", "EXIT", "EGRESS", "ALARM",
+    "FIRE", "EXIT", "EGRESS", "ALARM",
     "SPRINKLER", "STANDPIPE", "SMOKE", "SUPPRESS",
+)
+# Phrases where "FIRE" is incidental, not a fire-safety signal. These get
+# stripped from the description before keyword matching so "GAS FIRED BOILER"
+# doesn't become a class2_fire record. Real fire-safety descriptions nearly
+# always contain another keyword (EXIT, SPRINKLER, ALARM, "FIRE STOPPING",
+# "FIRE EXTINGUISHER") that survives the strip.
+# "UNSAFE" was previously a keyword but swept up ~170 LL11 facade-cycle
+# reports per run (FDNY expert: facade issues are structural, not fire);
+# removed entirely.
+FIRE_FALSE_POSITIVES = (
+    "GAS FIRED", "GAS-FIRED", "OIL FIRED", "OIL-FIRED",
+    "FIRE-HYDRANT", "FIRE HYDRANT",
 )
 FIREMAN_SVC_KEYWORDS = (
     "FIREMAN", "PHASE I", "PHASE 1", "FIRE SERVICE", "DOOR LOCK",
@@ -89,7 +101,12 @@ def _classify_ecb(r):
         return None
     cat = r.get("violation_type") or ""
     desc = (r.get("violation_description") or "").upper()
-    has_fire_kw = any(k in desc for k in FIRE_KEYWORDS)
+    # Strip benign "FIRE" contexts (gas-fired boilers, fire-hydrants) before
+    # keyword-matching so they can't trigger a class2_fire classification.
+    desc_stripped = desc
+    for fp in FIRE_FALSE_POSITIVES:
+        desc_stripped = desc_stripped.replace(fp, "")
+    has_fire_kw = any(k in desc_stripped for k in FIRE_KEYWORDS)
     has_fireman_kw = any(k in desc for k in FIREMAN_SVC_KEYWORDS)
 
     if is_class1:
