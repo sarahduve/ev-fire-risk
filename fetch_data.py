@@ -185,6 +185,13 @@ def load_charger_stations():
         # Skip NJ / other-state stations
         if (s.get("state") or "").upper() != "NY":
             continue
+        # v2.0: status codes per AFDC — E=Existing (operational), P=Planned
+        # (registered but not yet energized), T=Temporarily Unavailable.
+        # Planned stations are real forward-looking signal (developer registered
+        # the install) but by definition have zero live charging activity, so
+        # score_garages.py only gives the EV-bonus to existing stations.
+        # access_code is 'public' or 'private'; fire risk doesn't differ by
+        # public accessibility so it's carried through but not filtered.
         out.append({
             "id": s.get("id"),
             "name": s.get("station_name", ""),
@@ -197,6 +204,8 @@ def load_charger_stations():
             "facility_type": s.get("facility_type", ""),
             "open_date": s.get("open_date", ""),
             "network": s.get("ev_network", ""),
+            "status": (s.get("status_code") or "E").upper(),  # E/P/T
+            "access": (s.get("access_code") or "").lower(),   # public/private
         })
     return out
 

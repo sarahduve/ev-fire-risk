@@ -60,6 +60,7 @@ jobs:
           import json, urllib.request, urllib.parse, time, os
           API_KEY = os.environ['NREL_API_KEY']
           BASE = 'https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json'
+          # Grid centers cover NYC; 8-mile radius with overlap. We de-dupe by station id.
           centers = [
               (40.712, -74.006), (40.755, -73.985), (40.800, -73.960),
               (40.840, -73.940), (40.850, -73.900), (40.880, -73.870),
@@ -67,18 +68,30 @@ jobs:
               (40.660, -73.900), (40.740, -73.920), (40.720, -73.850),
               (40.740, -73.790), (40.670, -73.780), (40.580, -74.150),
           ]
+          # v2.0 fetch widening: pull public + private access, existing + planned
+          # status, and drop the facility_type pre-filter. Rationale:
+          # * facility_type pre-filter (was PAY_GARAGE/PARKING_GARAGE) dropped
+          #   Tesla Superchargers at malls (RETAIL/MALL) and other stations with
+          #   null facility_type even when physically on a parking BBL.
+          # * access=private captures tenant-only / workplace / fleet chargers
+          #   that are in AFDC but not publicly discoverable.
+          # * status=P (planned) overlaps with our DOB-permit-based pending
+          #   install signal and provides AFDC's own forward-looking view.
+          # The PAD->PIP->nearest-edge cascade in fetch_data.py now decides
+          # per-station whether it actually sits on a parking BBL.
           all_stations = {}
           for lat, lon in centers:
               params = urllib.parse.urlencode({
                   'api_key': API_KEY, 'fuel_type': 'ELEC',
                   'latitude': lat, 'longitude': lon,
-                  'radius': 8, 'limit': 200, 'status': 'E',
+                  'radius': 8, 'limit': 200,
+                  'access': 'public,private',
+                  'status': 'E,P',
               })
               with urllib.request.urlopen(f'{BASE}?{params}', timeout=30) as resp:
                   data = json.loads(resp.read())
               for s in data.get('fuel_stations', []):
-                  if s.get('facility_type') in ('PAY_GARAGE', 'PARKING_GARAGE'):
-                      all_stations[s['id']] = s
+                  all_stations[s['id']] = s
               time.sleep(0.5)
           output = {
               'metadata': {'query_date': time.strftime('%Y-%m-%d'), 'api_key_used': 'registered'},
@@ -87,7 +100,7 @@ jobs:
           }
           with open('afdc_data.json', 'w') as f:
               json.dump(output, f, indent=2)
-          print(f'Fetched {len(all_stations)} AFDC garage stations')
+          print(f'Fetched {len(all_stations)} AFDC stations (all facility types, public+private, existing+planned)')
           "
 
       - name: Fetch OSM parking data
@@ -120,6 +133,9 @@ jobs:
 
       - name: Score garages (reads from cache)
         run: python3 score_garages.py
+
+      - name: Enrich with DOB EV permit signal (pending install flags)
+        run: python3 enrich_ev_permits.py
 
       - name: Run tests
         run: python3 tests.py
