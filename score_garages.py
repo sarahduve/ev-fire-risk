@@ -60,11 +60,21 @@ def _has_fdny_sprinkler_evidence(fdny_recs):
 
 
 def _years_open(date_str, today_year=2026, today_month=4, today_day=15):
-    """Approximate years between violation date and today."""
+    """Approximate years between violation date and today. Handles both ISO
+    (YYYY-MM-DD, FDNY / LL2604) and compact (YYYYMMDD, DOB ECB) formats.
+
+    The old implementation assumed ISO. For YYYYMMDD input, slicing [5:7]
+    and [8:10] produced wrong/empty substrings, raised ValueError silently,
+    and returned 0 — flooring the age multiplier to ×1.0 for every ECB
+    record and wiping out the age-weighted scoring across 3,300+ violations.
+    """
     if not date_str:
         return 0
     try:
-        y, m, d = int(date_str[:4]), int(date_str[5:7]), int(date_str[8:10])
+        if "-" in date_str:
+            y, m, d = int(date_str[:4]), int(date_str[5:7]), int(date_str[8:10])
+        else:
+            y, m, d = int(date_str[:4]), int(date_str[4:6]), int(date_str[6:8])
         days = (today_year - y) * 365.25 + (today_month - m) * 30 + (today_day - d)
         return max(days / 365.25, 0)
     except (ValueError, IndexError):
