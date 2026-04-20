@@ -79,7 +79,9 @@ GARAGEAREA_MIN_SQFT = 1000  # ~3 cars; flag garagearea < 2500 as small
 #   T = Transportation (piers, airport terminals, bus terminals, ferry buildings)
 #   Q = Recreation (parks, rec centers — "garagearea" is often vehicle maintenance)
 #   U = Utility (power substations, water treatment)
-EXCLUDE_CLASSES = ("T", "Q", "U")
+#   Z8 = Cemetery Land (Hart Island in particular — abandoned DOC buildings
+#        with legacy "garagearea" values that aren't functional garages)
+EXCLUDE_CLASSES = ("T", "Q", "U", "Z8")
 
 # Map building class -> broad category for UI filtering / popup labels
 def _derive_garage_type(bldgclass):
