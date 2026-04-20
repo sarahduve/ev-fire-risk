@@ -451,15 +451,22 @@ def match_chargers_to_garages(garages, stations):
         # (charger is confirmed at this building via PIP, but PLUTO doesn't
         # report garagearea — e.g. 100 Jay St has a real garage entrance
         # on York St but garagearea=0 in PLUTO).
-        # Still respect EXCLUDE_CLASSES here — T (airport/pier), Q (parks),
-        # U (utility), Z8 (cemetery) BBLs are not parking garages even when
-        # an AFDC charger matches to them. Without this filter, JFK-adjacent
-        # Tesla sites were inflating T1 terminals into the scored set.
+        # Two layers of gating:
+        # - EXCLUDE_CLASSES: T (airport/pier), Q (parks), U (utility),
+        #   Z8 (cemetery) — never count as parking.
+        # - Non-parking G subclasses: G2 (detached residential garage),
+        #   G3/G4/G5/G7 (gas stations), G6 (surface lot). Only the
+        #   _is_gclass_garage whitelist (G1/GU/GW + G0 multi-story) counts.
+        #   Previously these were slipping in when an AFDC charger matched
+        #   their BBL (gas station chargers, dealer-lot chargers, etc.).
         if bbl not in garage_bbls and bbl not in seen_extra_bbls:
             r = pluto_by_bbl.get(bbl)
             if r:
                 rcls = (r.get("bldgclass") or "")
+                rfloors = float(r.get("numfloors") or 0)
                 if any(rcls.startswith(ex) for ex in EXCLUDE_CLASSES):
+                    continue
+                if rcls.startswith("G") and not _is_gclass_garage(rcls, rfloors):
                     continue
                 norm = _normalize_pluto_record(r)
                 if norm:
