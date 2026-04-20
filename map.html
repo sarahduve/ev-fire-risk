@@ -237,6 +237,10 @@
       Pending EV install
       <input type="checkbox" id="pendingEvFilter" style="margin:0;"/>
     </label>
+    <label id="fleetLabel" data-tip="Show government / operational fleet facilities — sanitation truck yards (DSNY), bus depots (MTA/NYC Transit), police garages (NYPD), firehouse apparatus bays (FDNY), postal yards (USPS), DOT fleet operations, Port Authority terminals. These are excluded by default because they serve specific government/agency vehicle fleets, not public or residential parking, and have a different operational context. 106 BBLs total." style="display:flex; align-items:center; gap:6px; font-size:12px; font-family:inherit; font-weight:normal; color:#e0e0e0; cursor:pointer; user-select:none; padding: 0 8px; height: 30px; border: 1px solid #333; border-radius: 4px; background: #1a1a1a; box-sizing: border-box;">
+      Show gov't fleet
+      <input type="checkbox" id="fleetFilter" style="margin:0;"/>
+    </label>
   </div>
   <div class="table-wrap">
     <table>
@@ -291,6 +295,7 @@ let activeBldgFilter = null; // null = all, or 'standalone', 'under_residential'
 function passesFilter(r) {
   if (activeBldgFilter && r.garage_type !== activeBldgFilter) return false;
   if (pendingEvOnly && !(r.pending_ev_permit || r.has_planned_chargers_afdc)) return false;
+  if (!showFleet && r.facility_role === 'operational_fleet') return false;
   if (!activeFilter) return true;
   if (activeFilter === 'high') return r.risk_score >= 70;
   if (activeFilter === 'elevated') return r.risk_score >= 50 && r.risk_score < 70;
@@ -805,6 +810,16 @@ document.getElementById('pendingEvFilter').addEventListener('change', (e) => {
   pendingEvOnly = e.target.checked;
   updateMarkers();
   renderTable();
+});
+
+// Government fleet filter: default HIDE (checkbox unchecked). When checked,
+// includes DSNY/MTA/NYPD/FDNY/USPS/DOT/Port-Authority operational facilities.
+let showFleet = false;
+document.getElementById('fleetFilter').addEventListener('change', (e) => {
+  showFleet = e.target.checked;
+  updateMarkers();
+  renderTable();
+  updateStats();
 });
 
 function passesSearch(r) {

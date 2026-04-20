@@ -137,6 +137,7 @@ def _normalize_pluto_record(r):
         "lat": lat,
         "lon": lon,
         "zonedist1": r.get("zonedist1", ""),
+        "ownername": (r.get("ownername") or "").strip(),
         "garage_type": _derive_garage_type(bldgclass),
         "small_garage": 0 < garagearea < 2500,
     }

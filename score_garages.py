@@ -162,6 +162,36 @@ def compute_tier(score, hazards):
     return "low"
 
 
+# Ownername prefixes that identify NYC/federal government vehicle-fleet
+# facilities (sanitation garages, bus depots, police yards, firehouses,
+# mail truck yards, Port Authority terminals). These are operational
+# fleet facilities — not public/residential parking — and have different
+# fire-risk context. The UI hides them by default via the facility_role
+# filter but keeps them in the scored output so researchers can opt in.
+OPERATIONAL_FLEET_OWNER_PREFIXES = (
+    "NYC DEPARTMENT OF SANITATION", "DEPARTMENT OF SANITATION",
+    "NYC TRANSIT AUTHORITY", "METROPOLITAN TRANSPORTATION",
+    "NYC DEPARTMENT OF TRANSPORTATION", "DEPARTMENT OF TRANSPORTATION",
+    "NYC POLICE DEPARTMENT", "NEW YORK CITY POLICE",
+    "NYC FIRE DEPARTMENT", "FIRE DEPARTMENT OF",
+    "UNITED STATES POSTAL", "US POSTAL",
+    "MTA -",
+    "PORT AUTHORITY",
+    "NYC DEPARTMENT OF SMALL BUSINESS",
+)
+
+
+def _classify_facility_role(ownername):
+    """Return 'operational_fleet' if this building is a government / transit
+    vehicle-fleet facility, otherwise None (untagged — default bucket)."""
+    if not ownername:
+        return None
+    o = ownername.upper().strip()
+    if any(o.startswith(p) for p in OPERATIONAL_FLEET_OWNER_PREFIXES):
+        return "operational_fleet"
+    return None
+
+
 def _ecb_hazard(r):
     """Attribute an ECB record to a hazard mechanism based on description
     keywords. Records with no matching keyword fall through to 'structural'
@@ -598,6 +628,8 @@ def main():
             "garagearea_sqft": g.get("garagearea", 0),
             "garage_type": g.get("garage_type", "other"),
             "small_garage": g.get("small_garage", False),
+            "ownername": g.get("ownername", ""),
+            "facility_role": _classify_facility_role(g.get("ownername", "")),
             "has_chargers": has_chargers,
             "total_ev_ports": total_ports,
             "charger_names": charger_names,
