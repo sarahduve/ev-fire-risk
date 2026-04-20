@@ -194699,7 +194699,7 @@
       "garage_type": "other",
       "small_garage": false,
       "ownername": "USPS",
-      "facility_role": null,
+      "facility_role": "operational_fleet",
       "has_chargers": false,
       "total_ev_ports": 0,
       "charger_names": "",
