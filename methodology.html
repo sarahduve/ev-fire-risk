@@ -72,7 +72,7 @@
     <a href="#overview">Overview</a>
     <a href="#why-garagearea" class="sub">Why garagearea, not just G-class</a>
     <a href="#reading-the-map" class="sub">Reading the Map</a>
-    <a href="#scoring" class="sub">Scoring Formula (6 factors)</a>
+    <a href="#scoring" class="sub">Scoring Formula</a>
     <a href="#data-sources">Data Sources</a>
     <a href="#spatial-matching">Charger Matching</a>
     <a href="#included">What's Included</a>
@@ -91,14 +91,16 @@
 
 <a href="index.html" class="back">&larr; Back to map</a>
 
-<h1>Methodology <span style="color:#888; font-size:15px; font-weight:400; letter-spacing:0.5px;">v1.3</span></h1>
+<h1>Methodology <span style="color:#888; font-size:15px; font-weight:400; letter-spacing:0.5px;">v2.0</span></h1>
 <p class="subtitle">How we score NYC parking buildings for EV battery fire risk</p>
 
 <h2 id="overview">Overview</h2>
 
-<p>This tool scores approximately 6,200 parking buildings across New York City on a 0-100 risk scale. The score reflects how vulnerable each location is to an EV battery fire event in an enclosed structure — specifically, the factors that would determine whether a single-vehicle thermal runaway cascades into a multi-vehicle fire like the <a href="https://fortune.com/asia/2024/08/07/exploding-mercedes-benz-ev-parking-garage-bans-south-korea/">August 2024 Incheon, South Korea incident</a> (140 vehicles destroyed, 23 hospitalized, 8 hours to extinguish).</p>
+<p>This tool scores approximately 6,350 parking buildings across New York City on the <strong>Fire Risk Index</strong>, a weighted sum of structural, regulatory, and EV-infrastructure risk factors. The index reflects how vulnerable each location is to an EV battery fire event in an enclosed structure — specifically, the factors that would determine whether a single-vehicle thermal runaway cascades into a multi-vehicle fire like the <a href="https://fortune.com/asia/2024/08/07/exploding-mercedes-benz-ev-parking-garage-bans-south-korea/">August 2024 Incheon, South Korea incident</a> (140 vehicles destroyed, 23 hospitalized, 8 hours to extinguish).</p>
 
-<p>"Parking buildings" is broader than "parking garages" as most people think about them. Only about 1,600 of the scored buildings are standalone parking structures (PLUTO class G). The other ~4,700 are residential, office, or institutional buildings with <strong>dedicated parking space inside them</strong> — the kind of ground-floor or basement garage that sits under apartments, under an office tower, or under a hospital. Most NYC parking exists this way. See <a href="#why-garagearea">Why garagearea, not just G-class</a> below.</p>
+<p>The Fire Risk Index is not bounded at 100. Each building's score reflects the actual severity of the signals attached to it; capping at a round number would erase the gap between a building with a few issues and one with many. Alongside the raw number, each building has a <strong>percentile rank</strong> ("worse than X% of NYC garages") so the relative severity is legible without needing to know the whole distribution.</p>
+
+<p>"Parking buildings" is broader than "parking garages" as most people think about them. Only about 1,600 of the scored buildings are standalone parking structures (PLUTO class G). The rest are residential, office, or institutional buildings with <strong>dedicated parking space inside them</strong> — the kind of ground-floor or basement garage that sits under apartments, under an office tower, or under a hospital. Most NYC parking exists this way. See <a href="#why-garagearea">Why garagearea, not just G-class</a> below.</p>
 
 <p>The score does <strong>not</strong> predict the probability of an EV fire occurring. EVs catch fire <a href="https://theicct.org/clearing-the-air-evs-could-bring-lower-fire-risk-oct24/">20-60x less frequently</a> than gasoline vehicles (~25 per 100,000 vs ~1,530 per 100,000). The score instead measures <strong>how bad it would be if one did occur</strong> at this specific location.</p>
 
@@ -127,8 +129,8 @@
   <tbody>
     <tr>
       <td><strong>Color</strong></td>
-      <td>Fire Risk Index (likelihood this building has a bad outcome)</td>
-      <td>Red = high (70+), orange = elevated (50-69), yellow = moderate (30-49), green = low (&lt;30). See the <a href="#scoring">Scoring Formula</a> below.</td>
+      <td>Fire Risk Index tier (severity)</td>
+      <td>Red = High (score ≥70 OR multiple hazard mechanisms maxed out), orange = Elevated (≥50 OR 2+ mechanisms maxed), yellow = Moderate (≥30), green = Low (&lt;30). Semantic escalation catches buildings whose individual mechanism contributions saturate without the raw score crossing a threshold. See the <a href="#scoring">Scoring Formula</a> below.</td>
     </tr>
     <tr>
       <td><strong>Size</strong></td>
@@ -152,12 +154,29 @@
 
 <h2 id="scoring">Scoring Formula</h2>
 
-<p>Each building is scored on six factors. Points are additive, capped at 100:</p>
+<p>The Fire Risk Index is a weighted sum of structural, regulatory-compliance, and EV-infrastructure factors. Points are additive, then <strong>hazard-mechanism caps</strong> bound how much any single failure mode (sprinkler, structural, egress, etc.) can contribute regardless of how many sources cite it. This prevents double-counting: one failing sprinkler system can show up as a DOB permit gap, an FDNY maintenance violation, and an ECB Class 1 citation, each contributing points. The cap bounds the mechanism's total contribution to the p95 of its raw distribution across all NYC garages.</p>
 
 <div class="formula">
-Score = Age + Sprinkler Evidence + Floors + DOB Violations + FDNY Compliance + EV Chargers<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(0-30) + (0-30) + (0-10) + (0-20) + (0-25) + (0-15)
+Fire Risk Index = Structural Age + Sprinkler Evidence + Multi-Story<br>
+&nbsp;&nbsp;+ DOB LL126 Parking Structure + DOB ECB Fire-Relevant + DOB NOW Fire Systems<br>
+&nbsp;&nbsp;+ LL26/2004 Active + FDNY Compliance + EV Charger Presence<br>
+&nbsp;&nbsp;− hazard-mechanism cap excess (subtracted when any mechanism's raw total exceeds its cap)
 </div>
+
+<p>Hazard-mechanism caps, set at the p95 of each mechanism's raw distribution:</p>
+
+<table>
+<tr><th>Mechanism</th><th>Cap</th><th>Typical contributors</th></tr>
+<tr><td>sprinkler</td><td>30</td><td>DOB sprinkler permit gap, LL26 retrofit flag, FDNY BF12/BF20, DOB NOW sprinkler filings, ECB sprinkler-keyword Class 1/2</td></tr>
+<tr><td>structural</td><td>23</td><td>DOB LL126 PS unsafe/initial, DOB ECB construction Class 1, DOB NOW structurally-compromised</td></tr>
+<tr><td>egress</td><td>18</td><td>ECB exit/egress-keyword Class 1/2, DOB NOW photoluminescent, LL26/2004 exit-sign active</td></tr>
+<tr><td>fireman_service</td><td>16</td><td>ECB elevator fireman-service Class 1</td></tr>
+<tr><td>other</td><td>8</td><td>ECB other elevator / uncategorized fire</td></tr>
+<tr><td>power</td><td>7</td><td>DOB NOW emergency power, LL26/2004 emergency power active</td></tr>
+<tr><td>alarm</td><td>6</td><td>FDNY other fire-protection charges, ECB alarm/smoke-keyword</td></tr>
+</table>
+
+<p>Each building's popup shows both the raw per-mechanism contribution and any cap applied, so readers can see "sprinkler had 113 raw points of signal but only 30 counted toward the Index." Tier assignment uses a score-threshold backbone (70/50/30) with escalation safety nets: if a building has 2+ maxed mechanisms it rises to Elevated, 3+ rises to High, and sprinkler+structural both maxed rises to High. These catch buildings whose severity is legible across multiple failure modes without any single source crossing a numeric threshold.</p>
 
 <h3>1. Structural Age (0-30 points)</h3>
 
@@ -209,15 +228,52 @@ Score = Age + Sprinkler Evidence + Floors + DOB Violations + FDNY Compliance + E
 <tr><td>1 floor</td><td>0</td><td>Single-level structure.</td></tr>
 </table>
 
-<h3>4. DOB Safety Violations (0-20 points)</h3>
+<h3>4. DOB Violation Signals</h3>
 
-<p>NYC Department of Buildings violations, tiered by severity:</p>
+<p>v1.3 dropped the keyword-matched DOB Violations filter (too narrow — caught only 406 garages on a taxonomy that's mostly administrative follow-up records) in favor of three targeted DOB sources. Each attributes to specific hazard mechanisms so double-counting is prevented at the cap layer.</p>
+
+<h4>DOB LL126 Parking Structure Program (0-12 points, attributes to <em>structural</em>)</h4>
+
+<p>The <a href="https://www.nyc.gov/site/buildings/codes/local-law-126.page">Local Law 126 periodic parking-garage inspection mandate</a> (from DOB NOW, device_type='Parking Structures'). Picks up buildings with filed-but-not-corrected "unsafe" reports (+12 flat) and buildings that never filed the mandated inspection at all (+8 flat). No age decay because the LL126 program is only ~4 months old.</p>
+
+<h4>DOB ECB Class 1 / Class 2 Fire-Relevant (variable points, attributes by keyword)</h4>
+
+<p>Active+uncured Immediately Hazardous / Class 1 and fire-relevant Class 2 violations from the <a href="https://data.cityofnewyork.us/Housing-Development/DOB-ECB-Violations/6bgk-3dad">DOB ECB Violations dataset</a>, weighted by category and multiplied by age since issue (older uncured = ×1.25–×2):</p>
 
 <table>
-<tr><th>Type</th><th>Points Each</th><th>Examples</th></tr>
-<tr><td>Critical</td><td>8</td><td>Immediate emergency orders (IMEGNCY), unsafe building designations, structurally compromised buildings</td></tr>
-<tr><td>High</td><td>5</td><td>Sprinkler deficiency violations</td></tr>
-<tr><td>Low</td><td>1 (max 3)</td><td>Photoluminescent exit sign violations, emergency power violations</td></tr>
+<tr><th>Category</th><th>Base Points</th><th>Age multiplier</th></tr>
+<tr><td>Class 1 Construction, fire keyword</td><td>6</td><td>3y → ×1.25, 5y → ×1.5, 10y+ → ×2</td></tr>
+<tr><td>Class 1 Elevator, fireman-service keyword</td><td>4</td><td>Same</td></tr>
+<tr><td>Class 1 Construction, other (non-fire)</td><td>3</td><td>Same</td></tr>
+<tr><td>Class 2, fire keyword</td><td>2</td><td>Same</td></tr>
+<tr><td>Class 1 Elevator, other</td><td>1</td><td>Same</td></tr>
+</table>
+
+<p>Each record's points are attributed to a hazard mechanism by description keyword: SPRINKLER/STANDPIPE → sprinkler, EXIT/EGRESS → egress, ALARM/SMOKE → alarm, construction-other or unclassified fire-relevant → structural, elevator fireman-service → fireman_service.</p>
+
+<p>v2.0 tightened the fire-keyword classifier: dropped <code>UNSAFE</code> (was sweeping LL11/FISP facade-cycle reports that are structural defects, not fire risks) and added a negative filter so "GAS FIRED BOILER" / "FIRE-HYDRANT" don't count unless paired with a real fire indicator elsewhere in the description.</p>
+
+<h4>DOB NOW Fire System Device Filings (0-20 points, attributes by device type)</h4>
+
+<p>Open violations from DOB NOW Safety Violations (<a href="https://data.cityofnewyork.us/Housing-Development/DOB-NOW-Safety-Violations/855j-jady">855j-jady</a>) on fire-relevant device types:</p>
+
+<table>
+<tr><th>Device type</th><th>Points</th><th>Attributes to</th></tr>
+<tr><td>Sprinklers</td><td>6</td><td>sprinkler</td></tr>
+<tr><td>Emergency Power</td><td>6</td><td>power</td></tr>
+<tr><td>Photoluminescent</td><td>1</td><td>egress</td></tr>
+<tr><td>Structurally Compromised Buildings</td><td>8</td><td>structural</td></tr>
+</table>
+
+<h4>Legacy LL26/2004 Active Violations (0-4 points)</h4>
+
+<p>Narrow slice of the <a href="https://data.cityofnewyork.us/Housing-Development/DOB-Violations/3h2n-5cm9">3h2n-5cm9 DOB Violations dataset</a> restricted to active LL26/2004 retrofit-mandate records:</p>
+
+<table>
+<tr><th>Subtype</th><th>Points</th><th>Attributes to</th></tr>
+<tr><td>LL2604S (sprinkler)</td><td>2</td><td>sprinkler</td></tr>
+<tr><td>LL2604E (emergency power)</td><td>1</td><td>power</td></tr>
+<tr><td>LL2604 (photoluminescent)</td><td>1</td><td>egress</td></tr>
 </table>
 
 <h3>5. FDNY Fire Protection Compliance (0-25 points)</h3>
@@ -235,11 +291,9 @@ Score = Age + Sprinkler Evidence + Floors + DOB Violations + FDNY Compliance + E
 <tr><td>Other fire protection system charges</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
 </table>
 
-<p>Points from all open violations are summed and capped at 25. A building with many old, unresolved sprinkler violations can max out this factor.</p>
+<p>v2.0 removed the 25-point factor-level cap in favor of the <a href="#scoring">hazard-mechanism caps</a> described above. BF12 and BF20 points attribute to the <em>sprinkler</em> mechanism (FDNY BF20 "inspection/testing" citations are almost always sprinkler/standpipe in practice); "other fire protection" charges attribute to <em>alarm</em>. So a building with 10 unresolved 10-year-old BF12s adds +100 raw sprinkler points to the score, then the sprinkler cap subtracts 70 as excess — the building still scores higher than a building with just 2 recent BF12s, but the evidence is only counted once at the mechanism level.</p>
 
 <p class="note"><strong>Why do open violations persist?</strong> FDNY can issue citations and levy fines but cannot physically force a building to upgrade its systems. Penalties are often modest relative to the cost of compliance (a $1,500 fine vs. a $200,000 sprinkler upgrade). Many violations result from default judgments where the respondent never appeared. In our scored buildings, <strong>61% of open fire-protection violations are 5+ years old</strong>, and <strong>37% are 10+ years old</strong>. This is structural non-compliance, not recent oversights.</p>
-
-<p>Total violation points are capped at 20. We search for violation types: <code>IMEGNCY</code> (immediate emergency), <code>UB</code> (unsafe buildings), <code>COMPBLD</code> (structurally compromised), <code>LL2604S</code> (sprinkler), <code>LL2604E</code> (emergency power), and <code>LL2604</code> (photoluminescent).</p>
 
 <h3>5. EV Charger Presence (0-15 points)</h3>
 
@@ -253,7 +307,20 @@ Score = Age + Sprinkler Evidence + Floors + DOB Violations + FDNY Compliance + E
 <tr><td>None</td><td>0</td></tr>
 </table>
 
+<p class="note"><strong>Existing chargers only.</strong> v2.0 only counts AFDC stations with <code>status_code='E'</code> (existing/operational) toward the EV bonus. AFDC "planned" stations (registered with AFDC but not yet energized) don't contribute to the score — there's no thermal stress from a charger that isn't live. Planned stations and DOB-filed-but-not-AFDC-listed installs are surfaced separately as a <em>pending EV install</em> flag (see Data Sources below), not baked into the score.</p>
+
 <p class="note"><strong>Why is charger presence a bonus, not a requirement?</strong> Roughly <a href="https://www.evfiresafe.com/ev-battery-fire-data">56% of documented EV battery fires</a> occur while the vehicle is parked and not charging. Any garage where EVs park is at risk — chargers just increase the concentration and add charging-related thermal stress.</p>
+
+<h3>Pending EV install signal (not scored)</h3>
+
+<p>Two forward-looking signals are surfaced on the map as a <em>Pending EV install</em> filter and popup badge, but <strong>not</strong> added to the Fire Risk Index:</p>
+
+<ul>
+<li><strong>AFDC-side:</strong> stations registered in AFDC with <code>status_code='P'</code> (planned). Operator has told AFDC a charger is coming but it's not yet live.</li>
+<li><strong>DOB-side:</strong> electrical permits from <a href="https://data.cityofnewyork.us/City-Government/DOB-NOW-Electrical-Permit-Applications/dm9a-ab7w">DOB NOW Electrical Permit Applications (dm9a-ab7w)</a> whose job description matches an EV-specific keyword (EV CHARGER, EVSE, ELECTRIC VEHICLE CHARG) — plus "CHARGING STATION(S)" gated behind a bike-negative filter so JOCO/LYFT/CITIBIKE e-bike dock permits don't pollute the signal. Filed 2025 or later, on BBLs that aren't already in AFDC as existing chargers.</li>
+</ul>
+
+<p>The two signals are largely disjoint — only one BBL overlaps. Together they flag ~110 parking structures in the pipeline of rollout, catching both the "operator registered early" and "permit filed quietly, AFDC hasn't caught up" patterns. See also the <a href="https://data.cityofnewyork.us/City-Government/OATH-Hearings-Division-Case-Status/jz4z-kudi">DOB ECB</a> and <a href="https://data.cityofnewyork.us/City-Government/DOB-NOW-Electrical-Permit-Applications/dm9a-ab7w">DOB NOW Electrical</a> deep links in each popup for drilling into the underlying records.</p>
 
 <h2 id="data-sources">Data Sources</h2>
 
@@ -294,12 +361,27 @@ Score = Age + Sprinkler Evidence + Floors + DOB Violations + FDNY Compliance + E
 <li><strong>Dataset:</strong> <a href="https://data.cityofnewyork.us/Housing-Development/DOB-NOW-Build-Approved-Permits/rbx6-tga4">NYC Open Data rbx6-tga4</a></li>
 </ul>
 
-<h3>DOB Violations</h3>
-<p>Building code violations from DOB. We search for safety-related violation types only.</p>
+<h3>DOB Violations (legacy 3h2n-5cm9)</h3>
+<p>Legacy BIS DOB violations dataset. In v1.3+ we narrowed this to <strong>active LL26/2004 retrofit-mandate records only</strong> (sprinkler, emergency power, photoluminescent exit signs). The broader keyword filter (IMEGNCY/UB/COMPBLD) was dropped — it caught only ~400 buildings on a taxonomy dominated by administrative follow-up records, and the real hazard signal moved to the DOB ECB and DOB NOW sources below.</p>
 <ul>
 <li><strong>Queried by:</strong> Borough code + block + lot (both padding variants)</li>
-<li><strong>Violation types:</strong> IMEGNCY, UB, COMPBLD, LL2604S, LL2604E, LL2604</li>
+<li><strong>v1.3+ filter:</strong> LL2604S / LL2604E / LL2604 with active status only</li>
 <li><strong>Dataset:</strong> <a href="https://data.cityofnewyork.us/Housing-Development/DOB-Violations/3h2n-5cm9">NYC Open Data 3h2n-5cm9</a></li>
+</ul>
+
+<h3>DOB ECB Violations (6bgk-3dad) — primary DOB hazard source in v1.3+</h3>
+<p>DOB violations adjudicated at OATH/ECB, with the full violation description text and hazard class (Class 1 / Class 2) we need for keyword classification. This is the main source of DOB-side signal for the Fire Risk Index.</p>
+<ul>
+<li><strong>Filtered to:</strong> active+uncured (<code>ecb_violation_status='ACTIVE'</code> AND <code>certification_status</code> in {"NO COMPLIANCE RECORDED", "CERTIFICATE DISAPPROVED", "REINSPECTION SHOWS STILL IN VIOLATION", "CERTIFICATE PENDING", null}) Class 1 / Hazardous and fire-relevant Class 2</li>
+<li><strong>Fire-keyword classifier:</strong> Class 1 Construction and fire-keyword Class 2 records are kept; non-fire Class 2 dropped. v2.0 removed the "UNSAFE" keyword (was sweeping LL11 facade-cycle reports) and added a benign-phrase strip for "GAS FIRED" / "FIRE-HYDRANT".</li>
+<li><strong>Dataset:</strong> <a href="https://data.cityofnewyork.us/Housing-Development/DOB-ECB-Violations/6bgk-3dad">NYC Open Data 6bgk-3dad</a></li>
+</ul>
+
+<h3>DOB NOW Safety Violations (855j-jady) — newer device-taxonomy source</h3>
+<p>Post-2021 DOB violations with structured <code>device_type</code> metadata. Drives the LL126 parking-structure signal and the fire-system device signals (sprinkler / emergency power / photoluminescent / structurally compromised).</p>
+<ul>
+<li><strong>Filtered to:</strong> active records on device types {Parking Structures, Sprinklers, Emergency Power, Photoluminescent, Structurally Compromised Buildings}</li>
+<li><strong>Dataset:</strong> <a href="https://data.cityofnewyork.us/Housing-Development/DOB-NOW-Safety-Violations/855j-jady">NYC Open Data 855j-jady</a></li>
 </ul>
 
 <h3>FDNY Fire Protection Violations (via OATH/ECB)</h3>
@@ -319,12 +401,21 @@ Score = Age + Sprinkler Evidence + Floors + DOB Violations + FDNY Compliance + E
 <p>US Department of Energy database of EV charger locations.</p>
 <ul>
 <li><strong>Queried using:</strong> <code>/v1/nearest.json</code> endpoint with 15 center points across NYC at 8-mile radius each, to ensure full geographic coverage</li>
-<li><strong>Filtered to:</strong> <code>facility_type</code> of PAY_GARAGE or PARKING_GARAGE only</li>
-<li><strong>Result:</strong> approximately 264 unique NYC garage charger stations after deduplication by station ID and filtering out-of-state entries</li>
+<li><strong>v2.0 broadening:</strong> no longer pre-filtered by <code>facility_type</code>. v1.x filtered to PAY_GARAGE / PARKING_GARAGE only, which dropped Tesla Superchargers at mall locations (classified as RETAIL/MALL/OTHER) and any station with null facility_type. Now pulls <code>access=public,private</code> and <code>status=E,P</code> (existing + planned) and lets the spatial matching cascade decide which stations actually sit on a parking BBL.</li>
+<li><strong>Result:</strong> approximately 1,080 unique NYC stations after deduplication by station ID and filtering out-of-state entries (up from ~264 in v1.x). ~630 match to a parking BBL in our scored set and drive <code>has_chargers=True</code>.</li>
 <li><strong>API:</strong> <a href="https://developer.nrel.gov/docs/transportation/alt-fuel-stations-v1/">NREL AFDC API v1</a> (free API key required)</li>
 </ul>
 
-<p class="note"><strong>Limitation:</strong> AFDC is voluntary — operators self-register. Our count is a lower bound. Some garages with chargers may not be in the federal database. We checked PlugShare and Recharged.com for additional sources but neither offers bulk data access.</p>
+<p class="note"><strong>Limitation:</strong> AFDC is voluntary — operators self-register. Even with the v2.0 widening, our count remains a lower bound. Some garages with installed chargers (tenant-only, fleet, older installs) may not be in the federal database even as private entries. See the <a href="https://github.com/sarahduve/ev-fire-risk/blob/main/research/charger_source_audit.md">charger source audit</a> for the 2×2 breakdown of AFDC presence × DOB permit paper trail across the has_chargers=True set.</p>
+
+<h3>DOB NOW Electrical Permit Applications (dm9a-ab7w)</h3>
+<p>Used in v2.0 to detect recent EV-charger electrical-permit activity at buildings that don't yet appear in AFDC as existing chargers. Drives the Pending EV install flag and a deep-link in each popup.</p>
+<ul>
+<li><strong>Endpoint:</strong> <a href="https://data.cityofnewyork.us/City-Government/DOB-NOW-Electrical-Permit-Applications/dm9a-ab7w">NYC Open Data dm9a-ab7w</a></li>
+<li><strong>Keyword filter:</strong> EV-specific (EV CHARGER, EV CHARGING, EVSE, ELECTRIC VEHICLE CHARG) accepted unconditionally. Generic "CHARGING STATION(S)" accepted only if the description doesn't mention bikes (JOCO / LYFT / CITIBIKE / BIKE / EBIKE / E-BIKE / DOCKLESS / MICROMOBIL), filtering out e-bike dock permits in parking garages.</li>
+<li><strong>Coverage caveat:</strong> DOB NOW launched in 2019. Pre-2019 electrical permits are in the <a href="https://data.cityofnewyork.us/Housing-Development/DOB-Permit-Issuance/ipu4-2q9a">DOB Permit Issuance dataset (ipu4-2q9a)</a>, which has no <code>job_description</code> field — keyword filtering isn't possible there, so older installs aren't in this signal.</li>
+<li><strong>TPR is low:</strong> of ~630 existing AFDC-matched chargers, only ~120 have a traceable EV-keyword DOB permit. The rest went in under umbrella ALT permits, used generic descriptions, or pre-date DOB NOW. A permit hit is strong confirmation of an install; a miss is uninformative.</li>
+</ul>
 
 <h3>OpenStreetMap</h3>
 <p>Community-edited map data. Queried via <a href="https://overpass-api.de/">Overpass API</a> for parking facilities tagged as <code>parking=underground</code> or <code>parking=multi-storey</code> within the NYC bounding box.</p>
@@ -380,7 +471,7 @@ Score = Age + Sprinkler Evidence + Floors + DOB Violations + FDNY Compliance + E
 <tr><td>Under-commercial (offices, retail, stores w/ apts)</td><td>~780</td><td>PLUTO class O/K/S + garagearea &ge; 1,000</td></tr>
 <tr><td>Institutional (hospitals, religious, schools)</td><td>~145</td><td>PLUTO class H/I/M + garagearea &ge; 1,000</td></tr>
 <tr><td>Other (warehouses, utilities, mixed)</td><td>~630</td><td>Other PLUTO classes + garagearea &ge; 1,000</td></tr>
-<tr><td><strong>Total scored</strong></td><td><strong>~6,200</strong></td><td></td></tr>
+<tr><td><strong>Total scored</strong></td><td><strong>~6,350</strong></td><td>Slight increase over v1.x (~6,200) because the broadened AFDC fetch surfaced ~190 additional BBLs with real charger matches that weren't in the original garagearea-filtered set.</td></tr>
 </table>
 
 <p>Buildings with <code>garagearea</code> between 1,000 and 2,500 sqft (roughly 3-7 cars) are tagged with a <code>small_garage</code> flag. The scoring formula applies uniformly to them, but the flag exists so filtering and interpretation can distinguish small ground-floor parking from full multi-car garage operations.</p>

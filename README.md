@@ -2,7 +2,7 @@
 
 **[View the live map](https://sarahduve.github.io/ev-fire-risk/)** | **[Methodology & sources](https://sarahduve.github.io/ev-fire-risk/methodology.html)**
 
-An interactive risk assessment of ~6,200 parking buildings across New York City, scored by their vulnerability to electric vehicle battery fires in enclosed structures. Covers both standalone parking garages and residential / office / institutional buildings with dedicated parking space.
+An interactive risk assessment of ~6,350 parking buildings across New York City, scored on the **Fire Risk Index** by their vulnerability to electric vehicle battery fires in enclosed structures. Covers both standalone parking garages and residential / office / institutional buildings with dedicated parking space.
 
 ## Why this exists
 
@@ -14,17 +14,23 @@ NYC has thousands of parking garages, many built decades before EVs existed. Som
 
 ## What it shows
 
-~6,200 buildings scored 0-100 based on eight factors:
+~6,350 buildings scored on the Fire Risk Index. The index is a weighted sum of structural, regulatory-compliance, and EV-infrastructure factors, with **hazard-mechanism caps** preventing any single failure mode from being double-counted across multiple data sources. Not bounded at 100 — preserves the gap between a building with a few issues and one with many. Each building also shows a percentile rank ("worse than N% of NYC garages") for intuitive framing.
+
+**Scoring factors:**
 
 - **Structural age (0-30 pts)** — Buildings built before 1968 (pre-modern NYC building code) score highest.
 - **Sprinkler system evidence (0-30 pts)** — Cross-references DOB sprinkler permits with FDNY fire-protection violations to determine whether a system exists. Buildings required by Local Law 26 or Local Law 16 to have sprinklers with no evidence of compliance score highest.
-- **DOB LL126 parking-structure program (0-12 pts)** — The 2021 periodic parking-garage inspection mandate (from DOB NOW). A building with an "unsafe" inspection report filed and not corrected (+12) or one that never filed its required inspection report (+8).
-- **DOB ECB Class 1/2 violations (0-15 pts)** — Active, uncured Immediately Hazardous / Major violations with fire-relevant descriptions (unsafe notifications, blocked egress, elevator fireman-service failure, fire alarm, sprinkler). Weighted by category, multiplied by age since issue (older uncured = more weight).
+- **DOB LL126 parking-structure program (0-12 pts)** — The 2021 periodic parking-garage inspection mandate (from DOB NOW). Unsafe report filed and not corrected (+12), or required report never filed (+8). Attributes to *structural* mechanism.
+- **DOB ECB Class 1/2 fire-relevant violations (variable)** — Active, uncured Immediately Hazardous / Class 2 violations with fire-relevant descriptions (blocked egress, elevator fireman-service failure, fire alarm, sprinkler). Weighted by category, multiplied by age since issue. Each record attributes to a hazard mechanism by description keyword (sprinkler/egress/alarm/fireman_service/structural).
 - **DOB NOW fire-system device violations (0-20 pts)** — Open sprinkler, emergency power, exit-sign, and structurally-compromised building filings from DOB NOW.
-- **Legacy LL26/2004 active violations (0-4 pts)** — Small-volume, high-specificity retrofit-mandate signal (exit signs, emergency power, sprinkler) for buildings that missed the 2019 compliance deadline.
-- **FDNY fire protection compliance (0-25 pts)** — Open (unresolved) FDNY fire-protection violations from OATH/ECB hearings. Time-weighted: older open violations indicate persistent non-compliance.
-- **EV charger presence (0-15 pts)** — 250+ buildings with chargers (AFDC stations). Chargers concentrate vehicles at high state of charge. DC fast chargers weighted 3x.
+- **Legacy LL26/2004 active violations (0-4 pts)** — Small-volume retrofit-mandate signal (sprinkler, emergency power, photoluminescent exit signs) for buildings that missed the 2019 compliance deadline.
+- **FDNY fire-protection compliance (variable)** — Open FDNY fire-protection violations from OATH/ECB hearings, time-weighted (older open violations score higher). Sprinkler/standpipe and inspection/testing charges attribute to *sprinkler*; other charges to *alarm*.
+- **EV charger presence (0-15 pts)** — Buildings with existing (operational) AFDC chargers. DC fast weighted 3x. Planned stations are tracked as a separate *pending EV install* signal and do not contribute to the score.
 - **Multi-story structure (0-10 pts)** — More floors = harder evacuation, heat rises. Underground garages identified via PLUTO basement codes + OpenStreetMap.
+
+After summing, **hazard-mechanism caps** bound each mechanism's total contribution at the p95 of its raw distribution (sprinkler=30, structural=23, egress=18, fireman_service=16, other=8, power=7, alarm=6). This prevents one failing sprinkler system cited by DOB permit gap + FDNY BF12 + ECB sprinkler-keyword from contributing 3× the points one failure warrants.
+
+Tier assignment uses a score-threshold backbone (70/50/30 = High/Elevated/Moderate) with semantic escalation: 3+ maxed mechanisms or sprinkler+structural both maxed rises a building to High regardless of raw score.
 
 See the [full methodology](https://sarahduve.github.io/ev-fire-risk/methodology.html) for scoring details, data source documentation, and limitations.
 
@@ -47,7 +53,8 @@ See the [full methodology](https://sarahduve.github.io/ev-fire-risk/methodology.
 | [DOB ECB Violations](https://data.cityofnewyork.us/Housing-Development/DOB-ECB-Violations/6bgk-3dad) | DOB violations adjudicated at OATH/ECB — includes hazard class (Class 1 / Class 2) and full violation descriptions. Primary DOB source in v1.3+. |
 | [DOB NOW Safety Violations](https://data.cityofnewyork.us/Housing-Development/DOB-NOW-Safety-Violations/855j-jady) | Newer (post-2021) DOB violations with device_type taxonomy. Includes the Local Law 126 parking-structure inspection program (filed/unsafe reports). |
 | [OATH/ECB Hearings](https://data.cityofnewyork.us/City-Government/OATH-Hearings-Division-Case-Status/jz4z-kudi) | FDNY fire-protection violations (sprinkler maintenance, inspection/testing failures, compliance status) |
-| [AFDC Alt Fuel Stations](https://developer.nrel.gov/docs/transportation/alt-fuel-stations-v1/) | EV charger locations, port counts, facility types |
+| [AFDC Alt Fuel Stations](https://developer.nrel.gov/docs/transportation/alt-fuel-stations-v1/) | EV charger locations, port counts. v2.0 broadened the fetch: drops the facility_type pre-filter, adds `access=public,private` and `status=E,P` to capture tenant-only / workplace / planned chargers (station count 271 → 1,082). |
+| [DOB NOW Electrical Permit Applications](https://data.cityofnewyork.us/City-Government/DOB-NOW-Electrical-Permit-Applications/dm9a-ab7w) | Post-2019 electrical permits. v2.0 uses this for the "pending EV install" signal — BBLs with EV-keyword electrical permits filed 2025+ but no AFDC existing-charger listing. Drives the pending-install filter + popup badge. |
 | [OpenStreetMap](https://www.openstreetmap.org/) via [Overpass API](https://overpass-api.de/) | Parking type classification (underground/multi-storey/surface) |
 
 v1 also uses [NYC Planning Labs Geosearch](https://geosearch.planninglabs.nyc/) (PAD-backed) for charger address resolution and the [NYC ArcGIS MapPLUTO](https://a841-dotweb01.nyc.gov/arcgis/rest/services/GAZETTEER/MapPLUTO/MapServer/0) endpoint for spatial fallback. Both are free and keyless.
