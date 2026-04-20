@@ -83,6 +83,34 @@
   .col-name { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   /* Filter row gap: in CSS not inline so mobile media query can override */
   .filter-row { gap: 8px; }
+  /* Replace the default-system checkbox inside filter-row labels with a
+     dark-themed one that matches the adjacent dropdowns/inputs. */
+  .filter-row input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #444;
+    border-radius: 3px;
+    background: #0a0a0a;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    margin: 0;
+  }
+  .filter-row input[type="checkbox"]:checked {
+    background: #ff8800;
+    border-color: #ff8800;
+  }
+  .filter-row input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 3px; top: 0;
+    width: 4px; height: 8px;
+    border: solid #000;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
 
   /* Mobile */
   @media (max-width: 600px) {
