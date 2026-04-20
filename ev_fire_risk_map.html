@@ -81,10 +81,6 @@
   /* First legend item (High risk) is at the left edge — anchor tooltip left so it doesn't clip */
   .legend-item:first-child[data-tip]:hover::after { left: 0; transform: none; }
   .col-name { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  /* Pending-EV label: long form on desktop, short "Pending ⚡" on mobile
-     (override in the mobile @media block below). */
-  .pending-long { display: inline; }
-  .pending-short { display: none; }
   /* Filter row gap: in CSS not inline so mobile media query can override */
   .filter-row { gap: 8px; }
 
@@ -148,9 +144,6 @@
     #addressSearch { width: auto !important; font-size: 11px !important; }
     #boroFilter, #bldgFilter { font-size: 11px !important; width: 100%; }
     .filter-row label { font-size: 11px; white-space: nowrap; justify-content: center; }
-    /* Swap long label for short "Pending ⚡" on mobile */
-    .pending-long { display: none; }
-    .pending-short { display: inline; }
     .panel-container > div:nth-child(2) { padding: 6px 10px 0 !important; }
     /* Hide Risk Factors, Last Sprinkler Permit, Type on mobile */
     th:nth-child(11), td:nth-child(11),
@@ -242,7 +235,7 @@
     </select>
     <label id="pendingEvLabel" data-tip="Garages flagged as 'pending EV install' by either signal: (1) AFDC has a 'planned' charger station registered but not yet energized, or (2) DOB has a 2025+ electrical permit mentioning EV chargers but no matching AFDC listing." style="display:flex; align-items:center; gap:5px; font-size:12px; color:#e0e0e0; cursor:pointer; user-select:none; padding: 0 8px; height: 30px; border: 1px solid #333; border-radius: 4px; background: #1a1a1a; box-sizing: border-box;">
       <input type="checkbox" id="pendingEvFilter" style="margin:0;"/>
-      <span class="pending-long">Pending EV install</span><span class="pending-short">Pending ⚡</span>
+      Pending EV install
     </label>
   </div>
   <div class="table-wrap">
