@@ -628,9 +628,14 @@ DATA.results.forEach(r => {
   const dobFireBreakdownTitle = `ECB fire-relevant: ${dobEcb}; DOB NOW fire systems: ${dobNowFs}; LL26/2004 active: ${ll2604}`;
   // Link builders for NYC Open Data.
   // FDNY link → OATH/ECB Hearings dataset (jz4z-kudi). Uses borough names,
-  // OATH's compliance_status field, and issuing_agency filter.
+  // OATH's compliance_status field, and issuing_agency filter. ~3% of
+  // OATH records store violation_location_lot_no without leading zeros
+  // (e.g. lot 42 stored as "42" rather than "0042"), so we query both
+  // padded and unpadded forms.
+  const lotPad = r.bbl.slice(6, 10);
+  const lotRaw = String(parseInt(lotPad, 10));
   const fdnyOathUrl = () => {
-    const q = `SELECT ticket_number, violation_date, issuing_agency, charge_1_code_description, charge_2_code_description, compliance_status, hearing_result WHERE violation_location_borough='${boroughFull.toUpperCase()}' AND violation_location_block_no='${r.bbl.slice(1,6)}' AND violation_location_lot_no='${r.bbl.slice(6,10)}' AND issuing_agency IN ('FIRE DEPARTMENT OF NYC') AND compliance_status IN ('Compliance Due','Both Due') ORDER BY violation_date DESC`;
+    const q = `SELECT ticket_number, violation_date, issuing_agency, charge_1_code_description, charge_2_code_description, compliance_status, hearing_result WHERE violation_location_borough='${boroughFull.toUpperCase()}' AND violation_location_block_no='${r.bbl.slice(1,6)}' AND violation_location_lot_no IN ('${lotPad}','${lotRaw}') AND issuing_agency IN ('FIRE DEPARTMENT OF NYC') AND compliance_status IN ('Compliance Due','Both Due') ORDER BY violation_date DESC`;
     return `https://data.cityofnewyork.us/City-Government/OATH-Hearings-Division-Case-Status/jz4z-kudi/explore/query/${encodeURIComponent(q)}`;
   };
   // DOB ECB link → the DOB ECB Violations dataset (6bgk-3dad). This is the

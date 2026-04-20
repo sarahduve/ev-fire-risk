@@ -509,6 +509,12 @@ Fire Risk Index = Structural Age + Sprinkler Evidence + Multi-Story<br>
 <h3>PLUTO garagearea is self-reported and imperfect</h3>
 <p>The <code>garagearea</code> field on PLUTO is populated during Department of Finance assessment and reflects what the city has on file. Some ground-floor garages may be under-reported; some "garagearea" values may conflate parking with storage or service space. The 1,000 sqft threshold filters the most obvious noise (single-car residential) but the exact size of the captured set will shift quarterly as PLUTO updates.</p>
 
+<h3>Warehouse (E) and factory (F) classes are included</h3>
+<p>Roughly 311 E-class (warehouse) and 86 F-class (factory) buildings in the scored set qualify via <code>garagearea ≥ 1,000 sqft</code>. In some cases these "garage areas" are truck loading docks or service-vehicle staging rather than passenger parking, which is a different fire-risk profile (different fleet composition, different maintenance regime, commercial-only access). The inclusion is intentional — our filter is owner-agnostic and class-permissive by design, and industrial buildings with significant enclosed vehicle space are legitimate fire-risk context — but users filtering by <code>garage_type</code> should know that "other" (the default category for non-residential, non-commercial, non-institutional) captures most of these.</p>
+
+<h3>FDNY and DOB link filters use zero-padded lot numbers</h3>
+<p>The "View FDNY violations on NYC Open Data" and "View all active DOB ECB violations" popup links construct SoQL filters using BBL-derived borough/block/lot fields. The OATH Hearings dataset stores ~3% of <code>violation_location_lot_no</code> values without leading zeros (e.g. lot 42 as "42" rather than "0042"), so the FDNY link uses an <code>IN</code> clause covering both padded and unpadded forms. For low-lot-number pre-war Manhattan buildings especially, the older unpadded convention persists.</p>
+
 <h3>Underground classification is incomplete</h3>
 <p>PLUTO basement codes + OSM identify approximately 200 underground garages. The true number in Manhattan alone is likely much higher — virtually every large residential or office building built since the 1960s has below-grade parking. The <a href="https://inrix.com/products/parking-data-software/">INRIX parking API</a> has a "Subterranean" classification for 350K+ facilities globally but requires enterprise licensing.</p>
 
