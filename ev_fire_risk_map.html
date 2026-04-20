@@ -390,11 +390,23 @@ function riskPane(r) {
   return 'lowPane';
 }
 
-// Known superblock / multi-garage complexes where one BBL hides N physical
-// facilities. Keyed by BBL; content rendered as an in-popup banner. Long-term
-// fix is a complex-aware UI; this is the stopgap for the worst offender.
+// Known superblock / multi-garage complexes where PLUTO addressing diverges
+// from the operator's internal labeling — one BBL may bundle multiple
+// physical garages, or the street address users search for (from on-site
+// signage) may not match PLUTO's primary address. Keyed by BBL; content
+// rendered as an in-popup banner. Long-term fix is a complex-aware UI;
+// this is the stopgap for the worst offenders.
+const COOP_CITY_GENERAL = 'Part of Co-op City (Riverbay Corp) — one of 8 parking structures serving the 15,000-unit cooperative. PLUTO addresses may differ from Riverbay\'s internal garage numbering (e.g., signage says "Garage #4 at 99 Asch Loop" but that garage is bundled into the 2051 Bartow Ave BBL — "99 Asch Loop" does not exist in PLUTO).';
 const COMPLEX_NOTES = {
   '1009720001': 'This complex (Stuyvesant Town) contains 6 distinct parking garages, all under single ownership. Score reflects aggregate compliance across all facilities.',
+  '2051410100': 'This BBL is the Bartow Mall complex in Co-op City. The 593,430 sqft garagearea bundles the mall\'s shopping-center garages — Riverbay signage labels two of them (Garage #4 at 99 Asch Loop, Garage #5 at 2099 Asch Loop) which flank the mall. Co-op City\'s other residential garages appear as separate dots at Carver Loop, Dreiser Loop, Co-op City Boulevard, and Baychester Avenue.',
+  '2051410009': COOP_CITY_GENERAL,
+  '2051410015': COOP_CITY_GENERAL,
+  '2051410440': COOP_CITY_GENERAL,
+  '2051410500': COOP_CITY_GENERAL,
+  '2051410120': COOP_CITY_GENERAL,
+  '2051410600': COOP_CITY_GENERAL,
+  '2051410700': COOP_CITY_GENERAL,
 };
 
 // Markers — index by station address + lat for table row lookup
