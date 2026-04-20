@@ -449,10 +449,17 @@ def match_chargers_to_garages(garages, stations):
         # If BBL isn't in our pre-expanded garage set, add it as an extra
         # (charger is confirmed at this building via PIP, but PLUTO doesn't
         # report garagearea — e.g. 100 Jay St has a real garage entrance
-        # on York St but garagearea=0 in PLUTO)
+        # on York St but garagearea=0 in PLUTO).
+        # Still respect EXCLUDE_CLASSES here — T (airport/pier), Q (parks),
+        # U (utility), Z8 (cemetery) BBLs are not parking garages even when
+        # an AFDC charger matches to them. Without this filter, JFK-adjacent
+        # Tesla sites were inflating T1 terminals into the scored set.
         if bbl not in garage_bbls and bbl not in seen_extra_bbls:
             r = pluto_by_bbl.get(bbl)
             if r:
+                rcls = (r.get("bldgclass") or "")
+                if any(rcls.startswith(ex) for ex in EXCLUDE_CLASSES):
+                    continue
                 norm = _normalize_pluto_record(r)
                 if norm:
                     extra_garages.append(norm)

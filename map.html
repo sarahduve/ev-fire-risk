@@ -398,6 +398,10 @@ function riskPane(r) {
 // this is the stopgap for the worst offenders.
 const COOP_CITY_GENERAL = 'Part of Co-op City (Riverbay Corp) — one of 8 parking structures serving the 15,000-unit cooperative. PLUTO addresses may differ from Riverbay\'s internal garage numbering (e.g., signage says "Garage #4 at 99 Asch Loop" but that garage is bundled into the 2051 Bartow Ave BBL — "99 Asch Loop" does not exist in PLUTO).';
 const LEFRAK_GENERAL = 'Part of LeFrak City — a 20-tower 1960s apartment complex in Queens. Each tower has its own tax lot with ~15,000 sqft attached parking, but the underground parking is operationally one interconnected system under single management (LeFrak Organization). The ~20 dots you see in this area each represent a per-tower parcel, not 20 independent garages.';
+const SPRING_CREEK_GENERAL = 'Part of Spring Creek Towers (formerly Starrett City) — the largest federally-subsidized affordable housing complex in the US, owned by BSC Housing Company. 46 buildings + 7 associated G1 parking garages spread across block 4452 in East New York. The parking structures are under single management; each dot represents a per-parcel garage in a coordinated operational system.';
+const PARKCHESTER_GENERAL = 'Part of Parkchester — a 12,000-unit Bronx apartment complex built 1938-1942 by Met Life, now owned by Parkchester Management Corp and PPC Commercial LLC. The parking garages (G1) are under single-operator management even though each has its own BBL.';
+const YANKEE_STADIUM_GENERAL = 'Part of the Yankee Stadium parking system — owned by NYC Parks Department, operated as stadium event parking. Multiple BBLs across the 161st St corridor (45 River, 950 River, 20/30 E 161 St, 951 River) show up as separate dots but function as one stadium-scale operation.';
+const MONTEFIORE_GENERAL = 'Part of Montefiore Medical Center\'s hospital parking — patient/visitor/staff garages under single hospital-network management.';
 const COMPLEX_NOTES = {
   // StuyTown — aggregated superblock: one BBL, 6 physical garages
   '1009720001': 'This complex (Stuyvesant Town) contains 6 distinct parking garages, all under single ownership. Score reflects aggregate compliance across all facilities.',
@@ -411,6 +415,36 @@ const COMPLEX_NOTES = {
   '2051410120': COOP_CITY_GENERAL,
   '2051410600': COOP_CITY_GENERAL,
   '2051410700': COOP_CITY_GENERAL,
+
+  // Co-op City — additional Riverbay BBL missed in earlier annotation (block 05135 separate from 05141)
+  '2051350090': COOP_CITY_GENERAL,
+
+  // Spring Creek Towers (formerly Starrett City) — BSC Housing Company, 7 G1 garages
+  '3044350050': SPRING_CREEK_GENERAL,
+  '3044520010': SPRING_CREEK_GENERAL,
+  '3044520040': SPRING_CREEK_GENERAL,
+  '3044520060': SPRING_CREEK_GENERAL,
+  '3044520105': SPRING_CREEK_GENERAL,
+  '3044520125': SPRING_CREEK_GENERAL,
+  '3044520135': SPRING_CREEK_GENERAL,
+  '3044520325': SPRING_CREEK_GENERAL,
+
+  // Parkchester — 5 G1 garages owned by PPC Commercial / Parkchester Management
+  '2039370085': PARKCHESTER_GENERAL,
+  '2039430001': PARKCHESTER_GENERAL,
+  '2039430205': PARKCHESTER_GENERAL,
+  '2039430209': PARKCHESTER_GENERAL,
+
+  // Yankee Stadium parking — NYC Parks, multiple BBLs on 161 St corridor
+  '2024900001': YANKEE_STADIUM_GENERAL,
+  '2024850001': YANKEE_STADIUM_GENERAL,
+  '2024990001': YANKEE_STADIUM_GENERAL,
+  '2024990108': YANKEE_STADIUM_GENERAL,
+  '2024930009': YANKEE_STADIUM_GENERAL,
+
+  // Montefiore hospital parking
+  '2033430283': MONTEFIORE_GENERAL,
+  '2049930001': MONTEFIORE_GENERAL,
 
   // LeFrak City — subdivided superblock: 20 per-tower BBLs for one operational parking system
   '4019180025': 'This is the LeFrak City Promenade Shops parking garage — a 131,000 sqft standalone G1 facility under the mall. LeFrak City\'s 20 residential towers each have smaller per-tower parking areas nearby, shown as separate dots.',

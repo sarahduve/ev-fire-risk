@@ -31,7 +31,7 @@ jobs:
           all_records, offset, limit = [], 0, 50000
           while True:
               params = urllib.parse.urlencode({
-                  '\$select': 'bbl,address,bldgclass,yearbuilt,numfloors,bldgarea,garagearea,lotarea,latitude,longitude,borough,zipcode,zonedist1',
+                  '\$select': 'bbl,address,bldgclass,yearbuilt,numfloors,bldgarea,garagearea,lotarea,latitude,longitude,borough,zipcode,zonedist1,ownername',
                   '\$where': 'latitude IS NOT NULL AND longitude IS NOT NULL AND latitude != 0',
                   '\$limit': limit, '\$offset': offset, '\$order': 'bbl',
               })
