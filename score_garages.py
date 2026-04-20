@@ -564,6 +564,10 @@ def score_garage(garage, sprinkler_permits, violations, charger_info,
     # a familiar 0-100 scale. A building with 3 Class 1s should score
     # meaningfully less than one with 30. Tier colors are still computed on
     # the raw score elsewhere; the number is honest regardless.
+    # Round to int for display — fractional scores (e.g. 134.2) come from
+    # the ECB age-multiplier (1.25/1.5/2.0) and don't carry real precision
+    # at this level of aggregation.
+    score = int(round(score))
     hazards_rounded = {m: round(v, 1) for m, v in hazards.items() if v > 0}
     return score, reasons, latest_sprinkler or "none", retrofit_flag, fdny_open_count, hazards_rounded
 
