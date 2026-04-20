@@ -678,14 +678,17 @@ if ('ontouchstart' in window) {
   document.addEventListener('click', (e) => {
     const tip = e.target.closest('[data-tip]');
     document.querySelectorAll('.tap-open').forEach(el => { if (el !== tip) el.classList.remove('tap-open'); });
-    // Table headers use a real DOM tooltip (pseudo-element positioning is unreliable
-    // inside a fixed-position bottom sheet with scrollable ancestors)
-    if (tip && tip.tagName === 'TH') {
-      if (floatTip.dataset.for === tip.dataset.key) {
+    // Table headers AND the pending-EV filter label use the real DOM
+    // tooltip banner (pseudo-element positioning is unreliable inside a
+    // fixed-position bottom sheet with scrollable ancestors — text leaks
+    // behind subsequent scrollable content).
+    if (tip && (tip.tagName === 'TH' || tip.id === 'pendingEvLabel')) {
+      const key = tip.dataset.key || tip.id;
+      if (floatTip.dataset.for === key) {
         floatTip.classList.remove('open'); floatTip.dataset.for = '';
       } else {
         floatTip.textContent = tip.dataset.tip;
-        floatTip.classList.add('open'); floatTip.dataset.for = tip.dataset.key;
+        floatTip.classList.add('open'); floatTip.dataset.for = key;
       }
       e.stopPropagation();
     } else {
