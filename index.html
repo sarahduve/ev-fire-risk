@@ -397,8 +397,12 @@ function riskPane(r) {
 // rendered as an in-popup banner. Long-term fix is a complex-aware UI;
 // this is the stopgap for the worst offenders.
 const COOP_CITY_GENERAL = 'Part of Co-op City (Riverbay Corp) — one of 8 parking structures serving the 15,000-unit cooperative. PLUTO addresses may differ from Riverbay\'s internal garage numbering (e.g., signage says "Garage #4 at 99 Asch Loop" but that garage is bundled into the 2051 Bartow Ave BBL — "99 Asch Loop" does not exist in PLUTO).';
+const LEFRAK_GENERAL = 'Part of LeFrak City — a 20-tower 1960s apartment complex in Queens. Each tower has its own tax lot with ~15,000 sqft attached parking, but the underground parking is operationally one interconnected system under single management (LeFrak Organization). The ~20 dots you see in this area each represent a per-tower parcel, not 20 independent garages.';
 const COMPLEX_NOTES = {
+  // StuyTown — aggregated superblock: one BBL, 6 physical garages
   '1009720001': 'This complex (Stuyvesant Town) contains 6 distinct parking garages, all under single ownership. Score reflects aggregate compliance across all facilities.',
+
+  // Co-op City — operator-vs-PLUTO addressing gap + 8 structures under Riverbay
   '2051410100': 'This BBL is the Bartow Mall complex in Co-op City. The 593,430 sqft garagearea bundles the mall\'s shopping-center garages — Riverbay signage labels two of them (Garage #4 at 99 Asch Loop, Garage #5 at 2099 Asch Loop) which flank the mall. Co-op City\'s other residential garages appear as separate dots at Carver Loop, Dreiser Loop, Co-op City Boulevard, and Baychester Avenue.',
   '2051410009': COOP_CITY_GENERAL,
   '2051410015': COOP_CITY_GENERAL,
@@ -407,6 +411,29 @@ const COMPLEX_NOTES = {
   '2051410120': COOP_CITY_GENERAL,
   '2051410600': COOP_CITY_GENERAL,
   '2051410700': COOP_CITY_GENERAL,
+
+  // LeFrak City — subdivided superblock: 20 per-tower BBLs for one operational parking system
+  '4019180025': 'This is the LeFrak City Promenade Shops parking garage — a 131,000 sqft standalone G1 facility under the mall. LeFrak City\'s 20 residential towers each have smaller per-tower parking areas nearby, shown as separate dots.',
+  '4019180018': LEFRAK_GENERAL,
+  '4019180045': LEFRAK_GENERAL,
+  '4019180050': LEFRAK_GENERAL,
+  '4019180052': LEFRAK_GENERAL,
+  '4019180055': LEFRAK_GENERAL,
+  '4019180060': LEFRAK_GENERAL,
+  '4019180062': LEFRAK_GENERAL,
+  '4019180065': LEFRAK_GENERAL,
+  '4019180067': LEFRAK_GENERAL,
+  '4019180070': LEFRAK_GENERAL,
+  '4019180072': LEFRAK_GENERAL,
+  '4019180090': LEFRAK_GENERAL,
+  '4019180095': LEFRAK_GENERAL,
+  '4019180107': LEFRAK_GENERAL,
+  '4019180108': LEFRAK_GENERAL,
+  '4019180110': LEFRAK_GENERAL,
+  '4019107501': LEFRAK_GENERAL,
+  '4019117501': LEFRAK_GENERAL,
+  '4019127501': LEFRAK_GENERAL,
+  '4019137501': LEFRAK_GENERAL,
 };
 
 // Markers — index by station address + lat for table row lookup
