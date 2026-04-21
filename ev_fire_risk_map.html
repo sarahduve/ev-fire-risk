@@ -174,6 +174,7 @@
     #addressSearch { width: auto !important; font-size: 11px !important; }
     #boroFilter, #bldgFilter { font-size: 11px !important; width: 100%; max-width: none; }
     .filter-row label { font-size: 11px; white-space: nowrap; padding: 0 4px; overflow: hidden; text-overflow: ellipsis; }
+    .install-suffix { display: none; }
     .panel-container > div:nth-child(2) { padding: 6px 10px 0 !important; }
     /* Hide Risk Factors, Last Sprinkler Permit, Type on mobile */
     th:nth-child(11), td:nth-child(11),
@@ -264,7 +265,7 @@
       <option value="institutional">Institutional</option>
     </select>
     <label id="pendingEvLabel" data-tip="Garages flagged as 'pending EV install' by either signal: (1) AFDC has a 'planned' charger station registered but not yet energized, or (2) DOB has a 2025+ electrical permit mentioning EV chargers but no matching AFDC listing." style="display:flex; align-items:center; gap:6px; font-size:12px; font-family:inherit; font-weight:normal; color:#e0e0e0; cursor:pointer; user-select:none; padding: 0 8px; height: 30px; border: 1px solid #333; border-radius: 4px; background: #1a1a1a; box-sizing: border-box;">
-      Pending EV install
+      Pending EV<span class="install-suffix"> install</span>
       <input type="checkbox" id="pendingEvFilter" style="margin:0;"/>
     </label>
     <label id="fleetLabel" data-tip="Show government / operational fleet facilities — sanitation truck yards (DSNY), bus depots (MTA/NYC Transit), police garages (NYPD), firehouse apparatus bays (FDNY), postal yards (USPS), DOT fleet operations, Port Authority terminals. These are excluded by default because they serve specific government/agency vehicle fleets, not public or residential parking, and have a different operational context. 106 BBLs total." style="display:flex; align-items:center; gap:6px; font-size:12px; font-family:inherit; font-weight:normal; color:#e0e0e0; cursor:pointer; user-select:none; padding: 0 8px; height: 30px; border: 1px solid #333; border-radius: 4px; background: #1a1a1a; box-sizing: border-box;">
