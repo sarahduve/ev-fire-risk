@@ -166,14 +166,23 @@
     td.col-name { white-space: normal; max-width: 140px; font-size: 10px; }
     th { font-size: 9px; }
     /* Mobile filter row: 2-up row 1 (search + borough), 3-up row 2
-       (garage-type + Pending EV install + Show gov't fleet). Checkboxes
-       don't need half-width cells. */
+       (garage-type + Pending EV + Show gov't fleet). Unequal 3-up widths
+       because "Pending EV" is the shortest label, "Show gov't fleet" is
+       the longest — weighted so each has comfortable inner padding. */
     .filter-row { gap: 6px; }
     .filter-row > *:nth-child(-n+2) { flex: 0 0 calc(50% - 3px); min-width: 0; }
-    .filter-row > *:nth-child(n+3) { flex: 0 0 calc(33.333% - 4px); min-width: 0; }
-    #addressSearch { width: auto !important; font-size: 11px !important; }
-    #boroFilter, #bldgFilter { font-size: 11px !important; width: 100%; max-width: none; }
-    .filter-row label { font-size: 11px; white-space: nowrap; padding: 0 4px; overflow: hidden; text-overflow: ellipsis; }
+    .filter-row > *:nth-child(3) { flex: 0 0 calc(38% - 4px); min-width: 0; }  /* garage types */
+    .filter-row > *:nth-child(4) { flex: 0 0 calc(27% - 4px); min-width: 0; }  /* pending ev */
+    .filter-row > *:nth-child(5) { flex: 0 0 calc(35% - 4px); min-width: 0; }  /* gov't fleet */
+    /* Consistent typography across all 5 filter controls */
+    .filter-row > * {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+      font-size: 11px !important;
+      font-weight: normal !important;
+    }
+    #addressSearch { width: auto !important; }
+    #boroFilter, #bldgFilter { width: 100%; max-width: none; }
+    .filter-row label { white-space: nowrap; padding: 0 6px; overflow: hidden; text-overflow: ellipsis; }
     .install-suffix { display: none; }
     .panel-container > div:nth-child(2) { padding: 6px 10px 0 !important; }
     /* Hide Risk Factors, Last Sprinkler Permit, Type on mobile */
