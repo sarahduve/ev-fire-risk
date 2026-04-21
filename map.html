@@ -165,13 +165,15 @@
     th, td { padding: 4px 3px; white-space: nowrap; }
     td.col-name { white-space: normal; max-width: 140px; font-size: 10px; }
     th { font-size: 9px; }
-    /* Mobile filter row: 2×2 grid so search+boro take row 1, garage-type
-       + pending-EV take row 2. Each cell is exactly half the row width. */
+    /* Mobile filter row: 2-up row 1 (search + borough), 3-up row 2
+       (garage-type + Pending EV install + Show gov't fleet). Checkboxes
+       don't need half-width cells. */
     .filter-row { gap: 6px; }
-    .filter-row > * { flex: 0 0 calc(50% - 3px); min-width: 0; }
+    .filter-row > *:nth-child(-n+2) { flex: 0 0 calc(50% - 3px); min-width: 0; }
+    .filter-row > *:nth-child(n+3) { flex: 0 0 calc(33.333% - 4px); min-width: 0; }
     #addressSearch { width: auto !important; font-size: 11px !important; }
-    #boroFilter, #bldgFilter { font-size: 11px !important; width: 100%; }
-    .filter-row label { font-size: 11px; white-space: nowrap; }
+    #boroFilter, #bldgFilter { font-size: 11px !important; width: 100%; max-width: none; }
+    .filter-row label { font-size: 11px; white-space: nowrap; padding: 0 4px; overflow: hidden; text-overflow: ellipsis; }
     .panel-container > div:nth-child(2) { padding: 6px 10px 0 !important; }
     /* Hide Risk Factors, Last Sprinkler Permit, Type on mobile */
     th:nth-child(11), td:nth-child(11),
