@@ -113,7 +113,13 @@ jobs:
           relation[\"amenity\"=\"parking\"][\"parking\"~\"underground|multi-storey|surface\"](40.49,-74.26,40.92,-73.70););
           out center tags;'''
           data = urllib.parse.urlencode({'data': query}).encode()
-          with urllib.request.urlopen('https://overpass-api.de/api/interpreter', data=data, timeout=120) as resp:
+          # Overpass API rejects default Python-urllib UA with HTTP 406
+          req = urllib.request.Request(
+              'https://overpass-api.de/api/interpreter',
+              data=data,
+              headers={'User-Agent': 'ev-fire-risk/1.0 (https://github.com/sarahduve/ev-fire-risk)'},
+          )
+          with urllib.request.urlopen(req, timeout=120) as resp:
               result = json.loads(resp.read())
           parsed = []
           for e in result.get('elements', []):
@@ -136,6 +142,9 @@ jobs:
 
       - name: Enrich with DOB EV permit signal (pending install flags)
         run: python3 enrich_ev_permits.py
+
+      - name: Enrich with PIPS LL126 filing status
+        run: python3 enrich_pips.py
 
       - name: Run tests
         run: python3 tests.py
