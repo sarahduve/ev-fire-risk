@@ -59,7 +59,10 @@ jobs:
           python3 -c "
           import json, urllib.request, urllib.parse, time, os
           API_KEY = os.environ['NREL_API_KEY']
-          BASE = 'https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json'
+          # NREL retired developer.nrel.gov on 2026-05-29 in the NREL->NLR
+          # (National Laboratory of the Rockies) domain migration. Same API,
+          # same key, host changed to developer.nlr.gov.
+          BASE = 'https://developer.nlr.gov/api/alt-fuel-stations/v1/nearest.json'
           # Grid centers cover NYC; 8-mile radius with overlap. We de-dupe by station id.
           centers = [
               (40.712, -74.006), (40.755, -73.985), (40.800, -73.960),
@@ -88,8 +91,7 @@ jobs:
                   'access': 'public,private',
                   'status': 'E,P',
               })
-              # Retry on transient network/DNS failures (a single getaddrinfo
-              # blip on developer.nrel.gov killed the 2026-06-01 monthly run).
+              # Retry on transient network/DNS failures.
               data = None
               for attempt in range(4):
                   try:

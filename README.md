@@ -53,13 +53,13 @@ See the [full methodology](https://sarahduve.github.io/ev-fire-risk/methodology.
 | [DOB ECB Violations](https://data.cityofnewyork.us/Housing-Development/DOB-ECB-Violations/6bgk-3dad) | DOB violations adjudicated at OATH/ECB — includes hazard class (Class 1 / Class 2) and full violation descriptions. Primary DOB source in v1.3+. |
 | [DOB NOW Safety Violations](https://data.cityofnewyork.us/Housing-Development/DOB-NOW-Safety-Violations/855j-jady) | Newer (post-2021) DOB violations with device_type taxonomy. Includes the Local Law 126 parking-structure inspection program (filed/unsafe reports). |
 | [OATH/ECB Hearings](https://data.cityofnewyork.us/City-Government/OATH-Hearings-Division-Case-Status/jz4z-kudi) | FDNY fire-protection violations (sprinkler maintenance, inspection/testing failures, compliance status) |
-| [AFDC Alt Fuel Stations](https://developer.nrel.gov/docs/transportation/alt-fuel-stations-v1/) | EV charger locations, port counts. v2.0 broadened the fetch: drops the facility_type pre-filter, adds `access=public,private` and `status=E,P` to capture tenant-only / workplace / planned chargers (station count 271 → 1,082). |
+| [AFDC Alt Fuel Stations](https://developer.nlr.gov/docs/transportation/alt-fuel-stations-v1/) | EV charger locations, port counts. v2.0 broadened the fetch: drops the facility_type pre-filter, adds `access=public,private` and `status=E,P` to capture tenant-only / workplace / planned chargers (station count 271 → 1,082). |
 | [DOB NOW Electrical Permit Applications](https://data.cityofnewyork.us/City-Government/DOB-NOW-Electrical-Permit-Applications/dm9a-ab7w) | Post-2019 electrical permits. v2.0 uses this for the "pending EV install" signal — BBLs with EV-keyword electrical permits filed 2025+ but no AFDC existing-charger listing. Drives the pending-install filter + popup badge. |
 | [OpenStreetMap](https://www.openstreetmap.org/) via [Overpass API](https://overpass-api.de/) | Parking type classification (underground/multi-storey/surface) |
 
 v1 also uses [NYC Planning Labs Geosearch](https://geosearch.planninglabs.nyc/) (PAD-backed) for charger address resolution and the [NYC ArcGIS MapPLUTO](https://a841-dotweb01.nyc.gov/arcgis/rest/services/GAZETTEER/MapPLUTO/MapServer/0) endpoint for spatial fallback. Both are free and keyless.
 
-All NYC Open Data is free and keyless (Socrata API). AFDC requires a free [NREL API key](https://developer.nrel.gov/signup/).
+All NYC Open Data is free and keyless (Socrata API). AFDC requires a free [NREL API key](https://developer.nlr.gov/signup/).
 
 ## Running it yourself
 
