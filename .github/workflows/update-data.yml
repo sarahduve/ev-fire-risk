@@ -88,8 +88,19 @@ jobs:
                   'access': 'public,private',
                   'status': 'E,P',
               })
-              with urllib.request.urlopen(f'{BASE}?{params}', timeout=30) as resp:
-                  data = json.loads(resp.read())
+              # Retry on transient network/DNS failures (a single getaddrinfo
+              # blip on developer.nrel.gov killed the 2026-06-01 monthly run).
+              data = None
+              for attempt in range(4):
+                  try:
+                      with urllib.request.urlopen(f'{BASE}?{params}', timeout=30) as resp:
+                          data = json.loads(resp.read())
+                      break
+                  except Exception as e:
+                      if attempt == 3:
+                          raise
+                      print(f'  AFDC fetch retry {attempt+1} for ({lat},{lon}): {e}')
+                      time.sleep(5 * (attempt + 1))
               for s in data.get('fuel_stations', []):
                   all_stations[s['id']] = s
               time.sleep(0.5)
