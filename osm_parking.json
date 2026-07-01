@@ -1,6 +1,13 @@
 {
-  "total": 5071,
+  "total": 5089,
   "elements": [
+    {
+      "osm_id": 1279266632,
+      "parking_type": "multi-storey",
+      "name": "",
+      "lat": 40.7097894,
+      "lon": -74.0143479
+    },
     {
       "osm_id": 1581175976,
       "parking_type": "multi-storey",
@@ -19,8 +26,8 @@
       "osm_id": 1706051592,
       "parking_type": "underground",
       "name": "Hippodrome Parking",
-      "lat": 40.7556649,
-      "lon": -73.9823304
+      "lat": 40.7557106,
+      "lon": -73.982428
     },
     {
       "osm_id": 1706052165,
@@ -574,6 +581,13 @@
       "name": "",
       "lat": 40.7119174,
       "lon": -74.0094303
+    },
+    {
+      "osm_id": 6001381447,
+      "parking_type": "underground",
+      "name": "320 Albany Parking",
+      "lat": 40.7096778,
+      "lon": -74.0168509
     },
     {
       "osm_id": 6175551628,
@@ -1561,6 +1575,13 @@
       "name": "",
       "lat": 40.510095,
       "lon": -74.2230301
+    },
+    {
+      "osm_id": 13952164531,
+      "parking_type": "underground",
+      "name": "Hudson Tower Parking",
+      "lat": 40.70996,
+      "lon": -74.017315
     },
     {
       "osm_id": 5889489,
@@ -3397,6 +3418,13 @@
       "lon": -74.0113724
     },
     {
+      "osm_id": 240197648,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7476472,
+      "lon": -73.9546146
+    },
+    {
       "osm_id": 240742969,
       "parking_type": "surface",
       "name": "",
@@ -5023,7 +5051,7 @@
     {
       "osm_id": 278053503,
       "parking_type": "multi-storey",
-      "name": "Icon",
+      "name": "dock 24/7",
       "lat": 40.7046511,
       "lon": -74.0107786
     },
@@ -5493,15 +5521,15 @@
       "osm_id": 287521202,
       "parking_type": "surface",
       "name": "Lot G",
-      "lat": 40.8146215,
+      "lat": 40.8146192,
       "lon": -74.0772677
     },
     {
       "osm_id": 287521330,
       "parking_type": "surface",
       "name": "Lot F",
-      "lat": 40.8116886,
-      "lon": -74.0780075
+      "lat": 40.8116926,
+      "lon": -74.0780103
     },
     {
       "osm_id": 287521959,
@@ -6440,6 +6468,13 @@
       "name": "",
       "lat": 40.8580848,
       "lon": -73.8736205
+    },
+    {
+      "osm_id": 331933011,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.8589213,
+      "lon": -73.8756887
     },
     {
       "osm_id": 333155254,
@@ -8843,6 +8878,13 @@
       "lon": -74.0723192
     },
     {
+      "osm_id": 456813131,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.8676703,
+      "lon": -73.8765573
+    },
+    {
       "osm_id": 457047957,
       "parking_type": "surface",
       "name": "",
@@ -10472,6 +10514,13 @@
       "name": "",
       "lat": 40.7599728,
       "lon": -74.0433474
+    },
+    {
+      "osm_id": 560193797,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.8150954,
+      "lon": -74.1614529
     },
     {
       "osm_id": 560431648,
@@ -12798,6 +12847,13 @@
       "lon": -74.0041171
     },
     {
+      "osm_id": 631992770,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.712772,
+      "lon": -74.0372254
+    },
+    {
       "osm_id": 632375171,
       "parking_type": "surface",
       "name": "",
@@ -14539,6 +14595,13 @@
       "name": "",
       "lat": 40.8128824,
       "lon": -73.9543178
+    },
+    {
+      "osm_id": 725677494,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7414539,
+      "lon": -74.028838
     },
     {
       "osm_id": 726893867,
@@ -17190,8 +17253,8 @@
       "osm_id": 833984609,
       "parking_type": "multi-storey",
       "name": "",
-      "lat": 40.7532831,
-      "lon": -73.8248224
+      "lat": 40.7532854,
+      "lon": -73.8248186
     },
     {
       "osm_id": 834043285,
@@ -17549,6 +17612,13 @@
       "name": "Borough Hall Municipal Garage",
       "lat": 40.7148621,
       "lon": -73.8264842
+    },
+    {
+      "osm_id": 839923519,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.8018932,
+      "lon": -74.2192367
     },
     {
       "osm_id": 839928668,
@@ -18662,6 +18732,13 @@
       "name": "",
       "lat": 40.7104321,
       "lon": -73.8354221
+    },
+    {
+      "osm_id": 903209031,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.6709053,
+      "lon": -73.9975496
     },
     {
       "osm_id": 903616823,
@@ -21693,6 +21770,13 @@
       "name": "",
       "lat": 40.6555632,
       "lon": -73.9518707
+    },
+    {
+      "osm_id": 1073219636,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7160139,
+      "lon": -74.0335783
     },
     {
       "osm_id": 1073238119,
@@ -30067,6 +30151,13 @@
       "lon": -74.1831869
     },
     {
+      "osm_id": 1355581479,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.6578101,
+      "lon": -73.9952104
+    },
+    {
       "osm_id": 1355694540,
       "parking_type": "surface",
       "name": "",
@@ -31003,6 +31094,13 @@
       "name": "",
       "lat": 40.6308516,
       "lon": -73.9470696
+    },
+    {
+      "osm_id": 1375345963,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7434074,
+      "lon": -73.9031605
     },
     {
       "osm_id": 1376760330,
@@ -33271,6 +33369,34 @@
       "name": "",
       "lat": 40.8402556,
       "lon": -73.7042839
+    },
+    {
+      "osm_id": 1526194763,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.8121864,
+      "lon": -74.1452699
+    },
+    {
+      "osm_id": 1526406408,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.8091461,
+      "lon": -74.1470951
+    },
+    {
+      "osm_id": 1530254764,
+      "parking_type": "underground",
+      "name": "",
+      "lat": 40.8699711,
+      "lon": -73.9153192
+    },
+    {
+      "osm_id": 1534102212,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.672184,
+      "lon": -73.9521922
     },
     {
       "osm_id": 2973239,
