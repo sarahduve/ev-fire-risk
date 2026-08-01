@@ -1,5 +1,5 @@
 {
-  "total": 5089,
+  "total": 5122,
   "elements": [
     {
       "osm_id": 1279266632,
@@ -2244,7 +2244,7 @@
     {
       "osm_id": 180332956,
       "parking_type": "surface",
-      "name": "JFK Cell Phone Waiting Lot",
+      "name": "JFK Cell Phone Waiting Lot West",
       "lat": 40.6558101,
       "lon": -73.8088905
     },
@@ -2385,8 +2385,8 @@
       "osm_id": 185022023,
       "parking_type": "surface",
       "name": "",
-      "lat": 40.6327686,
-      "lon": -74.0104104
+      "lat": 40.6327653,
+      "lon": -74.0103384
     },
     {
       "osm_id": 185148180,
@@ -3397,6 +3397,13 @@
       "lon": -73.9339466
     },
     {
+      "osm_id": 238142698,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7390707,
+      "lon": -73.9940943
+    },
+    {
       "osm_id": 238383868,
       "parking_type": "surface",
       "name": "",
@@ -3687,8 +3694,8 @@
       "osm_id": 248143116,
       "parking_type": "multi-storey",
       "name": "Red Ball Garage",
-      "lat": 40.743934,
-      "lon": -73.9803436
+      "lat": 40.7439321,
+      "lon": -73.9803474
     },
     {
       "osm_id": 248234565,
@@ -4076,6 +4083,13 @@
       "lon": -74.0886699
     },
     {
+      "osm_id": 258963163,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7626641,
+      "lon": -74.0875392
+    },
+    {
       "osm_id": 259418939,
       "parking_type": "surface",
       "name": "Handicapped Parking",
@@ -4179,6 +4193,13 @@
       "name": "",
       "lat": 40.6848947,
       "lon": -73.9134104
+    },
+    {
+      "osm_id": 260135776,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.8676561,
+      "lon": -74.0740759
     },
     {
       "osm_id": 260999644,
@@ -4725,6 +4746,13 @@
       "name": "",
       "lat": 40.812981,
       "lon": -73.9598371
+    },
+    {
+      "osm_id": 272713890,
+      "parking_type": "multi-storey",
+      "name": "",
+      "lat": 40.7271829,
+      "lon": -74.0332459
     },
     {
       "osm_id": 272713892,
@@ -5749,6 +5777,20 @@
       "lon": -73.909801
     },
     {
+      "osm_id": 296322555,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.6752087,
+      "lon": -73.9866647
+    },
+    {
+      "osm_id": 296322568,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.6725812,
+      "lon": -73.9962876
+    },
+    {
       "osm_id": 297943135,
       "parking_type": "surface",
       "name": "",
@@ -6559,6 +6601,20 @@
       "name": "",
       "lat": 40.6904537,
       "lon": -73.9624222
+    },
+    {
+      "osm_id": 338066291,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7352281,
+      "lon": -73.8619934
+    },
+    {
+      "osm_id": 338071523,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7368613,
+      "lon": -73.8567131
     },
     {
       "osm_id": 338220381,
@@ -7494,14 +7550,14 @@
     {
       "osm_id": 377339427,
       "parking_type": "surface",
-      "name": "",
+      "name": "Steinway Parking Lot",
       "lat": 40.7637436,
       "lon": -73.9159284
     },
     {
       "osm_id": 377339429,
       "parking_type": "surface",
-      "name": "",
+      "name": "Webster Bank Parking",
       "lat": 40.7639173,
       "lon": -73.9164803
     },
@@ -7881,7 +7937,7 @@
       "parking_type": "surface",
       "name": "Municipal Parking Field 8",
       "lat": 40.6625006,
-      "lon": -73.7042219
+      "lon": -73.704218
     },
     {
       "osm_id": 405332407,
@@ -8955,6 +9011,13 @@
       "lon": -74.0046544
     },
     {
+      "osm_id": 460359188,
+      "parking_type": "multi-storey",
+      "name": "",
+      "lat": 40.8033151,
+      "lon": -73.9922648
+    },
+    {
       "osm_id": 460504393,
       "parking_type": "surface",
       "name": "Edison Park Fast",
@@ -9508,6 +9571,13 @@
       "lon": -73.7806874
     },
     {
+      "osm_id": 496527850,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.6752428,
+      "lon": -73.9837687
+    },
+    {
       "osm_id": 500136566,
       "parking_type": "surface",
       "name": "",
@@ -9672,8 +9742,8 @@
       "osm_id": 508822662,
       "parking_type": "surface",
       "name": "",
-      "lat": 40.7849682,
-      "lon": -73.9416488
+      "lat": 40.7849641,
+      "lon": -73.9416419
     },
     {
       "osm_id": 508822664,
@@ -16778,7 +16848,7 @@
       "parking_type": "surface",
       "name": "",
       "lat": 40.6993027,
-      "lon": -73.9691887
+      "lon": -73.9691902
     },
     {
       "osm_id": 825878363,
@@ -17507,6 +17577,13 @@
       "name": "",
       "lat": 40.5262428,
       "lon": -74.2011591
+    },
+    {
+      "osm_id": 836204461,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.8733609,
+      "lon": -73.9676204
     },
     {
       "osm_id": 836225270,
@@ -19376,6 +19453,13 @@
       "name": "",
       "lat": 40.8574555,
       "lon": -73.9363421
+    },
+    {
+      "osm_id": 966199936,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7397849,
+      "lon": -73.935992
     },
     {
       "osm_id": 968943121,
@@ -24491,8 +24575,8 @@
       "osm_id": 1175790990,
       "parking_type": "surface",
       "name": "",
-      "lat": 40.7113707,
-      "lon": -74.0039491
+      "lat": 40.7113757,
+      "lon": -74.0039467
     },
     {
       "osm_id": 1176286762,
@@ -28485,6 +28569,13 @@
       "lon": -74.1058536
     },
     {
+      "osm_id": 1311126881,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7451803,
+      "lon": -73.9271276
+    },
+    {
       "osm_id": 1311346651,
       "parking_type": "surface",
       "name": "",
@@ -29440,8 +29531,8 @@
       "osm_id": 1338977902,
       "parking_type": "multi-storey",
       "name": "",
-      "lat": 40.8854694,
-      "lon": -74.2410395
+      "lat": 40.8854653,
+      "lon": -74.241036
     },
     {
       "osm_id": 1338984924,
@@ -33397,6 +33488,146 @@
       "name": "",
       "lat": 40.672184,
       "lon": -73.9521922
+    },
+    {
+      "osm_id": 1534619242,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7931479,
+      "lon": -74.1786514
+    },
+    {
+      "osm_id": 1536565600,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7597311,
+      "lon": -73.801534
+    },
+    {
+      "osm_id": 1536888806,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7522538,
+      "lon": -74.1591605
+    },
+    {
+      "osm_id": 1536891777,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7515738,
+      "lon": -74.1570127
+    },
+    {
+      "osm_id": 1537172316,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7601511,
+      "lon": -74.189237
+    },
+    {
+      "osm_id": 1537172317,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7601855,
+      "lon": -74.1883593
+    },
+    {
+      "osm_id": 1537172319,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7592101,
+      "lon": -74.18608
+    },
+    {
+      "osm_id": 1537259838,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7693587,
+      "lon": -74.182262
+    },
+    {
+      "osm_id": 1540209674,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.6997756,
+      "lon": -73.9703342
+    },
+    {
+      "osm_id": 1540209678,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.6997465,
+      "lon": -73.9718192
+    },
+    {
+      "osm_id": 1540226682,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7039258,
+      "lon": -73.9700445
+    },
+    {
+      "osm_id": 1540226685,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7056913,
+      "lon": -73.9713334
+    },
+    {
+      "osm_id": 1541315374,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7587936,
+      "lon": -74.1890596
+    },
+    {
+      "osm_id": 1541318282,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7831829,
+      "lon": -74.1624956
+    },
+    {
+      "osm_id": 1545990519,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7781944,
+      "lon": -74.1896519
+    },
+    {
+      "osm_id": 1545990521,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7777564,
+      "lon": -74.1897075
+    },
+    {
+      "osm_id": 1545990523,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7784884,
+      "lon": -74.1892831
+    },
+    {
+      "osm_id": 1546061052,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.7506877,
+      "lon": -74.1692847
+    },
+    {
+      "osm_id": 1546061542,
+      "parking_type": "surface",
+      "name": "",
+      "lat": 40.75018,
+      "lon": -74.169255
+    },
+    {
+      "osm_id": 1546137516,
+      "parking_type": "multi-storey",
+      "name": "",
+      "lat": 40.8637595,
+      "lon": -73.8285236
     },
     {
       "osm_id": 2973239,
