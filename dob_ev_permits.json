@@ -36,15 +36,6 @@
     "job_description": "General wiring and meter service for 2 family. install 1 EV Charger"
   },
   {
-    "bbl": "5004320023",
-    "filing_date": "2025-01-21",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
-    "filing_number": "I1",
-    "keyword": "EV CHARGER",
-    "job_description": "EV charger"
-  },
-  {
     "bbl": "2032250108",
     "filing_date": "2026-09-17",
     "filing_status": "Pending Payment Verification",
@@ -61,6 +52,42 @@
     "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "200 amp panel & 15 L2 EV Chargers"
+  },
+  {
+    "bbl": "2058411944",
+    "filing_date": "2026-10-19",
+    "filing_status": "Pending Payment Verification",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "New 200 Amp Panel & 8 EV Chargers"
+  },
+  {
+    "bbl": "2058353055",
+    "filing_date": "2026-10-19",
+    "filing_status": "Pending Payment Verification",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "New 200 Amp Panel and 20 EV Chargers"
+  },
+  {
+    "bbl": "2057960127",
+    "filing_date": "2026-10-19",
+    "filing_status": "Pending Payment Verification",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "New 200 amp 3p panel & 23 EV chargers"
+  },
+  {
+    "bbl": "2042230039",
+    "filing_date": "2026-10-19",
+    "filing_status": "Pending Payment Verification",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "New 200 Amp Panel & 15 EV chargers"
   },
   {
     "bbl": "3075767501",
@@ -936,15 +963,6 @@
     "job_description": "TCPM H&L JOB # C4933C EV CHARGES"
   },
   {
-    "bbl": "3080590056",
-    "filing_date": "2022-08-04",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
-    "filing_number": "I1",
-    "keyword": "EV CHARGER",
-    "job_description": "EV Charger"
-  },
-  {
     "bbl": "3050710022",
     "filing_date": "2022-08-01",
     "filing_status": "Complete",
@@ -952,6 +970,15 @@
     "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "install of 6 EV Chargers"
+  },
+  {
+    "bbl": "3080590056",
+    "filing_date": "2022-08-04",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "EV Charger"
   },
   {
     "bbl": "3029930018",
@@ -1170,15 +1197,6 @@
     "job_description": "Wiring and install for 10 EV Chargers"
   },
   {
-    "bbl": "3065400046",
-    "filing_date": "2023-02-21",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
-    "filing_number": "I1",
-    "keyword": "EV CHARGER",
-    "job_description": "EV Charger"
-  },
-  {
     "bbl": "3053740010",
     "filing_date": "2023-02-13",
     "filing_status": "Complete",
@@ -1215,6 +1233,15 @@
     "job_description": "INSTALLATION OF METER. GENERAL WIRING AND INSTALLATION OF  PANEL & 21 LEVEL 2 POWER SHARING EV CHARGERSPAA TO CHANGE FEEDERS AND SERVICE SWITCH"
   },
   {
+    "bbl": "3065400046",
+    "filing_date": "2023-02-21",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "EV Charger"
+  },
+  {
     "bbl": "3057780001",
     "filing_date": "2023-02-22",
     "filing_status": "Permit Issued",
@@ -1225,19 +1252,19 @@
   },
   {
     "bbl": "3059060018",
-    "filing_date": "2023-06-21",
-    "filing_status": "Approved",
-    "job_status": "Job in Process",
-    "filing_number": "P1",
+    "filing_date": "2023-02-23",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
+    "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "WIRING AND INSTALLATION OF 2 EV CHARGER PANELS AND 40 LEVEL 2 POWER SHARING EV CHARGERSPAA TO ADD 5 MORE EV CHARGERS AND 1 MORE PANEL"
   },
   {
     "bbl": "3059060018",
-    "filing_date": "2023-02-23",
-    "filing_status": "Complete",
-    "job_status": "Job is complete",
-    "filing_number": "I1",
+    "filing_date": "2023-06-21",
+    "filing_status": "Approved",
+    "job_status": "Job in Process",
+    "filing_number": "P1",
     "keyword": "EV CHARGER",
     "job_description": "WIRING AND INSTALLATION OF 2 EV CHARGER PANELS AND 40 LEVEL 2 POWER SHARING EV CHARGERSPAA TO ADD 5 MORE EV CHARGERS AND 1 MORE PANEL"
   },
@@ -1989,15 +2016,6 @@
     "job_description": "Install of 8 EV Chargers"
   },
   {
-    "bbl": "3062200020",
-    "filing_date": "2023-12-13",
-    "filing_status": "Approved",
-    "job_status": "Job in Process",
-    "filing_number": "P1",
-    "keyword": "EV CHARGER",
-    "job_description": "EV Charger"
-  },
-  {
     "bbl": "3011560045",
     "filing_date": "2023-11-29",
     "filing_status": "Complete",
@@ -2012,6 +2030,15 @@
     "filing_status": "Complete",
     "job_status": "Job is complete",
     "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "EV Charger"
+  },
+  {
+    "bbl": "3062200020",
+    "filing_date": "2023-12-13",
+    "filing_status": "Approved",
+    "job_status": "Job in Process",
+    "filing_number": "P1",
     "keyword": "EV CHARGER",
     "job_description": "EV Charger"
   },
@@ -2481,7 +2508,7 @@
     "job_status": "Job in Process",
     "filing_number": "P2",
     "keyword": "EV CHARGING",
-    "job_description": "Wiring Of EV Charging Stations."
+    "job_description": "EV Charging Stations."
   },
   {
     "bbl": "3013020001",
@@ -2503,15 +2530,6 @@
   },
   {
     "bbl": "3013020001",
-    "filing_date": "2026-03-10",
-    "filing_status": "Approved",
-    "job_status": "Job in Process",
-    "filing_number": "P2",
-    "keyword": "EV CHARGING",
-    "job_description": "EV Charging Stations."
-  },
-  {
-    "bbl": "3013020001",
     "filing_date": "2024-07-22",
     "filing_status": "Complete",
     "job_status": "Job is complete",
@@ -2527,6 +2545,15 @@
     "filing_number": "P1",
     "keyword": "EV CHARGING",
     "job_description": "Wiring Of EV Charging Stations. Advisory Board Approval # BK02924A1"
+  },
+  {
+    "bbl": "3013020001",
+    "filing_date": "2026-03-10",
+    "filing_status": "Approved",
+    "job_status": "Job in Process",
+    "filing_number": "P2",
+    "keyword": "EV CHARGING",
+    "job_description": "Wiring Of EV Charging Stations."
   },
   {
     "bbl": "3013020001",
@@ -2702,8 +2729,8 @@
   {
     "bbl": "3027700010",
     "filing_date": "2024-08-21",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
+    "filing_status": "Cancelled",
+    "job_status": "Inspection not complete due to withdrawal",
     "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "install 2 subpanels instead of existing outlets and add 8 ev chargers with disconnect switches out of them for parking garage"
@@ -2734,15 +2761,6 @@
     "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "installing 38 EV chargers and 2 - 200 amp panels."
-  },
-  {
-    "bbl": "3032740002",
-    "filing_date": "2025-04-08",
-    "filing_status": "Approved",
-    "job_status": "Job in Process",
-    "filing_number": "P1",
-    "keyword": "EV CHARGER",
-    "job_description": "installing 88 EV chargers"
   },
   {
     "bbl": "3029420001",
@@ -2786,6 +2804,15 @@
     "filing_status": "Complete",
     "job_status": "Job is complete",
     "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "installing 88 EV chargers"
+  },
+  {
+    "bbl": "3032740002",
+    "filing_date": "2025-04-08",
+    "filing_status": "Approved",
+    "job_status": "Job in Process",
+    "filing_number": "P1",
     "keyword": "EV CHARGER",
     "job_description": "installing 88 EV chargers"
   },
@@ -3690,15 +3717,6 @@
     "job_description": "Install EV Chargers"
   },
   {
-    "bbl": "3050700019",
-    "filing_date": "2025-04-08",
-    "filing_status": "Complete",
-    "job_status": "Job is complete",
-    "filing_number": "I1",
-    "keyword": "EV CHARGER",
-    "job_description": "Installation of EV chargers."
-  },
-  {
     "bbl": "3025050028",
     "filing_date": "2025-04-10",
     "filing_status": "Permit Issued",
@@ -3706,6 +3724,15 @@
     "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "Installing 11 new EV chargers and 1 100 amp panel."
+  },
+  {
+    "bbl": "3050700019",
+    "filing_date": "2025-04-08",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "Installation of EV chargers."
   },
   {
     "bbl": "3073470036",
@@ -3737,20 +3764,11 @@
   {
     "bbl": "3045880102",
     "filing_date": "2025-04-10",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
-    "filing_number": "I1",
-    "keyword": "EV CHARGER",
-    "job_description": "Installing 6 EV Chargers"
-  },
-  {
-    "bbl": "3076530001",
-    "filing_date": "2025-04-10",
     "filing_status": "Complete",
     "job_status": "Job is complete",
     "filing_number": "I1",
-    "keyword": "EV CHARGING",
-    "job_description": "INSTALLING 10 NEW LOAD MANAGED L2 EV CHARGING STATIONS IN INDOOR GARAGE"
+    "keyword": "EV CHARGER",
+    "job_description": "Installing 6 EV Chargers"
   },
   {
     "bbl": "3076530001",
@@ -3758,6 +3776,15 @@
     "filing_status": "Approved",
     "job_status": "Job in Process",
     "filing_number": "P1",
+    "keyword": "EV CHARGING",
+    "job_description": "INSTALLING 10 NEW LOAD MANAGED L2 EV CHARGING STATIONS IN INDOOR GARAGE"
+  },
+  {
+    "bbl": "3076530001",
+    "filing_date": "2025-04-10",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
+    "filing_number": "I1",
     "keyword": "EV CHARGING",
     "job_description": "INSTALLING 10 NEW LOAD MANAGED L2 EV CHARGING STATIONS IN INDOOR GARAGE"
   },
@@ -3836,8 +3863,8 @@
   {
     "bbl": "3063150039",
     "filing_date": "2025-05-01",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
     "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "Installing 13 EV Chargers"
@@ -4394,8 +4421,8 @@
   {
     "bbl": "3075640031",
     "filing_date": "2025-07-30",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
     "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "Installing 13 EV Chargers"
@@ -4662,6 +4689,15 @@
     "job_description": "FOR CHARGING STATION - INSTALL 8 DEDICATED ELECTRICAL LINES FOE 8 DUPLEX OUTLETS 20AMPS 110VTS, AND INSTALL 2 DUPLEX RECEPTACLES FOR 2 CAMERAS"
   },
   {
+    "bbl": "3017560024",
+    "filing_date": "2025-12-15",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "CHARGING STATION",
+    "job_description": "Installing Power to Battery charging station"
+  },
+  {
     "bbl": "3066330045",
     "filing_date": "2025-10-22",
     "filing_status": "Complete",
@@ -4673,8 +4709,8 @@
   {
     "bbl": "3050830003",
     "filing_date": "2025-10-29",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
     "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "EV charger installation"
@@ -4714,6 +4750,15 @@
     "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "Installing 12 EV Chargers"
+  },
+  {
+    "bbl": "3017560024",
+    "filing_date": "2025-12-30",
+    "filing_status": "Approved",
+    "job_status": "Job in Process",
+    "filing_number": "P1",
+    "keyword": "CHARGING STATION",
+    "job_description": "Installing Power to Battery charging station"
   },
   {
     "bbl": "3031137501",
@@ -4840,24 +4885,6 @@
     "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "EV charger installation"
-  },
-  {
-    "bbl": "3017560024",
-    "filing_date": "2025-12-15",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
-    "filing_number": "I1",
-    "keyword": "CHARGING STATION",
-    "job_description": "Installing Power to Battery charging station"
-  },
-  {
-    "bbl": "3017560024",
-    "filing_date": "2025-12-30",
-    "filing_status": "Approved",
-    "job_status": "Job in Process",
-    "filing_number": "P1",
-    "keyword": "CHARGING STATION",
-    "job_description": "Installing Power to Battery charging station"
   },
   {
     "bbl": "3021050011",
@@ -5337,6 +5364,33 @@
     "job_description": "ELECTRICAL VEHICLE CHARGING STATIONS FOR THE CONSOLIDATED BUS TRANSIT SPACE METER NUMBER 12720427 - Wiring from new POE indicated in the design package above to switchgear has decreased to 15'. Wiring from switchgear to step-up xfmer is decreased to 20 and is now AL. Wiring from switchgear to Re-fee"
   },
   {
+    "bbl": "3044520580",
+    "filing_date": "2026-09-30",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "ELECTRIC VEHICLE CHARG",
+    "job_description": "Install new electric vehicle charging system consisting of (2) service disconnect/CT cabinet assemblies, (2) MCB switchboards, (5) Tesla V3.5 Supercharger cabinets, (20) Tesla V4 Supercharger posts,. PROJECT IS RELATED TO GC PERMIT - B01275447"
+  },
+  {
+    "bbl": "3030327501",
+    "filing_date": "2026-10-19",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "Residential EV charger installation and sub-panel in the parking garage - Unit 4A."
+  },
+  {
+    "bbl": "3087270040",
+    "filing_date": "2026-10-27",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "Residential Level 2 EV charger and 2nd floor Sub-panel installation."
+  },
+  {
     "bbl": "3023170005",
     "filing_date": "2022-08-31",
     "filing_status": "Complete",
@@ -5456,8 +5510,8 @@
   {
     "bbl": "3027350004",
     "filing_date": "2022-09-15",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
     "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "New service & general wiring for 57 apartments & commercial space - installation of  12 Level 2 EV chargers."
@@ -7507,19 +7561,19 @@
   },
   {
     "bbl": "1011057501",
-    "filing_date": "2024-08-07",
-    "filing_status": "Approved",
-    "job_status": "Job in Process",
-    "filing_number": "P2",
+    "filing_date": "2024-02-12",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
+    "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "EV Chargers"
   },
   {
     "bbl": "1011057501",
-    "filing_date": "2024-02-12",
-    "filing_status": "Complete",
-    "job_status": "Job is complete",
-    "filing_number": "I1",
+    "filing_date": "2024-08-07",
+    "filing_status": "Approved",
+    "job_status": "Job in Process",
+    "filing_number": "P2",
     "keyword": "EV CHARGER",
     "job_description": "EV Chargers"
   },
@@ -8919,6 +8973,15 @@
     "job_description": "Installation of three (3) Workplace Charging stations in our Con Edison yard"
   },
   {
+    "bbl": "1014447501",
+    "filing_date": "2026-10-12",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "Install 7 level 2 EV chargers"
+  },
+  {
     "bbl": "1021327501",
     "filing_date": "2022-08-25",
     "filing_status": "Complete",
@@ -9565,15 +9628,6 @@
     "filing_number": "I1",
     "keyword": "CHARGING STATION",
     "job_description": "installing two 40amp outlets for electric car charging stations in parking lot of building."
-  },
-  {
-    "bbl": "4060570003",
-    "filing_date": "2023-01-19",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
-    "filing_number": "I1",
-    "keyword": "EV CHARGING",
-    "job_description": "Install EV Charging Port"
   },
   {
     "bbl": "4086450017",
@@ -10339,6 +10393,15 @@
     "filing_number": "I1",
     "keyword": "EV CHARGE",
     "job_description": "TC PM H&L JOB # C4950C EV CHARGES  EPR # QNO1691A1"
+  },
+  {
+    "bbl": "4060570003",
+    "filing_date": "2023-01-19",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGING",
+    "job_description": "Install EV Charging Port"
   },
   {
     "bbl": "4023610268",
@@ -11710,6 +11773,15 @@
   },
   {
     "bbl": "4101010150",
+    "filing_date": "2024-05-06",
+    "filing_status": "Approved",
+    "job_status": "Job in Process",
+    "filing_number": "P2",
+    "keyword": "EV CHARGER",
+    "job_description": "Supply and install (10) Level 2 EV chargers.  32 amps each."
+  },
+  {
+    "bbl": "4101010150",
     "filing_date": "2024-02-08",
     "filing_status": "Complete",
     "job_status": "Job is complete",
@@ -11723,15 +11795,6 @@
     "filing_status": "Approved",
     "job_status": "Job in Process",
     "filing_number": "P1",
-    "keyword": "EV CHARGER",
-    "job_description": "Supply and install (10) Level 2 EV chargers.  32 amps each."
-  },
-  {
-    "bbl": "4101010150",
-    "filing_date": "2024-05-06",
-    "filing_status": "Approved",
-    "job_status": "Job in Process",
-    "filing_number": "P2",
     "keyword": "EV CHARGER",
     "job_description": "Supply and install (10) Level 2 EV chargers.  32 amps each."
   },
@@ -12007,19 +12070,19 @@
   },
   {
     "bbl": "4012420025",
-    "filing_date": "2024-05-21",
-    "filing_status": "Complete",
-    "job_status": "Job is complete",
-    "filing_number": "I1",
+    "filing_date": "2025-01-16",
+    "filing_status": "Approved",
+    "job_status": "Job in Process",
+    "filing_number": "P1",
     "keyword": "EV CHARGER",
     "job_description": "installing (1) EV charger ONLY , 01-16-2025 adding (1) #6 AWG FDR as per objection of DOB for conditions of approval"
   },
   {
     "bbl": "4012420025",
-    "filing_date": "2025-01-16",
-    "filing_status": "Approved",
-    "job_status": "Job in Process",
-    "filing_number": "P1",
+    "filing_date": "2024-05-21",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
+    "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "installing (1) EV charger ONLY , 01-16-2025 adding (1) #6 AWG FDR as per objection of DOB for conditions of approval"
   },
@@ -12132,6 +12195,15 @@
     "job_description": "STAND ALONE ELECTRIC VEHICLE CHARGING STATIONUSING (3) EV CHARGER SYSTEMS : TOTAL 240 KW AC/240 KVA AC"
   },
   {
+    "bbl": "4011650058",
+    "filing_date": "2025-06-10",
+    "filing_status": "Approved",
+    "job_status": "Job in Process",
+    "filing_number": "P1",
+    "keyword": "EV CHARGER",
+    "job_description": "Install of 20 EV Chargers"
+  },
+  {
     "bbl": "4011650017",
     "filing_date": "2024-07-08",
     "filing_status": "Complete",
@@ -12177,15 +12249,6 @@
     "job_description": "Install of 20 EV Chargers"
   },
   {
-    "bbl": "4011650058",
-    "filing_date": "2025-06-10",
-    "filing_status": "Approved",
-    "job_status": "Job in Process",
-    "filing_number": "P1",
-    "keyword": "EV CHARGER",
-    "job_description": "Install of 20 EV Chargers"
-  },
-  {
     "bbl": "4011650027",
     "filing_date": "2024-07-08",
     "filing_status": "Complete",
@@ -12202,6 +12265,15 @@
     "filing_number": "P3",
     "keyword": "EV CHARGER",
     "job_description": "Install of 20 EV Chargers"
+  },
+  {
+    "bbl": "4097640063",
+    "filing_date": "2024-09-13",
+    "filing_status": "Approved",
+    "job_status": "Job in Process",
+    "filing_number": "P1",
+    "keyword": "EV CHARGER",
+    "job_description": "install 25 EV chargers and 2 - 200 amp pannels."
   },
   {
     "bbl": "4003810030",
@@ -12371,15 +12443,6 @@
     "filing_status": "Complete",
     "job_status": "Job is complete",
     "filing_number": "I1",
-    "keyword": "EV CHARGER",
-    "job_description": "install 25 EV chargers and 2 - 200 amp pannels."
-  },
-  {
-    "bbl": "4097640063",
-    "filing_date": "2024-09-13",
-    "filing_status": "Approved",
-    "job_status": "Job in Process",
-    "filing_number": "P1",
     "keyword": "EV CHARGER",
     "job_description": "install 25 EV chargers and 2 - 200 amp pannels."
   },
@@ -13394,8 +13457,8 @@
   {
     "bbl": "4025450040",
     "filing_date": "2025-04-25",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
     "filing_number": "I1",
     "keyword": "ELECTRIC VEHICLE CHARG",
     "job_description": "Install new wiring for new electric vehicle charging center. Project part of EPR-QN03031A1."
@@ -13561,6 +13624,15 @@
     "filing_number": "S3",
     "keyword": "EV CHARGER",
     "job_description": "General wiring and meter service for 1 family with an ancillary dwelling unit, install 2 EV Charger, obtain new C/O"
+  },
+  {
+    "bbl": "4082340113",
+    "filing_date": "2026-10-07",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "S5",
+    "keyword": "EV CHARGER",
+    "job_description": "General wiring and meter service for NEW 1 family with an ancillary dwelling unit, Install 1 EV Chargers, obtain new C/O"
   },
   {
     "bbl": "4072650033",
@@ -14049,15 +14121,6 @@
     "job_description": "GENERAL WIRING GARAGE- INSTALLED EV CHARGER ON GARAGE"
   },
   {
-    "bbl": "4042820100",
-    "filing_date": "2026-04-02",
-    "filing_status": "Approved",
-    "job_status": "Job in Process",
-    "filing_number": "P2",
-    "keyword": "EV CHARGER",
-    "job_description": "TR-25247-00 EV CHARGER"
-  },
-  {
     "bbl": "4135060054",
     "filing_date": "2025-10-24",
     "filing_status": "Permit Issued",
@@ -14074,6 +14137,15 @@
     "filing_number": "P2",
     "keyword": "EV CHARGER",
     "job_description": "200 amp service upgrade. Adding 2 meters. lights, outlets, switches, exhaust fans , water heaters and smoke detectors, EV charger, Superseding application # Q01307762"
+  },
+  {
+    "bbl": "4042820100",
+    "filing_date": "2026-04-02",
+    "filing_status": "Approved",
+    "job_status": "Job in Process",
+    "filing_number": "P2",
+    "keyword": "EV CHARGER",
+    "job_description": "TR-25247-00 EV CHARGER"
   },
   {
     "bbl": "4002460001",
@@ -14411,8 +14483,8 @@
   {
     "bbl": "4006737501",
     "filing_date": "2026-03-16",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
+    "filing_status": "Cancelled",
+    "job_status": "Inspection not complete due to withdrawal",
     "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "Installation of 10 Level 2 EV chargers"
@@ -14599,9 +14671,18 @@
   },
   {
     "bbl": "4104890014",
-    "filing_date": "2026-06-03",
-    "filing_status": "Permit Issued",
+    "filing_date": "2026-10-06",
+    "filing_status": "Approved",
     "job_status": "Job in Process",
+    "filing_number": "P1",
+    "keyword": "ELECTRIC VEHICLE CHARG",
+    "job_description": "NEW 50A ADJUSTABLE LEVEL 2 ELECTRIC VEHICLE CHARGER, SET TO 50A SECURED INPLACE"
+  },
+  {
+    "bbl": "4104890014",
+    "filing_date": "2026-06-03",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
     "filing_number": "S1",
     "keyword": "ELECTRIC VEHICLE CHARG",
     "job_description": "NEW 50A ADJUSTABLE LEVEL 2 ELECTRIC VEHICLE CHARGER, SET TO 50A SECURED INPLACE"
@@ -14703,6 +14784,24 @@
     "job_status": "Job in Process",
     "filing_number": "I1",
     "keyword": "EV CHARGER",
+    "job_description": "Install 6 EV Chargers"
+  },
+  {
+    "bbl": "4158100001",
+    "filing_date": "2026-07-31",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "INSTALL 6 EV CHARGERS"
+  },
+  {
+    "bbl": "4158150220",
+    "filing_date": "2026-07-31",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
     "job_description": "INSTALL 6 EV CHARGERS"
   },
   {
@@ -14731,24 +14830,6 @@
     "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "INSTALL 8 EV CHARGERS"
-  },
-  {
-    "bbl": "4158150220",
-    "filing_date": "2026-07-31",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
-    "filing_number": "I1",
-    "keyword": "EV CHARGER",
-    "job_description": "Install 6 EV Chargers"
-  },
-  {
-    "bbl": "4158100001",
-    "filing_date": "2026-07-31",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
-    "filing_number": "I1",
-    "keyword": "EV CHARGER",
-    "job_description": "INSTALL 6 EV CHARGERS"
   },
   {
     "bbl": "4158100071",
@@ -14798,8 +14879,8 @@
   {
     "bbl": "4130430047",
     "filing_date": "2026-09-16",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
     "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "SYSTEM SIZE: 4.05KW DC, 3.3KW AC MODULES: (9) ELIN ENERGY (SIRIUS PV):ELNSM54M-HC-N-450 INVERTERS: (1) SOLAREDGE TECHNOLOGIES:SE3800H-USMN OPTIMIZERS: (9) SOLAREDGE TECHNOLOGIES: U650 RACKING: ALPHATRACK TO FRAMING -SNR-DC-00370 EXISTING SOLAR SYSTEM INSTALLED. INSTALL 2 EV CHARGERS EXTERIOR NEARDRI"
@@ -14821,6 +14902,24 @@
     "filing_number": "I1",
     "keyword": "EV CHARGING",
     "job_description": "Install (4) new dual port level 2 EV charging station. Install (8) New 50 Amp 208/Volt 2 Pole circuit breakers in new EV panel and trench  to each level 2 charger. Install trench and circuit from new property line box to new milbank enclosure and (1) new 10 point meter."
+  },
+  {
+    "bbl": "4080790013",
+    "filing_date": "2026-10-01",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "Install new 200A service and EV charger receptacle"
+  },
+  {
+    "bbl": "4051450001",
+    "filing_date": "2026-10-06",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "EV Charger Installation"
   },
   {
     "bbl": "4159050042",
@@ -15588,6 +15687,15 @@
     "job_description": "installing circuit for EV charger ONLY"
   },
   {
+    "bbl": "5061600001",
+    "filing_date": "2024-01-11",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
+    "filing_number": "I1",
+    "keyword": "EV CHARGING",
+    "job_description": "Install EV Charging Port"
+  },
+  {
     "bbl": "5043000036",
     "filing_date": "2024-01-08",
     "filing_status": "Permit Issued",
@@ -15613,15 +15721,6 @@
     "filing_number": "I1",
     "keyword": "EV CHARGING",
     "job_description": "Install EV Charging Port on 1st Floor Panel"
-  },
-  {
-    "bbl": "5061600001",
-    "filing_date": "2024-01-11",
-    "filing_status": "Complete",
-    "job_status": "Job is complete",
-    "filing_number": "I1",
-    "keyword": "EV CHARGING",
-    "job_description": "Install EV Charging Port"
   },
   {
     "bbl": "5017600025",
@@ -15946,6 +16045,15 @@
     "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "240 volt level 2 EV charger"
+  },
+  {
+    "bbl": "5004320023",
+    "filing_date": "2025-01-21",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "EV charger"
   },
   {
     "bbl": "5045790023",
@@ -16588,19 +16696,19 @@
   },
   {
     "bbl": "5070130061",
-    "filing_date": "2026-04-20",
-    "filing_status": "Approved",
+    "filing_date": "2026-03-19",
+    "filing_status": "Permit Issued",
     "job_status": "Job in Process",
-    "filing_number": "P1",
+    "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "Level2 EV Charger"
   },
   {
     "bbl": "5070130061",
-    "filing_date": "2026-03-19",
-    "filing_status": "Permit Issued",
+    "filing_date": "2026-04-20",
+    "filing_status": "Approved",
     "job_status": "Job in Process",
-    "filing_number": "I1",
+    "filing_number": "P1",
     "keyword": "EV CHARGER",
     "job_description": "Level2 EV Charger"
   },
@@ -16769,11 +16877,38 @@
   {
     "bbl": "5027050200",
     "filing_date": "2026-09-17",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
     "filing_number": "I1",
     "keyword": "CHARGING STATION",
     "job_description": "installation of new workplace charging stations"
+  },
+  {
+    "bbl": "5001850526",
+    "filing_date": "2026-09-30",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGING",
+    "job_description": "INSTALL NEW 400A EV PANEL AND (10) EV CHARGING STATIONS WITH ASSOCIATED FEEDERS. EXISTING SERVICE TO REMAIN."
+  },
+  {
+    "bbl": "5033140065",
+    "filing_date": "2026-10-01",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "Residential Level 2 EV charger installation."
+  },
+  {
+    "bbl": "5001850527",
+    "filing_date": "2026-10-16",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGING",
+    "job_description": "INSTALL NEW 400A EV PANEL AND (10) EV CHARGING STATIONS WITH ASSOCIATED FEEDERS. EXISTING SERVICE TO REMAIN."
   },
   {
     "bbl": "5057330082",
@@ -17938,19 +18073,19 @@
   },
   {
     "bbl": "2026140019",
-    "filing_date": "2025-02-12",
-    "filing_status": "Complete",
-    "job_status": "Job is complete",
-    "filing_number": "I1",
+    "filing_date": "2025-04-07",
+    "filing_status": "Approved",
+    "job_status": "Job in Process",
+    "filing_number": "P1",
     "keyword": "EV CHARGER",
     "job_description": "EV charger installation"
   },
   {
     "bbl": "2026140019",
-    "filing_date": "2025-04-07",
-    "filing_status": "Approved",
-    "job_status": "Job in Process",
-    "filing_number": "P1",
+    "filing_date": "2025-02-12",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
+    "filing_number": "I1",
     "keyword": "EV CHARGER",
     "job_description": "EV charger installation"
   },
@@ -18533,8 +18668,8 @@
   {
     "bbl": "2024887501",
     "filing_date": "2025-11-14",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
+    "filing_status": "Cancelled",
+    "job_status": "Inspection not complete due to withdrawal",
     "filing_number": "I1",
     "keyword": "CHARGING STATION",
     "job_description": "INSTALLING 2 EV L2  AND 1 EV L3 CHARGING STATIONS IN INDOOR PARKING GARAGE"
@@ -18695,8 +18830,8 @@
   {
     "bbl": "2056260396",
     "filing_date": "2026-09-15",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
     "filing_number": "I1",
     "keyword": "CHARGING STATION",
     "job_description": "File to clear ECB violation #39180981K for work done for a car charging station done by others."
@@ -18729,24 +18864,6 @@
     "job_description": "Residential Level 2 EV charger installation on exterior of a house."
   },
   {
-    "bbl": "2032250108",
-    "filing_date": "2026-09-17",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
-    "filing_number": "I1",
-    "keyword": "EV CHARGER",
-    "job_description": "100 amp panel & 6 L2 EV chargers"
-  },
-  {
-    "bbl": "2049970001",
-    "filing_date": "2026-09-17",
-    "filing_status": "Permit Issued",
-    "job_status": "Job in Process",
-    "filing_number": "I1",
-    "keyword": "EV CHARGER",
-    "job_description": "200 amp panel & 15 L2 EV Chargers"
-  },
-  {
     "bbl": "2058532207",
     "filing_date": "2026-08-27",
     "filing_status": "Complete",
@@ -18765,13 +18882,76 @@
     "job_description": "Installation of EV Charging stations at the NYC DOT parking lot. The site will have (1) switchboard with a 4000A service switch, 1500kva transformer,  3 BTC power Gen IV power units, 6 BTC power gen IV charging dispensers. EPR # BX03442A1"
   },
   {
-    "bbl": "2058120094",
-    "filing_date": "2026-09-24",
+    "bbl": "2032250108",
+    "filing_date": "2026-09-17",
     "filing_status": "Permit Issued",
     "job_status": "Job in Process",
     "filing_number": "I1",
     "keyword": "EV CHARGER",
+    "job_description": "100 amp panel & 6 L2 EV chargers"
+  },
+  {
+    "bbl": "2049970001",
+    "filing_date": "2026-09-17",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "200 amp panel & 15 L2 EV Chargers"
+  },
+  {
+    "bbl": "2058120094",
+    "filing_date": "2026-09-24",
+    "filing_status": "Complete",
+    "job_status": "Job is complete",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
     "job_description": "Residential Level 2 48-amp EV charger installation inside the garage."
+  },
+  {
+    "bbl": "2058120094",
+    "filing_date": "2026-10-16",
+    "filing_status": "Approved",
+    "job_status": "Job in Process",
+    "filing_number": "P1",
+    "keyword": "EV CHARGER",
+    "job_description": "Residential Level 2 48-amp EV charger installation inside the garage."
+  },
+  {
+    "bbl": "2058411944",
+    "filing_date": "2026-10-19",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "New 200 Amp Panel & 8 EV Chargers"
+  },
+  {
+    "bbl": "2057960127",
+    "filing_date": "2026-10-19",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "New 200 amp 3p panel & 23 EV chargers"
+  },
+  {
+    "bbl": "2042230039",
+    "filing_date": "2026-10-19",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "New 200 Amp Panel & 15 EV chargers"
+  },
+  {
+    "bbl": "2058353055",
+    "filing_date": "2026-10-19",
+    "filing_status": "Permit Issued",
+    "job_status": "Job in Process",
+    "filing_number": "I1",
+    "keyword": "EV CHARGER",
+    "job_description": "New 200 Amp Panel and 20 EV Chargers"
   },
   {
     "bbl": "2030690062",

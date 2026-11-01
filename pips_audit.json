@@ -1,37 +1,37 @@
 {
   "metadata": {
-    "pips_total_unique_bbls": 5404,
-    "ours_total": 6311,
-    "matched": 2806,
-    "pips_only_count": 2598,
-    "ours_only_count": 3505
+    "pips_total_unique_bbls": 5378,
+    "ours_total": 6312,
+    "matched": 2795,
+    "pips_only_count": 2583,
+    "ours_only_count": 3517
   },
   "status_distribution_in_pips_only": {
-    "UNSAFE": 99,
-    "SREM": 404,
-    "SAFE": 555,
-    "NO_REPORT_FILED": 1529,
-    "STATUS_PENDING": 11
+    "UNSAFE": 100,
+    "SREM": 407,
+    "NO_REPORT_FILED": 1479,
+    "SAFE": 562,
+    "STATUS_PENDING": 35
   },
   "dof_class_distribution_in_pips_only": {
-    "ELEVATOR APT": 920,
-    "CONDOMINIUMS": 315,
+    "ELEVATOR APT": 921,
+    "CONDOMINIUMS": 314,
     "ELEVATOR APTS:CO-OP(OTHER THAN CONDOS)": 201,
-    "CONDOMINIUMS:SPECIAL CONDO BILLING LOT": 169,
-    "ELEVATOR APTS:SEMI-FIREPROOF(W/O STORES)": 123,
-    "ELEVATOR APTS:SEMI-FIREPROOF(W STORES)": 71,
+    "CONDOMINIUMS:SPECIAL CONDO BILLING LOT": 170,
+    "ELEVATOR APTS:SEMI-FIREPROOF(W/O STORES)": 121,
+    "ELEVATOR APTS:SEMI-FIREPROOF(W STORES)": 69,
     "ELEVATOR APTS:FIREPROOF(W STORES)": 59,
     "UP APARTMENT": 53,
     "ELEVATOR APTS:FIREPROOF(STD CONSTRUCT W/O STORES)": 39,
-    "GARAGES & GAS STATIONS:GARAGE TWO OR MORE STORIES": 38,
-    "WAREHOUSES:FIREPROOF": 37,
+    "WAREHOUSES:FIREPROOF": 36,
+    "GARAGES & GAS STATIONS:GARAGE TWO OR MORE STORIES": 36,
     "WAREHOUSE": 34,
     "OFFICE BUILDINGS": 26,
     "GARAGES & GAS STATIONS:MISCELLANEOUS": 25,
-    "WALK-UP APTS:3 FAMILIES": 20,
-    "STORES WITH APARTMENTS ABOVE": 16,
+    "WALK-UP APTS:3 FAMILIES": 18,
     "STORE BUILDING": 16,
-    "HOTELS": 13,
+    "STORES WITH APARTMENTS ABOVE": 14,
+    "HOTELS": 14,
     "STORE BUILDING: TWO STORY OR STORE/OFFICE": 13,
     "GARAGE/GAS STAT'N": 13
   },
@@ -51,6 +51,14 @@
       "filing_status": "SREM",
       "dof_class": "CONDOMINIUMS",
       "structure_id": "M0004617"
+    },
+    {
+      "bbl": "1000160003",
+      "address": "201 MURRAY STREET, Manhattan",
+      "borough": "Manhattan",
+      "filing_status": "NO_REPORT_FILED",
+      "dof_class": "MISCELLANEOUS",
+      "structure_id": "M0006148"
     },
     {
       "bbl": "1000167508",
@@ -461,14 +469,6 @@
       "structure_id": "M0004597"
     },
     {
-      "bbl": "1005560015",
-      "address": "85 EAST 10 STREET, Manhattan",
-      "borough": "Manhattan",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "WALK-UP APTS:OLD LAW TENEMENTS",
-      "structure_id": "M0002165"
-    },
-    {
       "bbl": "1005570017",
       "address": "60 EAST 12 STREET, Manhattan",
       "borough": "Manhattan",
@@ -757,22 +757,6 @@
       "structure_id": "M0003295"
     },
     {
-      "bbl": "1007090023",
-      "address": "521 WEST 37 STREET, Manhattan",
-      "borough": "Manhattan",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "STORES WITH APARTMENTS ABOVE",
-      "structure_id": "M0003302"
-    },
-    {
-      "bbl": "1007100011",
-      "address": "528 WEST 39 STREET, Manhattan",
-      "borough": "Manhattan",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "GARAGES & GAS STATIONS:GARAGE 1 STORY, SEMI-FIREPROOF OR FIREPROOF",
-      "structure_id": "M0000012"
-    },
-    {
       "bbl": "1007120011",
       "address": "438 WEST 15 STREET, Manhattan",
       "borough": "Manhattan",
@@ -851,6 +835,14 @@
       "filing_status": "SAFE",
       "dof_class": "CONDOMINIUMS",
       "structure_id": "M0004624"
+    },
+    {
+      "bbl": "1007747501",
+      "address": "244 7 AVENUE, Manhattan",
+      "borough": "Manhattan",
+      "filing_status": "SREM",
+      "dof_class": "CONDOMINIUMS:SPECIAL CONDO BILLING LOT",
+      "structure_id": "M0002018"
     },
     {
       "bbl": "1007787501",
@@ -1629,14 +1621,6 @@
       "structure_id": "M0004579"
     },
     {
-      "bbl": "1012610160",
-      "address": "46 WEST 46 STREET, Manhattan",
-      "borough": "Manhattan",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "STORES WITH APARTMENTS ABOVE",
-      "structure_id": "M0002546"
-    },
-    {
       "bbl": "1012687502",
       "address": "656 5 AVENUE, Manhattan",
       "borough": "Manhattan",
@@ -1675,14 +1659,6 @@
       "filing_status": "SAFE",
       "dof_class": "OFFICE BUILDINGS",
       "structure_id": "M0004645"
-    },
-    {
-      "bbl": "1013020025",
-      "address": "131 EAST 47 STREET, Manhattan",
-      "borough": "Manhattan",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "VACANT LAND:COMMERCIAL/LOWER MANH RESIDENTIAL",
-      "structure_id": "M0002598"
     },
     {
       "bbl": "1013047502",
@@ -1880,7 +1856,7 @@
       "bbl": "1013870001",
       "address": "910 5 AVENUE, Manhattan",
       "borough": "Manhattan",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "ELEVATOR APTS:CO-OP(OTHER THAN CONDOS)",
       "structure_id": "M0003458"
     },
@@ -2309,6 +2285,14 @@
       "structure_id": "M0002655"
     },
     {
+      "bbl": "1015000053",
+      "address": "40 EAST   89 STREET, Manhattan",
+      "borough": "Manhattan",
+      "filing_status": "NO_REPORT_FILED",
+      "dof_class": "ELEVATOR APT",
+      "structure_id": "M0007049"
+    },
+    {
       "bbl": "1015090056",
       "address": "121 EAST   80 STREET, Manhattan",
       "borough": "Manhattan",
@@ -2584,7 +2568,7 @@
       "bbl": "1016450050",
       "address": "152 EAST  118 STREET, Manhattan",
       "borough": "Manhattan",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "ELEVATOR APT",
       "structure_id": "M0005648"
     },
@@ -3872,7 +3856,7 @@
       "bbl": "2029880004",
       "address": "1468 HOE AVENUE, Bronx",
       "borough": "Bronx",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "SAFE",
       "dof_class": "ELEVATOR APT",
       "structure_id": "X0006009"
     },
@@ -3904,7 +3888,7 @@
       "bbl": "2030137501",
       "address": "1508 BOONE AVENUE, Bronx",
       "borough": "Bronx",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "CONDOMINIUMS:SPECIAL CONDO BILLING LOT",
       "structure_id": "X0003843"
     },
@@ -4424,7 +4408,7 @@
       "bbl": "2040250040",
       "address": "1855 EAST TREMONT AVENUE, Bronx",
       "borough": "Bronx",
-      "filing_status": "STATUS_PENDING",
+      "filing_status": "NO_REPORT_FILED",
       "dof_class": "GARAGES & GAS STATIONS:MISCELLANEOUS",
       "structure_id": "X0000500"
     },
@@ -4536,7 +4520,7 @@
       "bbl": "2043407501",
       "address": "610 WARING AVENUE, Bronx",
       "borough": "Bronx",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "UNSAFE",
       "dof_class": "CONDOMINIUMS",
       "structure_id": "X0006805"
     },
@@ -4664,7 +4648,7 @@
       "bbl": "2048530011",
       "address": "873 EAST  228 STREET, Bronx",
       "borough": "Bronx",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "UP APARTMENT",
       "structure_id": "X0007025"
     },
@@ -5661,14 +5645,6 @@
       "structure_id": "B0000439"
     },
     {
-      "bbl": "3002397501",
-      "address": "1 CLINTON STREET, Brooklyn",
-      "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "CONDOMINIUMS",
-      "structure_id": "B0005883"
-    },
-    {
       "bbl": "3002710001",
       "address": "205 STATE STREET, Brooklyn",
       "borough": "Brooklyn",
@@ -5760,7 +5736,7 @@
       "bbl": "3003487501",
       "address": "69 CARROLL STREET, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "SAFE",
       "dof_class": "CONDOMINIUMS",
       "structure_id": "B0005622"
     },
@@ -5851,14 +5827,6 @@
       "filing_status": "SREM",
       "dof_class": "GARAGE/GAS STAT'N",
       "structure_id": "B0006683"
-    },
-    {
-      "bbl": "3005180035",
-      "address": "62 DELEVAN STREET, Brooklyn",
-      "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "GARAGES & GAS STATIONS:GARAGE TWO OR MORE STORIES",
-      "structure_id": "B0003992"
     },
     {
       "bbl": "3006210136",
@@ -5992,7 +5960,7 @@
       "bbl": "3008957503",
       "address": "11 TERRACE PLACE, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "CONDOMINIUMS",
       "structure_id": "B0005623"
     },
@@ -6000,7 +5968,7 @@
       "bbl": "3008977503",
       "address": "282 21 STREET, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "CONDOMINIUMS",
       "structure_id": "B0006421"
     },
@@ -6166,11 +6134,11 @@
     },
     {
       "bbl": "3010470003",
-      "address": "541 4 AVENUE, Brooklyn",
+      "address": "555 4 AVENUE, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "ELEVATOR APTS:SEMI-FIREPROOF(W STORES)",
-      "structure_id": "B0000514"
+      "filing_status": "SAFE",
+      "dof_class": "ELEVATOR APT",
+      "structure_id": "B0006493"
     },
     {
       "bbl": "3010520005",
@@ -6640,7 +6608,7 @@
       "bbl": "3015160042",
       "address": "52 ROCKAWAY AVENUE, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "STATUS_PENDING",
+      "filing_status": "NO_REPORT_FILED",
       "dof_class": "STORE BUILDING: ONE STORY",
       "structure_id": "B0000799"
     },
@@ -6696,7 +6664,7 @@
       "bbl": "3015930023",
       "address": "874 WILLOUGHBY AVENUE, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "ELEVATOR APTS:SEMI-FIREPROOF(W STORES)",
       "structure_id": "B0002400"
     },
@@ -6757,14 +6725,6 @@
       "structure_id": "B0007030"
     },
     {
-      "bbl": "3017090036",
-      "address": "1797 ATLANTIC AVENUE, Brooklyn",
-      "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "GARAGES & GAS STATIONS:GARAGE TWO OR MORE STORIES",
-      "structure_id": "B0004008"
-    },
-    {
       "bbl": "3017130007",
       "address": "1875 ATLANTIC AVENUE, Brooklyn",
       "borough": "Brooklyn",
@@ -6800,7 +6760,7 @@
       "bbl": "3017370021",
       "address": "116 NOSTRAND AVENUE, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "STORE BUILDING: TWO STORY OR STORE/OFFICE",
       "structure_id": "B0002288"
     },
@@ -6872,7 +6832,7 @@
       "bbl": "3017820027",
       "address": "880 DEKALB AVENUE, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "ELEVATOR APT",
       "structure_id": "B0005796"
     },
@@ -7011,14 +6971,6 @@
       "filing_status": "SREM",
       "dof_class": "ELEVATOR APT",
       "structure_id": "B0006463"
-    },
-    {
-      "bbl": "3018840048",
-      "address": "378 FLUSHING AVENUE, Brooklyn",
-      "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "ELEVATOR APTS:SEMI-FIREPROOF(W/O STORES)",
-      "structure_id": "B0000389"
     },
     {
       "bbl": "3018930004",
@@ -7232,7 +7184,7 @@
       "bbl": "3019940053",
       "address": "1091 FULTON STREET, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "STATUS_PENDING",
+      "filing_status": "SAFE",
       "dof_class": "CHURCH, SYNAGOGUE, CHAPEL",
       "structure_id": "B0002378"
     },
@@ -7445,14 +7397,6 @@
       "structure_id": "B0003177"
     },
     {
-      "bbl": "3022660038",
-      "address": "95 GERRY STREET, Brooklyn",
-      "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "FACTORY/INDUSTRIAL BLDGS:LIGHT MANUFACTURING",
-      "structure_id": "B0000822"
-    },
-    {
       "bbl": "3022690024",
       "address": "88 GERRY STREET, Brooklyn",
       "borough": "Brooklyn",
@@ -7611,14 +7555,6 @@
       "filing_status": "SREM",
       "dof_class": "ELEVATOR APTS:SEMI-FIREPROOF(W STORES)",
       "structure_id": "B0003186"
-    },
-    {
-      "bbl": "3023270022",
-      "address": "182 BEDFORD AVENUE, Brooklyn",
-      "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "RESIDENCE-MULTI USE:PRIMARY 3 FAMILY W STORE/OFFICE",
-      "structure_id": "B0000719"
     },
     {
       "bbl": "3023280015",
@@ -7901,14 +7837,6 @@
       "structure_id": "B0005937"
     },
     {
-      "bbl": "3024957501",
-      "address": "79 EAGLE STREET, Brooklyn",
-      "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "WALK-UP APTS:OVER 6 FAMILIES(W/O STORES)",
-      "structure_id": "B0002844"
-    },
-    {
       "bbl": "3024970023",
       "address": "220 DUPONT STREET, Brooklyn",
       "borough": "Brooklyn",
@@ -7928,7 +7856,7 @@
       "bbl": "3025230050",
       "address": "191 HURON STREET, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "SAFE",
       "dof_class": "ELEVATOR APT",
       "structure_id": "B0005849"
     },
@@ -7989,28 +7917,12 @@
       "structure_id": "B0005528"
     },
     {
-      "bbl": "3025980016",
-      "address": "273 GAR ECKFORD STREET, Brooklyn",
-      "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "WALK-UP APTS:3 FAMILIES",
-      "structure_id": "B0002390"
-    },
-    {
       "bbl": "3026000017",
       "address": "201 NEWEL STREET, Brooklyn",
       "borough": "Brooklyn",
       "filing_status": "NO_REPORT_FILED",
       "dof_class": "STORE BUILDING: ONE STORY",
       "structure_id": "B0002369"
-    },
-    {
-      "bbl": "3026010012",
-      "address": "202 NEWELL STREET, Brooklyn",
-      "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "WAREHOUSES:FIREPROOF",
-      "structure_id": "B0003193"
     },
     {
       "bbl": "3026240024",
@@ -8344,7 +8256,7 @@
       "bbl": "3030410001",
       "address": "55 MESEROLE STREET, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "UTILITY BUREAU PR",
       "structure_id": "B0006785"
     },
@@ -8472,7 +8384,7 @@
       "bbl": "3031837501",
       "address": "651 BUSHWICK AVENUE, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "CONDOMINIUMS",
       "structure_id": "B0004947"
     },
@@ -8520,7 +8432,7 @@
       "bbl": "3032170010",
       "address": "114 SUYDAM STREET, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "VACANT LAND:COMMERCIAL/LOWER MANH RESIDENTIAL",
       "structure_id": "B0002404"
     },
@@ -8723,14 +8635,6 @@
       "filing_status": "NO_REPORT_FILED",
       "dof_class": "ELEVATOR APT",
       "structure_id": "B0007041"
-    },
-    {
-      "bbl": "3035900050",
-      "address": "420 WATKINS STREET, Brooklyn",
-      "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "ELEVATOR APTS:SEMI-FIREPROOF(W STORES)",
-      "structure_id": "B0002921"
     },
     {
       "bbl": "3036027501",
@@ -9192,7 +9096,7 @@
       "bbl": "3050660071",
       "address": "261 LENOX ROAD, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "STATUS_PENDING",
+      "filing_status": "NO_REPORT_FILED",
       "dof_class": "ELEVATOR APT",
       "structure_id": "B0006716"
     },
@@ -9360,7 +9264,7 @@
       "bbl": "3051590053",
       "address": "405 EAST   16 STREET, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "ELEVATOR APT",
       "structure_id": "B0005000"
     },
@@ -9544,7 +9448,7 @@
       "bbl": "3052817501",
       "address": "3001 FORT HAMILTON PARKWAY, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "CONDOMINIUMS",
       "structure_id": "B0005624"
     },
@@ -9712,7 +9616,7 @@
       "bbl": "3053747501",
       "address": "400 OCEAN PARKWAY, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "STATUS_PENDING",
+      "filing_status": "NO_REPORT_FILED",
       "dof_class": "CONDOMINIUMS:SPECIAL CONDO BILLING LOT",
       "structure_id": "B0000735"
     },
@@ -9752,7 +9656,7 @@
       "bbl": "3053900074",
       "address": "449 OCEAN PARKWAY, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "SAFE",
       "dof_class": "ELEVATOR APTS:FIREPROOF(STD CONSTRUCT W/O STORES)",
       "structure_id": "B0000740"
     },
@@ -10224,7 +10128,7 @@
       "bbl": "3060927502",
       "address": "115 DAHLGREN PLACE, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "CONDOMINIUMS",
       "structure_id": "B0005627"
     },
@@ -10272,7 +10176,7 @@
       "bbl": "3061040001",
       "address": "9323 SHORE ROAD, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "STATUS_PENDING",
+      "filing_status": "NO_REPORT_FILED",
       "dof_class": "ELEVATOR APT",
       "structure_id": "B0006976"
     },
@@ -10373,14 +10277,6 @@
       "structure_id": "B0005973"
     },
     {
-      "bbl": "3061220038",
-      "address": "9602 4 AVENUE, Brooklyn",
-      "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "ELEVATOR APT",
-      "structure_id": "B0006645"
-    },
-    {
       "bbl": "3061240005",
       "address": "9601 SHORE ROAD, Brooklyn",
       "borough": "Brooklyn",
@@ -10424,7 +10320,7 @@
       "bbl": "3061337501",
       "address": "9935 SHORE ROAD, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "CONDOMINIUMS",
       "structure_id": "B0005565"
     },
@@ -10512,7 +10408,7 @@
       "bbl": "3063367501",
       "address": "2246 84 STREET, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "CONDOMINIUMS",
       "structure_id": "B0005556"
     },
@@ -11077,18 +10973,10 @@
       "structure_id": "B0003211"
     },
     {
-      "bbl": "3067390065",
-      "address": "1746GAR OCEAN AVENUE, Brooklyn",
-      "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "WALK-UP APTS:3 FAMILIES",
-      "structure_id": "B0000798"
-    },
-    {
       "bbl": "3067397501",
       "address": "1756 OCEAN AVENUE, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "CONDOMINIUMS:SPECIAL CONDO BILLING LOT",
       "structure_id": "B0003200"
     },
@@ -11152,7 +11040,7 @@
       "bbl": "3067570012",
       "address": "1880 OCEAN AVENUE, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "HOSPITALS & HEALTH:MISCELLANEOUS",
       "structure_id": "B0000788"
     },
@@ -11160,7 +11048,7 @@
       "bbl": "3067570043",
       "address": "1958 OCEAN AVENUE, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "RESIDENCE-MULTI USE:PRIMARY 3 FAMILY W STORE/OFFICE",
       "structure_id": "B0000847"
     },
@@ -11616,7 +11504,7 @@
       "bbl": "3071590146",
       "address": "815 GRAVESEND NECK ROAD, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "SAFE",
       "dof_class": "ELEVATOR APT",
       "structure_id": "B0005092"
     },
@@ -11845,14 +11733,6 @@
       "structure_id": "B0005107"
     },
     {
-      "bbl": "3072990057",
-      "address": "2423 OCEAN AVENUE, Brooklyn",
-      "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "ELEVATOR APTS:SEMI-FIREPROOF(W/O STORES)",
-      "structure_id": "B0000973"
-    },
-    {
       "bbl": "3072990069",
       "address": "2409 OCEAN AVENUE, Brooklyn",
       "borough": "Brooklyn",
@@ -11944,7 +11824,7 @@
       "bbl": "3073530001",
       "address": "2555 OCEAN AVENUE, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "SREM",
       "dof_class": "STORE BUILDING",
       "structure_id": "B0006700"
     },
@@ -12128,7 +12008,7 @@
       "bbl": "3074220040",
       "address": "2939 AVENUE Y, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "ELEVATOR APTS:CO-OP(OTHER THAN CONDOS)",
       "structure_id": "B0000980"
     },
@@ -12152,7 +12032,7 @@
       "bbl": "3074221042",
       "address": "2413 EAST   29 STREET, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "STATUS_PENDING",
+      "filing_status": "NO_REPORT_FILED",
       "dof_class": "ELEVATOR APTS:CO-OP(OTHER THAN CONDOS)",
       "structure_id": "B0000995"
     },
@@ -12520,7 +12400,7 @@
       "bbl": "3078130106",
       "address": "4149 KINGS HIGHWAY, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "ELEVATOR APTS:FIREPROOF(STD CONSTRUCT W/O STORES)",
       "structure_id": "B0002990"
     },
@@ -12608,7 +12488,7 @@
       "bbl": "3085580010",
       "address": "2241 COLEMAN STREET, Brooklyn",
       "borough": "Brooklyn",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "SREM",
       "dof_class": "OFFICE BUILDINGS:PROFESSIONAL BUILDINGS",
       "structure_id": "B0003004"
     },
@@ -13792,7 +13672,7 @@
       "bbl": "4005420005",
       "address": "22-12 ASTORIA BOULEVARD, Queens",
       "borough": "Queens",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "ELEVATOR APTS:LUXURY TYPE",
       "structure_id": "Q0000846"
     },
@@ -13888,7 +13768,7 @@
       "bbl": "4005730059",
       "address": "26-38 28 STREET, Queens",
       "borough": "Queens",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "ELEVATOR APTS:SEMI-FIREPROOF(W STORES)",
       "structure_id": "Q0000925"
     },
@@ -14952,7 +14832,7 @@
       "bbl": "4012380006",
       "address": "39-65 52 STREET, Queens",
       "borough": "Queens",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "ELEVATOR APT",
       "structure_id": "Q0006792"
     },
@@ -15286,11 +15166,11 @@
     },
     {
       "bbl": "4013520073",
-      "address": "73-01 QUEENS BOULEVARD, Queens",
+      "address": "72-37 QUEENS BOULEVARD, Queens",
       "borough": "Queens",
       "filing_status": "NO_REPORT_FILED",
       "dof_class": "GARAGES & GAS STATIONS:GARAGE TWO OR MORE STORIES",
-      "structure_id": "Q0003967"
+      "structure_id": "Q0004186"
     },
     {
       "bbl": "4013520131",
@@ -16848,7 +16728,7 @@
       "bbl": "4028640021",
       "address": "86-10 GRAND AVENUE, Queens",
       "borough": "Queens",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "ELEVATOR APTS:CO-OP(OTHER THAN CONDOS)",
       "structure_id": "Q0000899"
     },
@@ -16960,7 +16840,7 @@
       "bbl": "4030830061",
       "address": "63-84 SAUNDERS STREET, Queens",
       "borough": "Queens",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "ELEVATOR APT",
       "structure_id": "Q0004812"
     },
@@ -17712,7 +17592,7 @@
       "bbl": "4045740041",
       "address": "162-01 POWELLS COVE BOULEVARD, Queens",
       "borough": "Queens",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "ELEVATOR APT",
       "structure_id": "Q0005236"
     },
@@ -17720,7 +17600,7 @@
       "bbl": "4045740061",
       "address": "162-21 POWELLS COVE BOULEVARD, Queens",
       "borough": "Queens",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "ELEVATOR APT",
       "structure_id": "Q0005299"
     },
@@ -18720,7 +18600,7 @@
       "bbl": "4061760058",
       "address": "36-35 BELL BOULEVARD, Queens",
       "borough": "Queens",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "OFFICE BUILDINGS",
       "structure_id": "Q0004923"
     },
@@ -19208,7 +19088,7 @@
       "bbl": "4092810044",
       "address": "129-11 JAMAICA AVENUE, Queens",
       "borough": "Queens",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "ELEVATOR APT",
       "structure_id": "Q0004965"
     },
@@ -19544,7 +19424,7 @@
       "bbl": "4097140018",
       "address": "141-05 PERSHING CRESCENT, Queens",
       "borough": "Queens",
-      "filing_status": "STATUS_PENDING",
+      "filing_status": "NO_REPORT_FILED",
       "dof_class": "ELEVATOR APT",
       "structure_id": "Q0004895"
     },
@@ -20309,6 +20189,14 @@
       "structure_id": "Q0000665"
     },
     {
+      "bbl": "4120930034",
+      "address": "135-30 140 STREET, Queens",
+      "borough": "Queens",
+      "filing_status": "NO_REPORT_FILED",
+      "dof_class": "HOTELS",
+      "structure_id": "Q0005896"
+    },
+    {
       "bbl": "4125280109",
       "address": "128-06 MERRICK BOULEVARD, Queens",
       "borough": "Queens",
@@ -20323,14 +20211,6 @@
       "filing_status": "NO_REPORT_FILED",
       "dof_class": "WAREHOUSE",
       "structure_id": "Q0006894"
-    },
-    {
-      "bbl": "4139570012",
-      "address": "156-36 CROSS BAY BOULEVARD, Queens",
-      "borough": "Queens",
-      "filing_status": "NO_REPORT_FILED",
-      "dof_class": "SHOPPING CENTER W/PARKING FACILITY",
-      "structure_id": "Q0004069"
     },
     {
       "bbl": "4142600111",
@@ -20424,7 +20304,7 @@
       "bbl": "4157520001",
       "address": "22-10 NEW HAVEN AVENUE, Queens",
       "borough": "Queens",
-      "filing_status": "NO_REPORT_FILED",
+      "filing_status": "STATUS_PENDING",
       "dof_class": "ELEVATOR APT",
       "structure_id": "Q0004957"
     },
@@ -20827,7 +20707,7 @@
       "address": "115 BROAD STREET",
       "bldgclass": "D5",
       "garage_type": "under_residential",
-      "risk_score": 27
+      "risk_score": 26
     },
     {
       "bbl": "1000130027",
@@ -20870,6 +20750,13 @@
       "bldgclass": "RC",
       "garage_type": "under_residential",
       "risk_score": 25
+    },
+    {
+      "bbl": "1000397502",
+      "address": "130 WATER STREET",
+      "bldgclass": "RM",
+      "garage_type": "under_residential",
+      "risk_score": 45
     },
     {
       "bbl": "1000907504",
@@ -21254,7 +21141,7 @@
       "address": "306 8 AVENUE",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 18
+      "risk_score": 17
     },
     {
       "bbl": "1007780025",
@@ -21457,7 +21344,7 @@
       "address": "501 WEST 51 STREET",
       "bldgclass": "P5",
       "garage_type": "other",
-      "risk_score": 69
+      "risk_score": 67
     },
     {
       "bbl": "1010810080",
@@ -21555,7 +21442,7 @@
       "address": "1992 BROADWAY",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 47
+      "risk_score": 45
     },
     {
       "bbl": "1011717513",
@@ -21576,7 +21463,7 @@
       "address": "303 WEST 66 STREET",
       "bldgclass": "D4",
       "garage_type": "under_residential",
-      "risk_score": 55
+      "risk_score": 58
     },
     {
       "bbl": "1012027501",
@@ -21709,14 +21596,14 @@
       "address": "118 EAST 60 STREET",
       "bldgclass": "D4",
       "garage_type": "under_residential",
-      "risk_score": 75
+      "risk_score": 76
     },
     {
       "bbl": "1014130001",
       "address": "883 PARK AVENUE",
       "bldgclass": "D4",
       "garage_type": "under_residential",
-      "risk_score": 70
+      "risk_score": 67
     },
     {
       "bbl": "1014197501",
@@ -21814,7 +21701,7 @@
       "address": "175 EAST 82 STREET",
       "bldgclass": "D6",
       "garage_type": "under_residential",
-      "risk_score": 28
+      "risk_score": 25
     },
     {
       "bbl": "1015420053",
@@ -21877,7 +21764,7 @@
       "address": "1677 LEXINGTON AVENUE",
       "bldgclass": "D6",
       "garage_type": "under_residential",
-      "risk_score": 20
+      "risk_score": 22
     },
     {
       "bbl": "1016350017",
@@ -21961,7 +21848,7 @@
       "address": "211 EAST 121 STREET",
       "bldgclass": "K2",
       "garage_type": "under_commercial",
-      "risk_score": 12
+      "risk_score": 10
     },
     {
       "bbl": "1017860037",
@@ -21996,7 +21883,7 @@
       "address": "201 EAST 125TH STREET",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 18
+      "risk_score": 21
     },
     {
       "bbl": "1018030001",
@@ -22101,7 +21988,7 @@
       "address": "WEST 145TH STREET",
       "bldgclass": "K9",
       "garage_type": "under_commercial",
-      "risk_score": 70
+      "risk_score": 88
     },
     {
       "bbl": "1020150006",
@@ -22248,7 +22135,7 @@
       "address": "108 WEST 227 STREET",
       "bldgclass": "D1",
       "garage_type": "under_residential",
-      "risk_score": 56
+      "risk_score": 55
     },
     {
       "bbl": "1022150554",
@@ -22475,6 +22362,13 @@
       "risk_score": 15
     },
     {
+      "bbl": "2023190109",
+      "address": "2413 THIRD AVENUE",
+      "bldgclass": "D7",
+      "garage_type": "under_residential",
+      "risk_score": 25
+    },
+    {
       "bbl": "2023200051",
       "address": "2491 3 AVENUE",
       "bldgclass": "G1",
@@ -22626,7 +22520,7 @@
       "address": "487 EAST 153 STREET",
       "bldgclass": "O2",
       "garage_type": "under_commercial",
-      "risk_score": 35
+      "risk_score": 40
     },
     {
       "bbl": "2023630012",
@@ -22738,7 +22632,7 @@
       "address": "973 BROOK AVENUE",
       "bldgclass": "F4",
       "garage_type": "other",
-      "risk_score": 33
+      "risk_score": 30
     },
     {
       "bbl": "2023920051",
@@ -22780,7 +22674,7 @@
       "address": "383 EAST 162 STREET",
       "bldgclass": "D9",
       "garage_type": "under_residential",
-      "risk_score": 17
+      "risk_score": 16
     },
     {
       "bbl": "2024210049",
@@ -22892,7 +22786,7 @@
       "address": "979 SUMMIT AVENUE",
       "bldgclass": "D9",
       "garage_type": "under_residential",
-      "risk_score": 15
+      "risk_score": 19
     },
     {
       "bbl": "2025240040",
@@ -22920,7 +22814,7 @@
       "address": "163 WEST 165 STREET",
       "bldgclass": "G1",
       "garage_type": "standalone",
-      "risk_score": 15
+      "risk_score": 30
     },
     {
       "bbl": "2025260076",
@@ -23011,7 +22905,7 @@
       "address": "691 EAST 140 STREET",
       "bldgclass": "D7",
       "garage_type": "under_residential",
-      "risk_score": 17
+      "risk_score": 20
     },
     {
       "bbl": "2025690020",
@@ -23494,7 +23388,7 @@
       "address": "1280 WESTCHESTER AVENUE",
       "bldgclass": "G1",
       "garage_type": "standalone",
-      "risk_score": 50
+      "risk_score": 52
     },
     {
       "bbl": "2027570093",
@@ -23665,6 +23559,13 @@
       "risk_score": 40
     },
     {
+      "bbl": "2027710235",
+      "address": "430 BARRETTO STREET",
+      "bldgclass": "G1",
+      "garage_type": "standalone",
+      "risk_score": 48
+    },
+    {
       "bbl": "2027720025",
       "address": "1261 EAST BAY AVENUE",
       "bldgclass": "G1",
@@ -23788,7 +23689,7 @@
       "address": "1321 VIELE AVENUE",
       "bldgclass": "GU",
       "garage_type": "standalone",
-      "risk_score": 56
+      "risk_score": 55
     },
     {
       "bbl": "2027750193",
@@ -24033,7 +23934,7 @@
       "address": "1355 CROMWELL AVENUE",
       "bldgclass": "G1",
       "garage_type": "standalone",
-      "risk_score": 48
+      "risk_score": 45
     },
     {
       "bbl": "2028710110",
@@ -24047,7 +23948,7 @@
       "address": "1650 UNDERCLIFF AVENUE",
       "bldgclass": "D7",
       "garage_type": "under_residential",
-      "risk_score": 18
+      "risk_score": 15
     },
     {
       "bbl": "2028800091",
@@ -24208,7 +24109,7 @@
       "address": "806 EAST 170TH STREET",
       "bldgclass": "D7",
       "garage_type": "under_residential",
-      "risk_score": 15
+      "risk_score": 16
     },
     {
       "bbl": "2029650036",
@@ -24404,7 +24305,7 @@
       "address": "4511 THIRD AVENUE",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 16
+      "risk_score": 15
     },
     {
       "bbl": "2030530036",
@@ -24915,7 +24816,7 @@
       "address": "2716 MARION AVENUE",
       "bldgclass": "D4",
       "garage_type": "under_residential",
-      "risk_score": 48
+      "risk_score": 51
     },
     {
       "bbl": "2032860034",
@@ -25181,7 +25082,7 @@
       "address": "STORY AVENUE",
       "bldgclass": "D1",
       "garage_type": "under_residential",
-      "risk_score": 26
+      "risk_score": 37
     },
     {
       "bbl": "2036720001",
@@ -25615,7 +25516,7 @@
       "address": "2633 EAST TREMONT AVENUE",
       "bldgclass": "K9",
       "garage_type": "under_commercial",
-      "risk_score": 37
+      "risk_score": 30
     },
     {
       "bbl": "2040790001",
@@ -25692,7 +25593,7 @@
       "address": "1402 BLONDELL AVENUE",
       "bldgclass": "E9",
       "garage_type": "other",
-      "risk_score": 44
+      "risk_score": 41
     },
     {
       "bbl": "2041390008",
@@ -25867,7 +25768,7 @@
       "address": "3215 WESTCHESTER AVENUE",
       "bldgclass": "D7",
       "garage_type": "under_residential",
-      "risk_score": 21
+      "risk_score": 15
     },
     {
       "bbl": "2042510030",
@@ -25972,7 +25873,7 @@
       "address": "1150 PELHAM PARKWAY SOUTH",
       "bldgclass": "D1",
       "garage_type": "under_residential",
-      "risk_score": 63
+      "risk_score": 60
     },
     {
       "bbl": "2043220001",
@@ -25993,7 +25894,7 @@
       "address": "1055 ESPLANADE",
       "bldgclass": "D1",
       "garage_type": "under_residential",
-      "risk_score": 55
+      "risk_score": 58
     },
     {
       "bbl": "2043400078",
@@ -26717,13 +26618,6 @@
       "risk_score": 35
     },
     {
-      "bbl": "2052930001",
-      "address": "2505 BRUCKNER BOULEVARD",
-      "bldgclass": "E9",
-      "garage_type": "other",
-      "risk_score": 10
-    },
-    {
       "bbl": "2053060096",
       "address": "1111 CALHOUN AVENUE",
       "bldgclass": "O2",
@@ -27267,7 +27161,7 @@
       "address": "76 CONGRESS STREET",
       "bldgclass": "R1",
       "garage_type": "under_residential",
-      "risk_score": 25
+      "risk_score": 15
     },
     {
       "bbl": "3003070006",
@@ -27414,7 +27308,7 @@
       "address": "306 BOND STREET",
       "bldgclass": "C7",
       "garage_type": "under_residential",
-      "risk_score": 38
+      "risk_score": 45
     },
     {
       "bbl": "3004310007",
@@ -27694,7 +27588,7 @@
       "address": "21 BEARD STREET",
       "bldgclass": "K8",
       "garage_type": "under_commercial",
-      "risk_score": 42
+      "risk_score": 39
     },
     {
       "bbl": "3006270038",
@@ -27722,7 +27616,7 @@
       "address": "639 4 AVENUE",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 27
+      "risk_score": 20
     },
     {
       "bbl": "3006400044",
@@ -27925,7 +27819,7 @@
       "address": "420 42 STREET",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 38
+      "risk_score": 39
     },
     {
       "bbl": "3007270007",
@@ -28135,14 +28029,14 @@
       "address": "4102 8TH AVENUE",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 33
+      "risk_score": 25
     },
     {
       "bbl": "3009280001",
       "address": "35 4 AVENUE",
       "bldgclass": "D6",
       "garage_type": "under_residential",
-      "risk_score": 15
+      "risk_score": 18
     },
     {
       "bbl": "3009340001",
@@ -28220,6 +28114,13 @@
       "bldgclass": "F5",
       "garage_type": "other",
       "risk_score": 45
+    },
+    {
+      "bbl": "3009960001",
+      "address": "55 2 AVENUE",
+      "bldgclass": "G1",
+      "garage_type": "standalone",
+      "risk_score": 38
     },
     {
       "bbl": "3009960011",
@@ -28499,7 +28400,7 @@
       "address": "PROSPECT PLACE",
       "bldgclass": "D6",
       "garage_type": "under_residential",
-      "risk_score": 15
+      "risk_score": 28
     },
     {
       "bbl": "3011631102",
@@ -28870,7 +28771,7 @@
       "address": "2384 ATLANTIC AVENUE",
       "bldgclass": "H9",
       "garage_type": "institutional",
-      "risk_score": 24
+      "risk_score": 32
     },
     {
       "bbl": "3014430027",
@@ -29097,6 +28998,13 @@
       "risk_score": 15
     },
     {
+      "bbl": "3016760025",
+      "address": "406 MAC DONOUGH STREET",
+      "bldgclass": "G1",
+      "garage_type": "standalone",
+      "risk_score": 45
+    },
+    {
       "bbl": "3016860037",
       "address": "194 BAINBRIDGE STREET",
       "bldgclass": "D1",
@@ -29318,7 +29226,7 @@
       "address": "1215 FULTON STREET",
       "bldgclass": "D7",
       "garage_type": "under_residential",
-      "risk_score": 19
+      "risk_score": 15
     },
     {
       "bbl": "3018617501",
@@ -29339,7 +29247,7 @@
       "address": "431 HERKIMER STREET",
       "bldgclass": "D7",
       "garage_type": "under_residential",
-      "risk_score": 26
+      "risk_score": 30
     },
     {
       "bbl": "3018650079",
@@ -29402,7 +29310,7 @@
       "address": "35 SKILLMAN STREET",
       "bldgclass": "R4",
       "garage_type": "under_residential",
-      "risk_score": 45
+      "risk_score": 43
     },
     {
       "bbl": "3018930037",
@@ -29517,6 +29425,13 @@
       "risk_score": 23
     },
     {
+      "bbl": "3020107503",
+      "address": "532 CLINTON AVENUE",
+      "bldgclass": "R4",
+      "garage_type": "under_residential",
+      "risk_score": 45
+    },
+    {
       "bbl": "3020110039",
       "address": "510 WAVERLY AVENUE",
       "bldgclass": "W1",
@@ -29584,7 +29499,7 @@
       "address": "62 CLERMONT AVENUE",
       "bldgclass": "D7",
       "garage_type": "under_residential",
-      "risk_score": 21
+      "risk_score": 15
     },
     {
       "bbl": "3020467501",
@@ -29892,7 +29807,7 @@
       "address": "6 HAVEMEYER STREET",
       "bldgclass": "D6",
       "garage_type": "under_residential",
-      "risk_score": 15
+      "risk_score": 33
     },
     {
       "bbl": "3023150021",
@@ -29979,6 +29894,13 @@
       "risk_score": 18
     },
     {
+      "bbl": "3023560001",
+      "address": "206 KENT AVENUE",
+      "bldgclass": "O5",
+      "garage_type": "under_commercial",
+      "risk_score": 15
+    },
+    {
       "bbl": "3023587502",
       "address": "129 METROPOLITAN AVENUE",
       "bldgclass": "R4",
@@ -30025,7 +29947,7 @@
       "address": "80 AINSLIE STREET",
       "bldgclass": "D7",
       "garage_type": "under_residential",
-      "risk_score": 25
+      "risk_score": 28
     },
     {
       "bbl": "3023770012",
@@ -30151,7 +30073,7 @@
       "address": "159 BROADWAY",
       "bldgclass": "H9",
       "garage_type": "institutional",
-      "risk_score": 15
+      "risk_score": 24
     },
     {
       "bbl": "3024600008",
@@ -30165,7 +30087,7 @@
       "address": "1 BLUE SLIP",
       "bldgclass": "RR",
       "garage_type": "under_residential",
-      "risk_score": 33
+      "risk_score": 25
     },
     {
       "bbl": "3024820001",
@@ -30515,7 +30437,7 @@
       "address": "38 VARICK STREET",
       "bldgclass": "O2",
       "garage_type": "under_commercial",
-      "risk_score": 10
+      "risk_score": 16
     },
     {
       "bbl": "3026790046",
@@ -30564,7 +30486,7 @@
       "address": "21 BROOME STREET",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 25
+      "risk_score": 15
     },
     {
       "bbl": "3027010050",
@@ -30620,7 +30542,7 @@
       "address": "64 BAYARD STREET",
       "bldgclass": "D3",
       "garage_type": "under_residential",
-      "risk_score": 21
+      "risk_score": 15
     },
     {
       "bbl": "3027240018",
@@ -31076,6 +30998,13 @@
       "bldgclass": "E1",
       "garage_type": "other",
       "risk_score": 53
+    },
+    {
+      "bbl": "3031547501",
+      "address": "87 GEORGE STREET",
+      "bldgclass": "RM",
+      "garage_type": "under_residential",
+      "risk_score": 25
     },
     {
       "bbl": "3031580001",
@@ -31712,7 +31641,7 @@
       "address": "2817 ATLANTIC AVENUE",
       "bldgclass": "D7",
       "garage_type": "under_residential",
-      "risk_score": 29
+      "risk_score": 25
     },
     {
       "bbl": "3039490042",
@@ -31782,7 +31711,7 @@
       "address": "765 ESSEX STREET",
       "bldgclass": "G1",
       "garage_type": "standalone",
-      "risk_score": 45
+      "risk_score": 52
     },
     {
       "bbl": "3039880015",
@@ -32048,7 +31977,7 @@
       "address": "25 WORTMAN AVENUE",
       "bldgclass": "G1",
       "garage_type": "standalone",
-      "risk_score": 51
+      "risk_score": 49
     },
     {
       "bbl": "3043880028",
@@ -32587,7 +32516,7 @@
       "address": "740 CLARKSON AVENUE",
       "bldgclass": "D1",
       "garage_type": "under_residential",
-      "risk_score": 60
+      "risk_score": 62
     },
     {
       "bbl": "3048530041",
@@ -32713,7 +32642,7 @@
       "address": "644 PARKSIDE AVENUE",
       "bldgclass": "O5",
       "garage_type": "under_commercial",
-      "risk_score": 22
+      "risk_score": 20
     },
     {
       "bbl": "3050570026",
@@ -32755,7 +32684,7 @@
       "address": "2100 BEDFORD AVENUE",
       "bldgclass": "RD",
       "garage_type": "under_residential",
-      "risk_score": 33
+      "risk_score": 25
     },
     {
       "bbl": "3050840049",
@@ -33056,7 +32985,7 @@
       "address": "350 CONEY ISLAND AVENUE",
       "bldgclass": "W1",
       "garage_type": "other",
-      "risk_score": 65
+      "risk_score": 69
     },
     {
       "bbl": "3053230001",
@@ -33318,6 +33247,13 @@
       "risk_score": 45
     },
     {
+      "bbl": "3055830065",
+      "address": "974 39 STREET",
+      "bldgclass": "G1",
+      "garage_type": "standalone",
+      "risk_score": 45
+    },
+    {
       "bbl": "3055840001",
       "address": "1002 39 STREET",
       "bldgclass": "E1",
@@ -33378,14 +33314,14 @@
       "address": "5521 8TH AVENUE",
       "bldgclass": "RC",
       "garage_type": "under_residential",
-      "risk_score": 25
+      "risk_score": 17
     },
     {
       "bbl": "3056807502",
       "address": "950 55TH STREET",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 33
+      "risk_score": 25
     },
     {
       "bbl": "3056867502",
@@ -33472,6 +33408,13 @@
       "risk_score": 30
     },
     {
+      "bbl": "3057190066",
+      "address": "1325 61 STREET",
+      "bldgclass": "G1",
+      "garage_type": "standalone",
+      "risk_score": 33
+    },
+    {
       "bbl": "3057200010",
       "address": "1408 60 STREET",
       "bldgclass": "S2",
@@ -33546,7 +33489,7 @@
       "address": "1446 65 STREET",
       "bldgclass": "K4",
       "garage_type": "under_commercial",
-      "risk_score": 62
+      "risk_score": 65
     },
     {
       "bbl": "3057610044",
@@ -33574,7 +33517,7 @@
       "address": "741 61 STREET",
       "bldgclass": "RC",
       "garage_type": "under_residential",
-      "risk_score": 15
+      "risk_score": 18
     },
     {
       "bbl": "3057940018",
@@ -33749,7 +33692,7 @@
       "address": "60 92ND STREET",
       "bldgclass": "R4",
       "garage_type": "under_residential",
-      "risk_score": 22
+      "risk_score": 20
     },
     {
       "bbl": "3061020006",
@@ -33924,7 +33867,7 @@
       "address": "2286 CROPSEY AVENUE",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 23
+      "risk_score": 15
     },
     {
       "bbl": "3064717502",
@@ -34211,7 +34154,7 @@
       "address": "1674 EAST 22 STREET",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 33
+      "risk_score": 37
     },
     {
       "bbl": "3068027503",
@@ -34431,6 +34374,13 @@
       "risk_score": 45
     },
     {
+      "bbl": "3070310018",
+      "address": "2902 WEST 37 STREET",
+      "bldgclass": "G1",
+      "garage_type": "standalone",
+      "risk_score": 45
+    },
+    {
       "bbl": "3070630012",
       "address": "1515 SURF AVENUE",
       "bldgclass": "D7",
@@ -34449,7 +34399,7 @@
       "address": "2006 SURF AVENUE",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 23
+      "risk_score": 25
     },
     {
       "bbl": "3071040237",
@@ -34729,14 +34679,14 @@
       "address": "486 NEPTUNE AVENUE",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 72
+      "risk_score": 77
     },
     {
       "bbl": "3072997503",
       "address": "2409 OCEAN AVENUE",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 28
+      "risk_score": 20
     },
     {
       "bbl": "3073390049",
@@ -34813,7 +34763,7 @@
       "address": "2615 EAST 17 STREET",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 39
+      "risk_score": 38
     },
     {
       "bbl": "3074790025",
@@ -35527,7 +35477,7 @@
       "address": "2911 BRIGHTON 5 STREET",
       "bldgclass": "D1",
       "garage_type": "under_residential",
-      "risk_score": 65
+      "risk_score": 63
     },
     {
       "bbl": "3086740007",
@@ -35625,7 +35575,7 @@
       "address": "3939 SHORE PARKWAY",
       "bldgclass": "J8",
       "garage_type": "other",
-      "risk_score": 34
+      "risk_score": 27
     },
     {
       "bbl": "3089000054",
@@ -36682,7 +36632,7 @@
       "address": "43-02 12 STREET",
       "bldgclass": "G1",
       "garage_type": "standalone",
-      "risk_score": 38
+      "risk_score": 35
     },
     {
       "bbl": "4004440024",
@@ -36934,7 +36884,7 @@
       "address": "31-48 CRESCENT STREET",
       "bldgclass": "D1",
       "garage_type": "under_residential",
-      "risk_score": 25
+      "risk_score": 15
     },
     {
       "bbl": "4005727501",
@@ -37284,7 +37234,7 @@
       "address": "34-14 STEINWAY STREET",
       "bldgclass": "K1",
       "garage_type": "under_commercial",
-      "risk_score": 91
+      "risk_score": 92
     },
     {
       "bbl": "4006720040",
@@ -37305,7 +37255,7 @@
       "address": "34-11 STEINWAY STREET",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 40
+      "risk_score": 35
     },
     {
       "bbl": "4006770041",
@@ -37417,7 +37367,7 @@
       "address": "23-74 48 STREET",
       "bldgclass": "E1",
       "garage_type": "other",
-      "risk_score": 42
+      "risk_score": 38
     },
     {
       "bbl": "4007450001",
@@ -37592,7 +37542,7 @@
       "address": "18-21 STEINWAY PLACE",
       "bldgclass": "G1",
       "garage_type": "standalone",
-      "risk_score": 35
+      "risk_score": 38
     },
     {
       "bbl": "4008140010",
@@ -37627,7 +37577,7 @@
       "address": "25-65 23 STREET",
       "bldgclass": "C7",
       "garage_type": "under_residential",
-      "risk_score": 28
+      "risk_score": 32
     },
     {
       "bbl": "4008840057",
@@ -38271,7 +38221,7 @@
       "address": "100-15 DITMARS BOULVARD",
       "bldgclass": "H2",
       "garage_type": "institutional",
-      "risk_score": 70
+      "risk_score": 71
     },
     {
       "bbl": "4016400020",
@@ -38733,7 +38683,7 @@
       "address": "98-81 QUEENS BOULEVARD",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 18
+      "risk_score": 15
     },
     {
       "bbl": "4021130034",
@@ -39097,7 +39047,7 @@
       "address": "47-01 48 STREET",
       "bldgclass": "E1",
       "garage_type": "other",
-      "risk_score": 40
+      "risk_score": 44
     },
     {
       "bbl": "4026020001",
@@ -39531,14 +39481,14 @@
       "address": "97-12 65TH ROAD",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 27
+      "risk_score": 25
     },
     {
       "bbl": "4031030030",
       "address": "63-34 AUSTIN STREET",
       "bldgclass": "K4",
       "garage_type": "under_commercial",
-      "risk_score": 45
+      "risk_score": 35
     },
     {
       "bbl": "4031040101",
@@ -39567,6 +39517,13 @@
       "bldgclass": "RM",
       "garage_type": "under_residential",
       "risk_score": 45
+    },
+    {
+      "bbl": "4031750070",
+      "address": "104-70 QUEENS BOULEVARD",
+      "bldgclass": "O5",
+      "garage_type": "under_commercial",
+      "risk_score": 55
     },
     {
       "bbl": "4031780067",
@@ -39643,7 +39600,7 @@
       "address": "83-36 BEVERLY ROAD",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 55
+      "risk_score": 57
     },
     {
       "bbl": "4033310013",
@@ -40805,7 +40762,7 @@
       "address": "134-37 35TH AVENUE",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 15
+      "risk_score": 18
     },
     {
       "bbl": "4049497502",
@@ -40917,7 +40874,7 @@
       "address": "39-16 PRINCE STREET",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 60
+      "risk_score": 54
     },
     {
       "bbl": "4049740027",
@@ -41015,7 +40972,7 @@
       "address": "142-39 38 AVENUE",
       "bldgclass": "C1",
       "garage_type": "under_residential",
-      "risk_score": 22
+      "risk_score": 20
     },
     {
       "bbl": "4050117502",
@@ -41092,7 +41049,7 @@
       "address": "144-10 ROOSEVELT AVENUE",
       "bldgclass": "D7",
       "garage_type": "under_residential",
-      "risk_score": 28
+      "risk_score": 27
     },
     {
       "bbl": "4050250064",
@@ -41169,14 +41126,14 @@
       "address": "132-57 SANFORD AVENUE",
       "bldgclass": "D1",
       "garage_type": "under_residential",
-      "risk_score": 54
+      "risk_score": 57
     },
     {
       "bbl": "4050417504",
       "address": "133-25 41 ROAD",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 22
+      "risk_score": 20
     },
     {
       "bbl": "4050437501",
@@ -41211,7 +41168,7 @@
       "address": "142-27 BARCLAY AVENUE",
       "bldgclass": "D3",
       "garage_type": "under_residential",
-      "risk_score": 54
+      "risk_score": 60
     },
     {
       "bbl": "4050460040",
@@ -41309,7 +41266,7 @@
       "address": "131-29 SANFORD AVENUE",
       "bldgclass": "E9",
       "garage_type": "other",
-      "risk_score": 76
+      "risk_score": 79
     },
     {
       "bbl": "4050620036",
@@ -41344,7 +41301,7 @@
       "address": "42-01 HAIGHT STREET",
       "bldgclass": "K4",
       "garage_type": "under_commercial",
-      "risk_score": 40
+      "risk_score": 43
     },
     {
       "bbl": "4050660151",
@@ -41526,7 +41483,7 @@
       "address": "140-22 BEECH AVENUE",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 46
+      "risk_score": 43
     },
     {
       "bbl": "4051867507",
@@ -41701,7 +41658,7 @@
       "address": "146-27 BEECH AVENUE",
       "bldgclass": "RM",
       "garage_type": "under_residential",
-      "risk_score": 18
+      "risk_score": 15
     },
     {
       "bbl": "4053757503",
@@ -42184,7 +42141,7 @@
       "address": "253-22 NORTHERN BOULEVARD",
       "bldgclass": "K2",
       "garage_type": "under_commercial",
-      "risk_score": 29
+      "risk_score": 25
     },
     {
       "bbl": "4082630146",
@@ -43017,7 +42974,7 @@
       "address": "166-20 90 AVENUE",
       "bldgclass": "D7",
       "garage_type": "under_residential",
-      "risk_score": 15
+      "risk_score": 30
     },
     {
       "bbl": "4098210001",
@@ -43899,7 +43856,7 @@
       "address": "147-35 FARMERS BOULEVARD",
       "bldgclass": "E1",
       "garage_type": "other",
-      "risk_score": 39
+      "risk_score": 37
     },
     {
       "bbl": "4133830054",
@@ -43969,6 +43926,13 @@
       "address": "248-22 BROOKVILLE BOULEVARD",
       "bldgclass": "G1",
       "garage_type": "standalone",
+      "risk_score": 30
+    },
+    {
+      "bbl": "4140660013",
+      "address": "162-18 CROSS BAY BOULEVARD",
+      "bldgclass": "K1",
+      "garage_type": "under_commercial",
       "risk_score": 30
     },
     {
