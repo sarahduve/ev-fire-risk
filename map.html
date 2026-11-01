@@ -398,8 +398,19 @@ const map = L.map('map').setView([40.735, -73.99], 13);
 map.dragging._draggable.options.clickTolerance = 15;
 // updateWhenIdle:false — fetch tiles during pan, not only after it stops.
 // Leaflet defaults this to true on mobile. Keeping this on; it's harmless.
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; OpenStreetMap &copy; CARTO',
+// CARTO started requiring an API key for basemap tiles (Nov 2026) and serves
+// "API KEY REQUIRED" tiles otherwise. Esri's dark gray canvas is keyless.
+// Labels are a separate reference layer drawn on top of the base.
+const ESRI = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/';
+L.tileLayer(ESRI + 'World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors',
+  maxNativeZoom: 16,
+  maxZoom: 19,
+  updateWhenIdle: false,
+  keepBuffer: 4,
+}).addTo(map);
+L.tileLayer(ESRI + 'World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+  maxNativeZoom: 16,
   maxZoom: 19,
   updateWhenIdle: false,
   keepBuffer: 4,
