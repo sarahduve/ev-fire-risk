@@ -357,17 +357,22 @@ if afdc_path.exists():
          len(ids) == len(set(ids)),
          f"{len(ids)} total, {len(set(ids))} unique")
 
-    # Check for the 28x duplication bug. v2.0 widened the AFDC fetch to
-    # include private + planned stations across all facility types, so some
-    # addresses legitimately host many stations (e.g. tenant-only residential
-    # towers with per-spot chargers). Relaxed from <=5 to <=30 to match
-    # observed plausible density.
+    # Check for the 28x duplication bug (one station fetched once per
+    # overlapping grid circle). Counting stations per address stopped working
+    # once garages started listing every spot as its own station (e.g. 35
+    # "SERAPHINE PARKING n" at 130 Avenue F, Bayonne, Nov 2026), so look for
+    # repeated name + location instead. AFDC has a few legit pairs (same
+    # site on two networks), hence <=3 rather than ==1.
     from collections import Counter
-    addr_counts = Counter(s.get("street_address", "") for s in stations)
-    max_dupes = addr_counts.most_common(1)[0][1] if addr_counts else 0
-    test("no address appears more than 30 times",
-         max_dupes <= 30,
-         f"max dupes: {max_dupes} ({addr_counts.most_common(1)})")
+    fingerprints = Counter(
+        (s.get("street_address"), s.get("station_name"),
+         s.get("latitude"), s.get("longitude"))
+        for s in stations
+    )
+    max_dupes = fingerprints.most_common(1)[0][1] if fingerprints else 0
+    test("no station name+location appears more than 3 times",
+         max_dupes <= 3,
+         f"max dupes: {max_dupes} ({fingerprints.most_common(1)})")
 else:
     print("  SKIP  (no afdc_data.json)")
 
